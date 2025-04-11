@@ -1,0 +1,106 @@
+{
+
+  "type": "module",
+
+  "name": "glowgazy",
+
+  "version": "1.0.0",
+
+  "description": "a e-commerce website",
+
+  "main": "src/index.js",
+
+  "scripts": {
+
+    "test": "echo \"Error: no test specified\" && exit 1",
+
+    "start": "node src/index.js",
+
+    "dev": "nodemon  src/index.js"
+
+  },
+
+  "author": "",
+
+  "license": "ISC",
+
+  "devDependencies": {
+
+    "nodemon": "^3.1.9",
+
+    "prettier": "^3.4.2"
+
+  },
+
+  "dependencies": {
+
+    "bcrypt": "^5.1.1",
+
+    "cookie-parser": "^1.4.7",
+
+    "cors": "^2.8.5",
+
+    "csurf": "^1.10.0",
+
+    "dotenv": "^16.4.7",
+
+    "ejs": "^3.1.10",
+
+    "exceljs": "^4.4.0",
+
+    "express": "^4.21.2",
+
+    "express-session": "^1.18.1",
+
+    "fs": "^0.0.1-security",
+
+    "helmet": "^8.0.0",
+
+    "moment": "^2.30.1",
+
+    "mongoos": "^0.0.1-security",
+
+    "mongoose": "^8.9.5",
+
+    "multer": "^1.4.5-lts.1",
+
+    "nodemailer": "^6.10.0",
+
+    "passport": "^0.7.0",
+
+    "passport-google-oauth20": "^2.0.0",
+
+    "pdfkit": "^0.16.0",
+
+    "pdfkit-table": "^0.1.99",
+
+    "razorpay": "^2.9.6",
+
+    "sharp": "^0.33.5",
+
+    "sweetalert2": "^11.15.10",
+
+    "uuid": "^11.0.5"
+
+  },
+
+  "repository": {
+
+    "type": "git",
+
+    "url": "git+https://github.com/Nandana002/glowgazey.git"
+
+  },
+
+  "keywords": [],
+
+  "bugs": {
+
+    "url": "https://github.com/Nandana002/glowgazey/issues"
+
+  },
+
+  "homepage": "https://github.com/Nandana002/glowgazey#readme"
+
+}
+
