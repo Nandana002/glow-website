@@ -1,0 +1,297 @@
+<%- include("../../views/partials/admin/headers") %>
+<%- include("../../views/partials/admin/slidebar") %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    /* Global Styles */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0a0a0f;
+        margin: 0;
+        padding: 0;
+        color: #e0e0e0;
+    }
+
+    .container {
+        padding: 40px 0;
+    }
+
+    /* Header and Sidebar Styling */
+    header, .sidebar {
+        background-color: #12121a;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Form Container Styling */
+    .col-md-6 {
+        background-color: rgba(20, 20, 30, 0.7);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 0, 0, 0.3);
+        padding: 35px;
+        margin-top: 60px;
+        border: 1px solid rgba(0, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .col-md-6:hover {
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), 0 0 50px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Title Style */
+    h3 {
+        font-size: 28px;
+        margin-bottom: 25px;
+        font-weight: 600;
+        text-align: center;
+        color: #0ff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        letter-spacing: 1px;
+    }
+
+    /* Label Style */
+    label {
+        font-size: 14px;
+        color: #0ff;
+        font-weight: 500;
+        margin-bottom: 8px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    /* Input and Textarea Styling */
+    input, textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0 20px;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        border-radius: 6px;
+        font-size: 15px;
+        color: #e0e0e0;
+        background-color: rgba(15, 15, 25, 0.6);
+        box-shadow: 0 0 5px rgba(0, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+        border-color: #0ff;
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Button Style */
+    button {
+        padding: 14px 28px;
+        background-color: transparent;
+        color: #0ff;
+        border: 2px solid #0ff;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    button:hover {
+        background-color: rgba(0, 255, 255, 0.1);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+    }
+    
+    button:active {
+        transform: scale(0.98);
+    }
+
+    /* Error and Success Messages */
+    .alert {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Neon Border Animation */
+    @keyframes neon-border-pulse {
+        0% {
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.3), 0 0 15px rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+            border-color: rgba(0, 255, 255, 0.8);
+        }
+        100% {
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.3), 0 0 15px rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+    }
+
+    .col-md-6 {
+        animation: neon-border-pulse 4s infinite;
+    }
+
+    /* Button Glow Animation */
+    @keyframes button-glow {
+        0% {
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.4);
+        }
+        100% {
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+    }
+
+    button {
+        animation: button-glow 2s infinite;
+    }
+    
+    /* Form title styling */
+    .form-title {
+        position: relative;
+        margin-bottom: 40px;
+        padding-bottom: 15px;
+        text-align: center;
+    }
+    
+    .form-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 25%;
+        width: 50%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #0ff, transparent);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 767px) {
+        .col-md-6 {
+            width: 90%;
+            padding: 20px;
+            margin: 40px auto;
+        }
+        
+        .form-title:after {
+            width: 80%;
+            left: 10%;
+        }
+    }
+    
+    /* Sweet Alert Custom Styling */
+    .swal2-popup {
+        background-color: #12121a !important;
+        border: 1px solid rgba(0, 255, 255, 0.3) !important;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.2) !important;
+    }
+    
+    .swal2-title, .swal2-content {
+        color: #e0e0e0 !important;
+    }
+    
+    .swal2-confirm {
+        background-color: transparent !important;
+        color: #0ff !important;
+        border: 2px solid #0ff !important;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+    }
+    
+    .swal2-confirm:hover {
+        background-color: rgba(0, 255, 255, 0.1) !important;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-60">
+            <h3 class="form-title">Edit Category</h3>
+            
+            <form id="editCategoryForm" method="POST" action="/admin/edit-page/<%=category._id%>">
+                <div class="mb-4 mt-30">
+                    <label for="categoryName" class="form-label">Category Name</label>
+                    <input type="text" id="categoryName" name="categoryName" value="<%=category.name%>" class="form-control border" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control border" rows="5"><%=category.description%></textarea>
+                </div>
+
+                <div class="d-grid mt-30">
+                    <button type="submit" class="btn">Update Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('editCategoryForm').addEventListener('submit', async function (e) {
+        e.preventDefault(); 
+        
+        const id = '<%=category._id%>';
+        const categoryName = document.getElementById('categoryName').value;
+        const description = document.getElementById('description').value;
+
+        try {
+            const response = await fetch(`/admin/edit-page/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ categoryName, description })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    title: 'Category Updated!',
+                    text: result.message,
+                    icon: 'success',
+                    confirmButtonText: 'Ok',
+                    background: '#12121a',
+                    color: '#e0e0e0',
+                    iconColor: '#0ff',
+                    confirmButtonColor: '#003344'
+                }).then(() => {
+                    window.location.href = '/admin/categoryInfo';
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: result.error || 'Something went wrong.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                    background: '#12121a',
+                    color: '#e0e0e0',
+                    iconColor: '#ff3366',
+                    confirmButtonColor: '#003344'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Internal Server Error',
+                text: 'Please try again later.',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+                background: '#12121a',
+                color: '#e0e0e0',
+                iconColor: '#ff3366',
+                confirmButtonColor: '#003344'
+            });
+        }
+    });
+</script>

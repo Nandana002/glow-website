@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --card-bg: #151515;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #00d2ff;
+            --accent-purple: #a64dff;
+            --accent-cyan: #00ffea;
+            --success: #00ffa3;
+            --danger: #ff3c6a;
+            --info: #3c8fff;
+            --border-color: #2a2a2a;
+            --hover-bg: #202020;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-main {
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            margin-left: 290px;
+            margin-top: 46px;
+            width:1200px;
+            max-width: 1400px;
+        }
+
+        .content-header {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .content-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .content-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            height: 3px;
+            width: 60px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+        }
+
+        .card-body {
+            position: relative;
+        }
+
+        .form-label {
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            display: block;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.3);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #00dbde, var(--success));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 255, 163, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 255, 163, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6a88, var(--danger));
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 60, 106, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 60, 106, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #00c6fb, var(--info));
+            color: white;
+            box-shadow: 0 4px 15px rgba(60, 143, 255, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(60, 143, 255, 0.4);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .table th {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 20px;
+            display: inline-block;
+            min-width: 90px;
+            text-align: center;
+        }
+
+        .alert-success {
+            background-color: rgba(0, 255, 163, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 163, 0.2);
+        }
+
+        .alert-danger {
+            background-color: rgba(255, 60, 106, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 60, 106, 0.2);
+        }
+
+        .text-white {
+            color: white;
+            text-decoration: none;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        .pagination-container a,
+        .pagination-container .current-page {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            min-width: 40px;
+        }
+
+        .pagination-container a:hover {
+            background: rgba(0, 210, 255, 0.1);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .pagination-container .current-page {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 210, 255, 0.3);
+        }
+
+        .d-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+        }
+
+        .col-md-4, .col-md-8 {
+            padding: 10px;
+            flex: 0 0 auto;
+        }
+
+        .col-md-4 {
+            width: 33.33333%;
+        }
+
+        .col-md-8 {
+            width: 66.66667%;
+        }
+
+        .mb-4 {
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 5px;
+        }
+
+        /* Animation effects */
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 210, 255, 0.8), 0 0 30px rgba(166, 77, 255, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table tbody tr {
+            animation: fadeIn 0.3s ease-out forwards;
+            animation-delay: calc(var(--index) * 0.05s);
+            opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            .content-main {
+                margin-left: 0;
+                margin-top: 20px;
+                padding: 15px;
+                width: calc(100% - 30px);
+            }
+
+            .col-md-4, .col-md-8 {
+                width: 100%;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .table th, .table td {
+                padding: 10px;
+            }
+
+            .pagination-container a,
+            .pagination-container .current-page {
+                padding: 6px 10px;
+            }
+        }
+        /* Force dark background on table elements */
+.table,
+.table thead,
+.table tbody,
+.table tr,
+.table th,
+.table td {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* More specific selector for table cells */
+.table-hover tbody tr {
+    background-color: var(--card-bg) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+/* Additional override for any potential inline styles */
+[class*="table"] {
+    background-color: var(--card-bg) !important;
+}
+
+/* Override for table-responsive */
+.table-responsive {
+    background-color: var(--card-bg) !important;
+}
+    </style>
+</head>
+
+<body>
+    <%- include("../../views/partials/admin/headers") %>
+    <%- include("../../views/partials/admin/slidebar") %>
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title card-title">Category</h2>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <!-- Category Form -->
+                    <div class="col-md-4">
+                        <form method="post" action="/admin/addCategory" onsubmit="handleFormSubmit(event)">
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Name</label>
+                                <input type="text" name="name" placeholder="Enter category name" class="form-control" id="product_name" required />
+                                <div id="name-error" class="error-message"></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Description</label>
+                                <textarea placeholder="Enter description" name="description" class="form-control" id="descriptionId" required></textarea>
+                                <div id="description-error" class="error-message"></div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button class="btn btn-primary" type="submit">Create Category</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Category Table -->
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Offer Price</th>
+                                        <th>Offer</th>
+                                        <th>Status</th>
+                                        <th>List/Unlist</th>
+                                        <th>Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cat.reverse().forEach((category) => { %>
+                                        <tr>
+                                            <td><%= category.name %></td>
+                                            <td><%= category.description %></td>
+                                            <td>
+                                                <% if (category.categoryOffer) { %>
+                                                    <%= category.categoryOffer %>%
+                                                <% } else { %>
+                                                    0%
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (category.categoryOffer === 0) { %>
+                                                    <button class="btn btn-success btn-sm text-white" onclick="addOffer('<%= category._id %>')">Add Offer</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-danger btn-sm text-white" onclick="removeOffer('<%= category._id %>')">Remove</button>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (category.isListed) { %>
+                                                    <span class="badge rounded-pill alert-success">Listed</span>
+                                                <% } else { %>
+                                                    <span class="badge rounded-pill alert-danger">Unlisted</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (category.isListed) { %>
+                                                    <button class="btn btn-danger">
+                                                        <a href="/admin/listCategory?id=<%= category._id %>" class="text-white">Unlist</a>
+                                                    </button>
+                                                <% } else { %>
+                                                    <button class="btn btn-success">
+                                                        <a href="/admin/unlistCategory?id=<%= category._id %>" class="text-white">List</a>
+                                                    </button>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/edit?id=<%= category._id %>" class="btn btn-info text-white">Edit</a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <% if (currentPage > 1) { %>
+                <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                    <span class="current-page"><%= i %></span>
+                <% } else { %>
+                    <a href="?page=<%= i %>"><%= i %></a>
+                <% } %>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const name = formData.get('name').trim().toLowerCase();
+            const description = formData.get('description');
+
+            if (!name || !description) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please fill in all required fields'
+                });
+                return;
+            }
+
+            fetch('/admin/addCategory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, description })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("Error adding category:", error);
+                    if (error.message === "Category already exists") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops',
+                            text: 'Category already exists'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops',
+                            text: 'An error occurred while adding the category'
+                        });
+                    }
+                });
+        }
+
+        function validateFrom() {
+            clearErrorMessages();
+
+            const name = document.getElementById("product_name").value.trim();
+            const description = document.getElementById("descriptionId").value.trim();
+            let isValid = true;
+
+            if (name === "") {
+                displayErrorMessage("name-error", "Please enter a name");
+                isValid = false;
+            } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+                displayErrorMessage("name-error", "Category name should contain only alphabetic characters");
+                isValid = false;
+            }
+
+            if (description === "") {
+                displayErrorMessage("description-error", "Please enter a description");
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function displayErrorMessage(elementId, message) {
+            var errorElement = document.getElementById(elementId);
+            errorElement.innerText = message;
+            errorElement.style.display = "block";
+        }
+
+        function clearErrorMessages() {
+            const errorElements = document.getElementsByClassName("error-message");
+            Array.from(errorElements).forEach((eleme) => {
+                eleme.innerText = "";
+                eleme.style.display = "none";
+            });
+        }
+
+        const imageFile = document.querySelector('input[type="file"]');
+        imageFile.addEventListener('change', function () {
+            const file = imageFile.files[0];
+            if (file && file.size > 2 * 1024 * 1024) {
+                alert("File size exceeds 2MB.");
+            }
+        });
+
+        const upload = multer({
+            storage: storage,
+            fileFilter: (req, file, cb) => {
+                if (file.mimetype.startsWith('image/')) {
+                    cb(null, true);
+                } else {
+                    cb(new Error('Invalid file type'), false);
+                }
+            }
+        });
+
+        async function addOffer(categoryId) {
+            const { value: amount } = await Swal.fire({
+                title: "Offer in percentage",
+                input: "number",
+                inputLabel: "Percentage",
+                inputPlaceholder: "%",
+            });
+
+            if (amount) {
+                try {
+                    const response = await fetch("/admin/addCategoryOffer", {
+                        method: "POST",
+                        headers: {
+                            'content-type': "application/json",
+                        },
+                        body: JSON.stringify({
+                            percentage: amount,
+                            categoryId: categoryId,
+                        }),
+                    });
+
+                    const data = await response.json();
+                    if (response.ok && data.status === true) {
+                        Swal.fire(
+                            "Offer added",
+                            "The offer has been added",
+                            "success"
+                        ).then(() => {
+                            location.reload();
+                        })
+                    } else {
+                        Swal.fire("Failed", data.message || "Adding offer failed", "error");
+                    }
+                } catch (error) {
+                    Swal.fire(
+                        "Error",
+                        "An error occured while adding the offer",
+                        "error"
+                    );
+
+                    console.error("Error adding offer", error)
+                }
+            }
+        }
+
+        async function removeOffer(categoryId) {
+            try {
+                const response = await fetch("/admin/removeCategoryOffer", {
+                    method: "POST",
+                    headers: {
+                        'content-type': "application/json"
+                    },
+                    body: JSON.stringify({
+                        categoryId: categoryId,
+                    })
+                })
+                const data = await response.json();
+
+                if (response.ok && data.status === true) {
+                    Swal.fire(
+                        "Offer removed",
+                        "The offer has been removed",
+                        "success"
+                    ).then(() => {
+                        location.reload();
+                    })
+                } else {
+                    Swal.fire("Failed", data.message || "Removing offer failed", "error");
+                }
+            } catch (error) {
+                Swal.fire(
+                    "Error",
+                    "An error occured while removing the offer",
+                    "error"
+                );
+
+                console.error("Error removing offer", error)
+            }
+        }
+    </script>
+</body>
+
+</html>

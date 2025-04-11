@@ -1,0 +1,350 @@
+<%- include("../../views/partials/admin/headers") %>
+<%- include("../../views/partials/admin/slidebar") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+ /* Base dark theme */
+body {
+  background-color: #121212;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  padding: 95px;
+  margin-top: -9px;
+  margin-left:226px
+}
+
+/* Neon header styling */
+.content-title {
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+}
+
+/* Card styling */
+.card {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  margin-bottom: 30px;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* Form elements styling */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  color: #f0f0f0;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-control {
+  background-color: #252525;
+  border: 1px solid #444;
+  border-radius: 5px;
+  color: #fff;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background-color: #cc9ccd;
+  border-color: #0ff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  outline: none;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E");
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 8px 10px;
+  padding-right: 30px;
+}
+
+/* Button styling with neon effect */
+.btn-primary {
+  background: linear-gradient(to right, #6e00ff, #9900ff);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 12px 25px;
+  position: relative;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(to right, #9900ff, #6e00ff);
+  box-shadow: 0 0 15px rgba(153, 0, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Error messages */
+.text-danger {
+  color: #ff5370;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+  
+  .col-md-6 {
+    width: 100%;
+  }
+}
+
+/* Input type date styling */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Highlight effect on form groups when focused */
+.form-group:focus-within label {
+  color: #0ff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* Add neon border glow effect to the card on hover */
+.card:hover {
+  box-shadow: 0 0 20px rgba(111, 0, 255, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Custom styling for Sweet Alert modals to match theme */
+.swal2-popup {
+  background-color: #252525 !important;
+  color: #f0f0f0 !important;
+  border: 1px solid #444 !important;
+}
+
+.swal2-title, .swal2-content {
+  color: #f0f0f0 !important;
+}
+
+.swal2-confirm {
+  background: linear-gradient(to right, #6e00ff, #9900ff) !important;
+}
+</style>
+
+<div class="container">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Edit Coupon</h2>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="editCouponForm" onsubmit="return validateEditCouponForm(event)">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="code">Coupon Code</label>
+                            <input type="text" class="form-control" id="code" name="code" required value="<%= coupon.code %>">
+                            <span id="codeError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="discountType">Discount Type</label>
+                            <select class="form-control" id="discountType" name="discountType" required>
+                                <option value="percentage" <%= coupon.discountType === 'percentage' ? 'selected' : '' %>>Percentage</option>
+                                <option value="flat" <%= coupon.discountType === 'flat' ? 'selected' : '' %>>Flat</option>
+                            </select>
+                            <span id="discountTypeError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="discountValue">Discount Value</label>
+                            <input type="number" class="form-control" id="discountValue" name="discountValue" required value="<%= coupon.discountValue %>">
+                            <span id="discountValueError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="minOrderValue">Minimum Order Value</label>
+                            <input type="number" class="form-control" id="minOrderValue" name="minOrderValue" required value="<%= coupon.minPurchase %>">
+                            <span id="minOrderValueError" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required value="<%= coupon.startDate.toISOString().split('T')[0] %>">
+                            <span id="startDateError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required value="<%= coupon.endDate.toISOString().split('T')[0] %>">
+                            <span id="endDateError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxDiscount">Max Discount</label>
+                            <input type="number" class="form-control" id="maxDiscount" name="maxDiscount" required value="<%= coupon.maxDiscount %>" placeholder="Enter maximum discount value">
+                            <span id="maxDiscountError" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="margin-top: 45px; text-align: center;">
+                            <input type="hidden" id="couponId" value="<%= coupon._id %>">
+                            <button type="submit" class="btn btn-primary">Update Coupon</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+<script>
+   
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        if (startDateInput.value.includes('T')) {
+            startDateInput.value = startDateInput.value.split('T')[0];
+        }
+        
+        if (endDateInput.value.includes('T')) {
+            endDateInput.value = endDateInput.value.split('T')[0];
+        }
+    });
+
+    async function validateEditCouponForm(event) {
+        event.preventDefault();
+
+        clearErrorMessages();
+
+        const code = document.getElementById("code").value.trim();
+        const discountValue = parseFloat(
+            document.getElementById("discountValue").value
+        );
+        const minOrderValue = parseFloat(
+            document.getElementById("minOrderValue").value
+        );
+        const maxDiscount = parseFloat(
+            document.getElementById("maxDiscount").value
+        );
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const discountType = document.getElementById("discountType").value;
+        const couponId = document.getElementById("couponId").value;
+
+        let isValid = true;
+
+        const couponCodeRegex = /^[A-Z0-9]{6,10}$/;
+        if (!couponCodeRegex.test(code)) {
+            document.getElementById("codeError").textContent =
+                "Coupon code must be between 6 to 10 characters long and contain only uppercase letters and numbers.";
+            isValid = false;
+        }
+
+        if (isNaN(discountValue) || discountValue <= 0) {
+            document.getElementById("discountValueError").textContent =
+                "Discount value must be a positive number.";
+            isValid = false;
+        }
+
+        if (!minOrderValue || minOrderValue <= 0) {
+            document.getElementById("minOrderValueError").textContent =
+                "Minimum order value must be a positive number.";
+            isValid = false;
+        }
+        
+        if (!maxDiscount || maxDiscount <= 0) {
+            document.getElementById("maxDiscountError").textContent =
+                "Maximum discount value must be a positive number.";
+            isValid = false;
+        }
+
+        if (new Date(startDate) > new Date(endDate)) {
+            document.getElementById("endDateError").textContent =
+                "End date must be later than start date.";
+            isValid = false;
+        }
+
+        if (isValid) {
+            try {
+                const couponData = {
+                    code,
+                    discountType,
+                    discountValue,
+                    minPurchase: minOrderValue,
+                    startDate,
+                    endDate,
+                    maxDiscount
+                };
+                
+                const response = await fetch(`/admin/editCoupon/${couponId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(couponData),
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Coupon updated successfully!',
+                        icon: 'success',
+                        background: '#252525',
+                        color: '#f0f0f0',
+                        confirmButtonColor: '#d4af37'
+                    }).then(() => {
+                        window.location.href = "/admin/coupon";
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: result.message || 'Error updating coupon',
+                        icon: 'error',
+                        background: '#252525',
+                        color: '#f0f0f0',
+                        confirmButtonColor: '#d4af37'
+                    });
+                }
+                return true;
+            } catch (error) {
+                console.log("Error:", error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Error updating coupon',
+                    icon: 'error',
+                    background: '#252525',
+                    color: '#f0f0f0',
+                    confirmButtonColor: '#d4af37'
+                });
+            }
+        } else {
+            return false;
+        }
+    }
+
+    function clearErrorMessages() {
+        const errorElements = document.querySelectorAll('.text-danger');
+        errorElements.forEach(element => {
+            element.textContent = '';  
+        });
+    }
+</script>

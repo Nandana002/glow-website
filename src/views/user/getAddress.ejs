@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shipping Address | GlowGazey</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fff;
+      color: #2D2D2D;
+      line-height: 1.6;
+    }
+
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100vh;
+      background-color: #FF6B6B;
+      padding-top: 60px;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-menu li {
+      padding: 15px 25px;
+      margin: 5px 0;
+    }
+
+    .sidebar-menu a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      position: fixed;
+      top: 0;
+    
+      right: 0;
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 99;
+      transition: left 0.3s ease;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 80px 30px 30px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .address-section {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+      color: #FF6B6B;
+      font-size: 1.8rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .address-card {
+      background-color: #fff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 1.8rem;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      position: relative;
+    }
+
+    .default-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .address-type {
+      display: inline-block;
+      background-color: #f1f1f1;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .address-text {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .address-text p {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0.5rem 0;
+    }
+
+    .address-text strong {
+      min-width: 100px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .address-actions {
+      display: flex;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .action-link {
+      text-decoration: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .edit-link {
+      background-color: #FF6B6B;
+    }
+
+    .edit-link:hover {
+      background-color: #ff5252;
+    }
+
+    .remove-link {
+      background-color: #dc3545;
+    }
+
+    .remove-link:hover {
+      background-color: #c82333;
+    }
+
+    .default-link {
+      background-color: #6c757d;
+      margin-left: auto;
+    }
+
+    .default-link:hover {
+      background-color: #5a6268;
+    }
+
+    .add-new-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: #FF6B6B;
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .add-new-link:hover {
+      background-color: #ff5252;
+      transform: translateY(-1px);
+    }
+
+    .empty-address {
+      text-align: center;
+      padding: 2rem;
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .empty-address i {
+      font-size: 3rem;
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .empty-address p {
+      color: #777;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Improved Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 200px;
+      }
+      
+      .main-content {
+        margin-left: 200px;
+      }
+
+    
+
+      .address-section {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 70px 20px 20px;
+      }
+
+      
+
+      .address-text {
+        grid-template-columns: 1fr;
+      }
+
+      .address-section {
+        padding: 1.5rem;
+      }
+
+      .address-card {
+        padding: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .sidebar {
+        width: 100%;
+        max-width: 250px;
+        height: 100%;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        padding: 60px 15px 15px;
+      }
+
+
+      .address-section {
+        padding: 1rem;
+      }
+
+      .address-card {
+        padding: 1.2rem;
+      }
+
+      .address-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .action-link {
+        width: 100%;
+        justify-content: center;
+        padding: 0.8rem;
+      }
+
+      .default-link {
+        margin-left: 0;
+      }
+
+      .add-new-link {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .address-text strong {
+        min-width: 80px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .address-card {
+        padding: 1rem;
+      }
+
+      .action-link {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+      }
+
+      .add-new-link {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
+
+      .empty-address i {
+        font-size: 2.5rem;
+      }
+
+      .empty-address p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <%- include("../partials/user/profileSide.ejs") %>
+    <%- include("../partials/user/navbar.ejs") %>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <section class="address-section">
+        <h1 class="section-title">Shipping Address</h1>
+        
+        <% if (address && address.length > 0) { %>
+          <% address.forEach((addr) => { %>
+            <div class="address-card">
+              <% if (addr.isDefault) { %>
+                <span class="default-badge"><i class="fas fa-check-circle"></i> Default</span>
+              <% } %>
+              
+              <span class="address-type">
+                <i class="fas <%= addr.addressType === 'Home' ? 'fa-home' : addr.addressType === 'Work' ? 'fa-briefcase' : 'fa-map-marker-alt' %>"></i>
+                <%= addr.addressType || 'Other' %>
+              </span>
+              
+              <div class="address-text">
+                <p><strong>Name:</strong> <%= addr.name %></p>
+                <p><strong>Phone:</strong> <%= addr.phone %></p>
+                <% if (addr.altPhone) { %>
+                  <p><strong>Alt Phone:</strong> <%= addr.altPhone %></p>
+                <% } %>
+                <p><strong>City:</strong> <%= addr.city %></p>
+                <p><strong>State:</strong> <%= addr.state %></p>
+                <p><strong>Pincode:</strong> <%= addr.pincode %></p>
+                <% if (addr.landMark) { %>
+                  <p><strong>Landmark:</strong> <%= addr.landMark %></p>
+                <% } %>
+              </div>
+              
+              <div class="address-actions">
+                <a href="/edit-address/<%= addr._id %>" class="action-link edit-link">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="#" class="action-link remove-link" onclick="deleteAddress('<%= addr._id %>', event)">
+                  <i class="fas fa-trash-alt"></i> Remove
+                </a>
+                <% if (!addr.isDefault) { %>
+                  <a href="#" class="action-link default-link" onclick="setDefaultAddress('<%= addr._id %>', event)">
+                    <i class="fas fa-star"></i> Set as Default
+                  </a>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <div class="empty-address">
+            <i class="fas fa-map-marker-alt"></i>
+            <p>You don't have any saved addresses yet.</p>
+            <a href="/add-address" class="add-new-link">
+              <i class="fas fa-plus"></i> Add Your First Address
+            </a>
+          </div>
+        <% } %>
+        
+        <% if (address && address.length > 0) { %>
+          <a href="/add-address" class="add-new-link">
+            <i class="fas fa-plus"></i> Add New Address
+          </a>
+        <% } %>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+  <script>
+    async function deleteAddress(addressId, e) {
+      try {
+        e.preventDefault();
+        swal({
+          title: "Are you sure?",
+          text: "You won't be able to recover this address!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#FF6B6B",
+          confirmButtonText: "Yes, delete it!",
+          cancelButtonText: "No, cancel please!",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        }, async function(isConfirm) {
+          if (isConfirm) {
+            const response = await fetch(`/delete-address/${addressId}`, {
+              method: "DELETE",
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            if (response.ok) {
+              swal("Deleted!", "Your address has been deleted.", "success");
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
+            } else {
+              swal("Failed!", "Could not delete the address.", "error");
+            }
+          } else {
+            swal("Cancelled", "Your address is safe.", "error");
+          }
+        });
+      } catch (error) {
+        console.log("Error deleting address:", error);
+      }
+    }
+
+    async function setDefaultAddress(addressId, e) {
+      try {
+        e.preventDefault();
+        swal({
+          title: "Set as Default",
+          text: "Would you like to set this as your default address?",
+          type: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#FF6B6B",
+          confirmButtonText: "Yes, set as default!",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        }, async function(isConfirm) {
+          if (isConfirm) {
+            const response = await fetch(`/set-default-address/${addressId}`, {
+              method: "PUT"
+            });
+            if (response.ok) {
+              swal("Success!", "This is now your default address.", "success");
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
+            } else {
+              swal("Failed!", "Could not set as default address.", "error");
+            }
+          } else {
+            swal("Cancelled", "Address settings unchanged", "error");
+          }
+        });
+      } catch (error) {
+        console.log("Error setting default address:", error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          document.querySelector('.sidebar').classList.toggle('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

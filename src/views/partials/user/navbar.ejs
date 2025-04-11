@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowBeauty - Navbar</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            --accent-color: #d96c94;
+            box-sizing: border-box;
+            --font-primary: 'Playfair Display', serif;
+            --font-secondary: 'Montserrat', sans-serif;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #d96c94;
+            /* Pink accent */
+            text-decoration: none;
+            flex-grow: 1;
+            font-family: var(--font-primary);
+        }
+
+        .navbar-brand:hover {
+            color: #d6336c;
+            /* Darker pink on hover */
+        }
+
+        .navbar-nav {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            /* Align items to the right */
+        }
+
+        .navbar-nav .nav-item {
+            margin: 0 15px;
+        }
+
+        .navbar-nav .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 10px 15px;
+            display: inline-block;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #e83e8c;
+            /* Pink accent on hover */
+        }
+        .nav-link {
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  margin: 0 10px;
+  position: relative;
+  color: var(--dark-color) !important;
+  transition: var(--transition);
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: var(--transition);
+}
+
+.nav-link:hover:after, .nav-link.active:after {
+  width: 100%;
+}
+
+        /* Dropdown styling */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            right: 0;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9fa;
+            /* Light gray on hover */
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Logout button styling */
+        .logout-btn {
+            color: #ff4d4d;
+            /* Red for logout */
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            color: #fff;
+            background-color: #ff4d4d;
+            border-radius: 5px;
+        }
+
+        /* Icons styling */
+        .navbar-nav .nav-link i {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar-nav .nav-item {
+                margin: 10px 0;
+            }
+
+            .dropdown-content {
+                position: static;
+            }
+        }
+        /* Badge Style */
+
+
+/* Positioning container to relative for proper badge placement */
+.nav-link {
+    position: relative;
+    display: inline-block;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" href="#">GlowGazey</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                   <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li> 
+
+                    <!-- Conditional rendering for user -->
+                    <% if (locals.user) { %>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <%= locals.user.name %>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="/myaccount">Profile</a>
+                                <a href="/logout">Logout</a>
+                            </div>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                    <% } %>
+
+                    <!-- Add Wishlist Icon -->
+                    <li class="nav-item">
+                        <a class="nav-link ms-3" href="/cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <% if (locals.cartCount > 0) { %>
+                                <span class="badge"><%= locals.cartCount %></span>
+                            <% } %>
+                        </a>
+                    </li>
+                    
+                    <!-- Wishlist Icon with Count -->
+                    <li class="nav-item">
+                        <a class="nav-link ms-3" href="/wishlist">
+                            <i class="fas fa-heart"></i>
+                            <% if (locals.wishlistCount > 0) { %>
+                                <span class="badge"><%= locals.wishlistCount %></span>
+                            <% } %>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha3/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

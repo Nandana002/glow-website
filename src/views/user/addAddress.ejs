@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Address</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #FFE2E2;
+            --accent-color: #FF8FAB;
+            --text-color: #4A4A4A;
+            --error-color: #FF6B6B;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FFE2E2 100%);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-container {
+            width: 75%;
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .form-label {
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #FFE2E2;
+            border-radius: 10px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        }
+
+        .form-select {
+            border: 2px solid #FFE2E2;
+            border-radius: 10px;
+            padding: 0.75rem;
+            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23FF6B6B' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.25);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Input group styling */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Floating label animation */
+        .form-control:focus + .form-label,
+        .form-control:not(:placeholder-shown) + .form-label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: var(--primary-color);
+        }
+
+        /* Custom scrollbar for select */
+        select::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        select::-webkit-scrollbar-track {
+            background: #FFE2E2;
+            border-radius: 4px;
+        }
+
+        select::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%;
+                padding: 1.5rem;
+            }
+        }
+        .error-message{
+            color:red
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="d-flex justify-content-center align-items-center bg-light">
+    <form class="row g-3 shadow p-4 bg-white rounded mt-5" style="width: 70%" id="address-form" onsubmit="address(event)">
+        <h1>Add Address</h1>
+        
+        <div class="col-md-6">
+            <label for="inputName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="inputName" name="name">
+            <div id="error1" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputPhone" class="form-label">Phone</label>
+            <input type="number" class="form-control" id="inputPhone" name="phone">
+            <div id="error2" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputAltPhone" class="form-label">Alternative Phone (Optional)</label>
+            <input type="number" class="form-control" id="inputAltPhone" name="altPhone">
+            <div id="error3" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputCity" class="form-label">City</label>
+            <input type="text" class="form-control" id="inputCity" name="city">
+            <div id="error4" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputState" class="form-label">State</label>
+            <select id="inputState" class="form-select" name="state">
+                <option selected>Choose...</option>
+                <option>Andhra Pradesh</option>
+                <option>Arunachal Pradesh</option>
+                <option>Assam</option>
+                <option>Bihar</option>
+                <option>Chhattisgarh</option>
+                <option>Goa</option>
+                <option>Gujarat</option>
+                <option>Haryana</option>
+                <option>Himachal Pradesh</option>
+                <option>Jharkhand</option>
+                <option>Karnataka</option>
+                <option>Kerala</option>
+                <option>Madhya Pradesh</option>
+                <option>Maharashtra</option>
+                <option>Manipur</option>
+                <option>Meghalaya</option>
+                <option>Mizoram</option>
+                <option>Nagaland</option>
+                <option>Odisha</option>
+                <option>Punjab</option>
+                <option>Rajasthan</option>
+                <option>Sikkim</option>
+                <option>Tamil Nadu</option>
+                <option>Telangana</option>
+                <option>Tripura</option>
+                <option>Uttar Pradesh</option>
+                <option>Uttarakhand</option>
+                <option>West Bengal</option>
+                <option>Andaman and Nicobar Islands</option>
+                <option>Chandigarh</option>
+                <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                <option>Delhi</option>
+                <option>Lakshadweep</option>
+                <option>Puducherry</option>
+                <option>Ladakh</option>
+                <option>Jammu and Kashmir</option>
+            </select>
+            <div id="error5" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputPincode" class="form-label">Pincode</label>
+            <input type="text" class="form-control" id="inputPincode" name="pincode">
+            <div id="error6" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputLandMark" class="form-label">Landmark (Optional)</label>
+            <input type="text" class="form-control" id="inputLandMark" name="landMark">
+            <div id="error7" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+            <label for="inputAddressType" class="form-label">Address Type</label>
+            <select id="inputAddressType" class="form-select" name="addressType">
+                <option selected>Choose...</option>
+                <option>Home</option>
+                <option>Work</option>
+                <option>Other</option>
+            </select>
+            <div id="error8" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="inputDefault" name="isDefault">
+                <label class="form-check-label" for="inputDefault">
+                    Set as default address
+                </label>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Add Address</button>
+        </div>
+    </form>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+<script>
+function nameValidateChecking(name) {
+    const error1 = document.getElementById('error1');
+    const namePattern = /^[a-zA-Z\s'-]+$/;
+    if(name.trim() == "") {
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter a valid name";
+    } else if(!namePattern.test(name)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Name can only contain alphabets and spaces";
+    } else {
+        error1.style.display = "none";
+        error1.innerHTML = '';
+        return true;
+    }
+    return false;
+}
+
+function phoneValidateChecking(phone) {
+    const error2 = document.getElementById('error2');
+    if(phone == "") {
+        error2.style.display = "block";
+        error2.innerHTML = "Enter a valid phone number";
+        return false;
+    } else if (phone.length < 10 || phone.length > 10) {
+        error2.style.display = "block";
+        error2.innerHTML = "Enter 10 digits";
+        return false;
+    } else {
+        error2.style.display = "none";
+        error2.innerHTML = "";
+        return true;
+    }
+}
+
+function altPhoneValidateChecking(altPhone) {
+    const error3 = document.getElementById('error3');
+    if(altPhone !== "" && (altPhone.length < 10 || altPhone.length > 10)) {
+        error3.style.display = "block";
+        error3.innerHTML = "Enter 10 digits";
+        return false;
+    } else {
+        error3.style.display = "none";
+        error3.innerHTML = "";
+        return true;
+    }
+}
+
+function cityValidateChecking(city) {
+    const error4 = document.getElementById('error4');
+    if(city == '') {
+        error4.style.display = 'block';
+        error4.innerHTML = 'City is required';
+        return false;
+    } else {
+        error4.style.display = 'none';
+        error4.innerHTML = '';
+        return true;
+    }
+}
+
+function stateValidateChecking(state) {
+    const error5 = document.getElementById('error5');
+    if(state == 'Choose...') {
+        error5.style.display = 'block';
+        error5.innerHTML = 'Please select a state';
+        return false;
+    } else {
+        error5.style.display = 'none';
+        error5.innerHTML = '';
+        return true;
+    }
+}
+
+function pincodeValidateChecking(pincode) {
+    const error6 = document.getElementById('error6');
+    if(pincode == '') {
+        error6.style.display = 'block';
+        error6.innerHTML = 'Pincode is required';
+        return false;
+    } else if(pincode.length !== 6) {
+        error6.style.display = 'block';
+        error6.innerHTML = "Pincode must be 6 digits";
+        return false;
+    } else {
+        error6.style.display = 'none';
+        error6.innerHTML = '';
+        return true;
+    }
+}
+
+function addressTypeValidateChecking(addressType) {
+    const error8 = document.getElementById('error8');
+    if(addressType == 'Choose...') {
+        error8.style.display = 'block';
+        error8.innerHTML = 'Please select an address type';
+        return false;
+    } else {
+        error8.style.display = 'none';
+        error8.innerHTML = '';
+        return true;
+    }
+}
+
+async function address(event) {
+    event.preventDefault(); 
+    const form = document.getElementById('address-form');
+    const name = form["name"].value.trim();
+    const phone = form["phone"].value.trim();
+    const altPhone = form["altPhone"].value.trim();
+    const city = form["city"].value.trim();
+    const state = form["state"].value;
+    const pincode = form["pincode"].value.trim();
+    const landMark = form["landMark"].value.trim();
+    const addressType = form["addressType"].value;
+    const isDefault = form["isDefault"].checked;
+    
+    const isNameValid = nameValidateChecking(name);
+    const isPhoneValid = phoneValidateChecking(phone);
+    const isAltPhoneValid = altPhoneValidateChecking(altPhone);
+    const isCityValid = cityValidateChecking(city);
+    const isStateValid = stateValidateChecking(state);
+    const isPincodeValid = pincodeValidateChecking(pincode);
+    const isAddressTypeValid = addressTypeValidateChecking(addressType);
+    
+    if(isNameValid && isPhoneValid && isAltPhoneValid && isCityValid && isStateValid && isPincodeValid && isAddressTypeValid) {
+        const formData = {
+            name,
+            phone,
+            altPhone: altPhone || undefined,
+            city,
+            state,
+            pincode,
+            landMark: landMark || undefined,
+            addressType,
+            isDefault
+        };
+        
+        try {
+            const response = await fetch('/address', {
+                method: 'POST',
+                headers: {'Content-Type': "application/json"},
+                body: JSON.stringify(formData)
+            });
+            
+            if(response.ok) {
+                await Swal.fire({
+                    title: 'Success!',
+                    text: 'Address added successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+                window.location.href = '/getAddress';
+            } else {
+                throw new Error('Server returned an error');
+            }
+        } catch (error) {
+            console.log("The error " + error);
+            await Swal.fire({
+                title: 'Error!',
+                text: 'There was an issue with the network. Please try again later.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+}
+</script>
+</html>

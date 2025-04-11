@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About GlowGazey | Luxury Cosmetics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f8d7e3;
+            --accent-color: #d4af37;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --bg-light: #faf7f8;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            line-height: 1.8;
+        }
+        
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(248, 215, 227, 0.3), rgba(248, 215, 227, 0.4)), url("/api/placeholder/1600/500") center/cover no-repeat;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 3rem;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+        h1 {
+            color: var(--text-dark);
+            font-size: 3.5rem;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+        
+        .accent-text {
+            color: var(--accent-color);
+        }
+        
+        .section-container {
+            padding: 5rem 0;
+        }
+        
+        .value-card {
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid var(--accent-color);
+        }
+        
+        .value-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .quote-section {
+            background-color: var(--primary-color);
+            padding: 5rem 0;
+        }
+        
+        .quote {
+            font-size: 1.8rem;
+            font-style: italic;
+            position: relative;
+            padding: 0 3rem;
+        }
+        
+        .quote::before, .quote::after {
+            content: '"';
+            font-size: 4rem;
+            color: var(--accent-color);
+            opacity: 0.5;
+            position: absolute;
+        }
+        
+        .quote::before {
+            top: -20px;
+            left: 0;
+        }
+        
+        .quote::after {
+            bottom: -40px;
+            right: 0;
+        }
+        
+        .footer {
+            background-color: #333;
+            color: var(--text-light);
+            padding: 3rem 0;
+        }
+        
+        .btn-custom {
+            background-color: var(--accent-color);
+            color: var(--text-light);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            background-color: #c4a030;
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+        
+        .story-img {
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .story-section {
+            position: relative;
+        }
+        
+        .story-accent {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: var(--primary-color);
+            opacity: 0.5;
+            z-index: -1;
+            border-radius: 50%;
+            right: -50px;
+            top: -50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <%- include("../partials/user/navbar.ejs") %>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10">
+                    <div class="hero-content">
+                        <h1>About <span class="accent-text">GlowGazey</span></h1>
+                        <p class="lead">Redefining beauty through the art of luminosity, crafting premium cosmetics that empower individual expression and celebrate natural radiance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="section-container">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0 story-section">
+                    <div class="story-accent"></div>
+                    <img src="/images/top-view-set-beauty-products-blue-background_23-2148574376.avif" alt="GlowGazey Journey" class="img-fluid story-img">
+                </div>
+                <div class="col-lg-6">
+                    <h2>Our Story</h2>
+                    <p>GlowGazey was born from a passionate vision to create cosmetics that transcend mere enhancement, instead celebrating the intrinsic beauty within each individual. Founded in 2018 by visionary makeup artist Isabella Laurent, our journey began in a small Parisian atelier where artistry met innovation.</p>
+                    <p>What started as a collection of hand-crafted illuminators has evolved into a comprehensive range of luxury cosmetics, each product infused with our signature luminosity and commitment to quality. Our philosophy remains unwavering: beauty products should not mask, but rather unveil your unique radiance.</p>
+                    <p>Today, GlowGazey stands at the intersection of timeless elegance and contemporary innovation, creating products that inspire confidence and self-expression while maintaining our steadfast dedication to ethical beauty.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="quote-section">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <p class="quote">Beauty is not about being noticed, it's about being remembered. Our products illuminate not just your features, but your essence.</p>
+                    <p class="mt-4"><strong>Nandana</strong>, Founder</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="section-container">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2>Our Values</h2>
+                    <p class="lead">At the heart of GlowGazey lie principles that guide every formulation, decision, and creation.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✦</div>
+                        <h3>Ethical Luxury</h3>
+                        <p>We believe that true luxury should never come at the expense of ethics. Our commitment to cruelty-free formulations and sustainable practices ensures that every GlowGazey product embodies responsible indulgence.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✧</div>
+                        <h3>Luminous Innovation</h3>
+                        <p>Our laboratories blend cutting-edge science with artistic vision, creating formulations that deliver unparalleled radiance while nurturing the skin. We constantly push boundaries to redefine what beauty products can achieve.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✦</div>
+                        <h3>Inclusive Elegance</h3>
+                        <p>Beauty knows no boundaries. We develop products that celebrate diversity, with formulations and shades meticulously crafted to enhance the natural beauty of all skin tones, types, and expressions.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✧</div>
+                        <h3>Sensorial Experience</h3>
+                        <p>Every GlowGazey product is designed to delight not just visually, but through texture, scent, and application. We believe beauty routines should be moments of luxury and self-care in your day.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✦</div>
+                        <h3>Skin-First Philosophy</h3>
+                        <p>Our formulations bridge the gap between skincare and cosmetics, infused with nourishing ingredients that enhance your skin's health and vitality while providing exquisite color and coverage.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="value-card">
+                        <div class="value-icon">✧</div>
+                        <h3>Artisanal Quality</h3>
+                        <p>From conceptualization to production, we maintain the highest standards of craftsmanship, ensuring that each product is a masterpiece of performance, longevity, and beauty.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Promise Section -->
+    <section class="section-container" style="background-color: var(--primary-color);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                    <img src="/images/cosmetic-male-beauty-products-with-display_23-2150435205.avif" alt="GlowGazey Promise" class="img-fluid story-img">
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <h2>Our Promise</h2>
+                    <p>When you choose GlowGazey, you're embracing more than just cosmetics—you're investing in a promise of excellence. Every product that bears our name undergoes rigorous testing to ensure it meets our exacting standards.</p>
+                    <p>We pledge to formulate with only the finest ingredients, never compromising on quality or ethics. Our products are:</p>
+                    <ul>
+                        <li>100% cruelty-free and never tested on animals</li>
+                        <li>Free from parabens, sulfates, and harmful chemicals</li>
+                        <li>Developed with skin-nurturing ingredients</li>
+                        <li>Created in small batches to ensure quality control</li>
+                        <li>Packaged with sustainability in mind</li>
+                    </ul>
+                    <p>We believe that true beauty radiates from confidence, and our purpose is to provide products that enhance your natural radiance while aligning with your values.</p>
+                    <a href="/shop" class="btn btn-custom mt-3">Discover Our Collections</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include("../partials/user/footer.ejs") %>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

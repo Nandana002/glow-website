@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Add SweetAlert CSS and JS in the head section -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+  .error-message{
+    color:red
+  }
+  body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+        }
+
+        .form-container {
+            width: 70%;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 2rem !important;
+            transition: transform 0.3s ease;
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-label {
+            color: #ad1457;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #f8bbd0;
+            border-radius: 10px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #d81b60;
+            box-shadow: 0 0 0 0.2rem rgba(216, 27, 96, 0.25);
+        }
+
+        .error-message {
+            color: #c2185b;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-primary {
+            background-color: #d81b60;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #ad1457;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(216, 27, 96, 0.3);
+        }
+
+        .btn-primary:focus {
+            box-shadow: 0 0 0 0.25rem rgba(216, 27, 96, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container {
+                width: 90%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center bg-light">
+    <form class="row g-3 shadow p-4 bg-white rounded mt-5" style="width: 70%" id="address-form" action="/edit-address/<%= address._id %>" method="POST">
+      <h1>Edit Address</h1>
+      <input type="hidden" name="addressId" value="<%=address._id%>">
+      
+        <div class="col-md-6">
+          <label for="inputName" class="form-label">Name</label>
+          <input type="text" class="form-control" id="inputName" name="name" value="<%=address.name%>">
+          <div id="error1" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputPhone" class="form-label">Phone</label>
+          <input type="text" class="form-control" id="inputPhone" name="phone" value="<%=address.phone%>">
+          <div id="error2" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputAltPhone" class="form-label">Alternative Phone (Optional)</label>
+          <input type="text" class="form-control" id="inputAltPhone" name="altPhone" value="<%=address.altPhone || ''%>">
+          <div id="error3" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputCity" class="form-label">City</label>
+          <input type="text" class="form-control" id="inputCity" name="city" value="<%=address.city%>">
+          <div id="error4" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputState" class="form-label">State</label>
+          <select id="inputState" class="form-select" name="state">
+            <option>Choose...</option>
+            <option value="Andhra Pradesh" <%=address.state === 'Andhra Pradesh' ? 'selected' : ''%>>Andhra Pradesh</option>
+            <option value="Arunachal Pradesh" <%=address.state === 'Arunachal Pradesh' ? 'selected' : ''%>>Arunachal Pradesh</option>
+            <option value="Assam" <%=address.state === 'Assam' ? 'selected' : ''%>>Assam</option>
+            <option value="Bihar" <%=address.state === 'Bihar' ? 'selected' : ''%>>Bihar</option>
+            <option value="Chhattisgarh" <%=address.state === 'Chhattisgarh' ? 'selected' : ''%>>Chhattisgarh</option>
+            <option value="Goa" <%=address.state === 'Goa' ? 'selected' : ''%>>Goa</option>
+            <option value="Gujarat" <%=address.state === 'Gujarat' ? 'selected' : ''%>>Gujarat</option>
+            <option value="Haryana" <%=address.state === 'Haryana' ? 'selected' : ''%>>Haryana</option>
+            <option value="Himachal Pradesh" <%=address.state === 'Himachal Pradesh' ? 'selected' : ''%>>Himachal Pradesh</option>
+            <option value="Jharkhand" <%=address.state === 'Jharkhand' ? 'selected' : ''%>>Jharkhand</option>
+            <option value="Karnataka" <%=address.state === 'Karnataka' ? 'selected' : ''%>>Karnataka</option>
+            <option value="Kerala" <%=address.state === 'Kerala' ? 'selected' : ''%>>Kerala</option>
+            <option value="Madhya Pradesh" <%=address.state === 'Madhya Pradesh' ? 'selected' : ''%>>Madhya Pradesh</option>
+            <option value="Maharashtra" <%=address.state === 'Maharashtra' ? 'selected' : ''%>>Maharashtra</option>
+            <option value="Manipur" <%=address.state === 'Manipur' ? 'selected' : ''%>>Manipur</option>
+            <option value="Meghalaya" <%=address.state === 'Meghalaya' ? 'selected' : ''%>>Meghalaya</option>
+            <option value="Mizoram" <%=address.state === 'Mizoram' ? 'selected' : ''%>>Mizoram</option>
+            <option value="Nagaland" <%=address.state === 'Nagaland' ? 'selected' : ''%>>Nagaland</option>
+            <option value="Odisha" <%=address.state === 'Odisha' ? 'selected' : ''%>>Odisha</option>
+            <option value="Punjab" <%=address.state === 'Punjab' ? 'selected' : ''%>>Punjab</option>
+            <option value="Rajasthan" <%=address.state === 'Rajasthan' ? 'selected' : ''%>>Rajasthan</option>
+            <option value="Sikkim" <%=address.state === 'Sikkim' ? 'selected' : ''%>>Sikkim</option>
+            <option value="Tamil Nadu" <%=address.state === 'Tamil Nadu' ? 'selected' : ''%>>Tamil Nadu</option>
+            <option value="Telangana" <%=address.state === 'Telangana' ? 'selected' : ''%>>Telangana</option>
+            <option value="Tripura" <%=address.state === 'Tripura' ? 'selected' : ''%>>Tripura</option>
+            <option value="Uttar Pradesh" <%=address.state === 'Uttar Pradesh' ? 'selected' : ''%>>Uttar Pradesh</option>
+            <option value="Uttarakhand" <%=address.state === 'Uttarakhand' ? 'selected' : ''%>>Uttarakhand</option>
+            <option value="West Bengal" <%=address.state === 'West Bengal' ? 'selected' : ''%>>West Bengal</option>
+            <option value="Andaman and Nicobar Islands" <%=address.state === 'Andaman and Nicobar Islands' ? 'selected' : ''%>>Andaman and Nicobar Islands</option>
+            <option value="Chandigarh" <%=address.state === 'Chandigarh' ? 'selected' : ''%>>Chandigarh</option>
+            <option value="Dadra and Nagar Haveli and Daman and Diu" <%=address.state === 'Dadra and Nagar Haveli and Daman and Diu' ? 'selected' : ''%>>Dadra and Nagar Haveli and Daman and Diu</option>
+            <option value="Delhi" <%=address.state === 'Delhi' ? 'selected' : ''%>>Delhi</option>
+            <option value="Lakshadweep" <%=address.state === 'Lakshadweep' ? 'selected' : ''%>>Lakshadweep</option>
+            <option value="Puducherry" <%=address.state === 'Puducherry' ? 'selected' : ''%>>Puducherry</option>
+            <option value="Ladakh" <%=address.state === 'Ladakh' ? 'selected' : ''%>>Ladakh</option>
+            <option value="Jammu and Kashmir" <%=address.state === 'Jammu and Kashmir' ? 'selected' : ''%>>Jammu and Kashmir</option>
+          </select>
+          <div id="error5" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputPincode" class="form-label">Pincode</label>
+          <input type="text" class="form-control" id="inputPincode" name="pincode" value="<%=address.pincode%>">
+          <div id="error6" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputLandMark" class="form-label">Landmark (Optional)</label>
+          <input type="text" class="form-control" id="inputLandMark" name="landMark" value="<%=address.landMark || ''%>">
+          <div id="error7" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputAddressType" class="form-label">Address Type</label>
+          <select id="inputAddressType" class="form-select" name="addressType">
+            <option>Choose...</option>
+            <option value="Home" <%=address.addressType === 'Home' ? 'selected' : ''%>>Home</option>
+            <option value="Work" <%=address.addressType === 'Work' ? 'selected' : ''%>>Work</option>
+            <option value="Other" <%=address.addressType === 'Other' ? 'selected' : ''%>>Other</option>
+          </select>
+          <div id="error8" class="error-message"></div>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="inputIsDefault" class="form-label">Set as Default</label>
+          <input type="checkbox" id="inputIsDefault" name="isDefault" <%= address.isDefault ? 'checked' : '' %>>
+        </div>
+        
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Update Address</button>
+        </div>
+      </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add form submit event listener
+    const form = document.getElementById('address-form');
+    form.addEventListener('submit', updateAddress);
+    
+    function nameValidateChecking(name) {
+        const error1 = document.getElementById('error1');
+        const namePattern = /^[a-zA-Z\s'-]+$/;
+        if(name.trim() == "") {
+            error1.style.display = "block";
+            error1.innerHTML = "Please enter a valid name";
+            return false;
+        } else if(!namePattern.test(name)) {
+            error1.style.display = "block";
+            error1.innerHTML = "Name can only contain alphabets and spaces";
+            return false;
+        } else {
+            error1.style.display = "none";
+            error1.innerHTML = '';
+            return true;
+        }
+    }
+
+    function phoneValidateChecking(phone) {
+        const error2 = document.getElementById('error2');
+        if(phone == "") {
+            error2.style.display = "block";
+            error2.innerHTML = "Enter a valid phone number";
+            return false;
+        } else if (phone.length < 10 || phone.length > 10) {
+            error2.style.display = "block";
+            error2.innerHTML = "Enter 10 digits";
+            return false;
+        } else {
+            error2.style.display = "none";
+            error2.innerHTML = "";
+            return true;
+        }
+    }
+
+    function altPhoneValidateChecking(altPhone) {
+        const error3 = document.getElementById('error3');
+        if(altPhone !== "" && (altPhone.length < 10 || altPhone.length > 10)) {
+            error3.style.display = "block";
+            error3.innerHTML = "Enter 10 digits";
+            return false;
+        } else {
+            error3.style.display = "none";
+            error3.innerHTML = "";
+            return true;
+        }
+    }
+
+    function cityValidateChecking(city) {
+        const error4 = document.getElementById('error4');
+        if(city == '') {
+            error4.style.display = 'block';
+            error4.innerHTML = 'City is required';
+            return false;
+        } else {
+            error4.style.display = 'none';
+            error4.innerHTML = '';
+            return true;
+        }
+    }
+
+    function stateValidateChecking(state) {
+        const error5 = document.getElementById('error5');
+        if(state == 'Choose...') {
+            error5.style.display = 'block';
+            error5.innerHTML = 'Please select a state';
+            return false;
+        } else {
+            error5.style.display = 'none';
+            error5.innerHTML = '';
+            return true;
+        }
+    }
+
+    function pincodeValidateChecking(pincode) {
+        const error6 = document.getElementById('error6');
+        if(pincode == '') {
+            error6.style.display = 'block';
+            error6.innerHTML = 'Pincode is required';
+            return false;
+        } else if(pincode.length !== 6) {
+            error6.style.display = 'block';
+            error6.innerHTML = "Pincode must be 6 digits";
+            return false;
+        } else {
+            error6.style.display = 'none';
+            error6.innerHTML = '';
+            return true;
+        }
+    }
+
+    function addressTypeValidateChecking(addressType) {
+        const error8 = document.getElementById('error8');
+        if(addressType == 'Choose...') {
+            error8.style.display = 'block';
+            error8.innerHTML = 'Please select an address type';
+            return false;
+        } else {
+            error8.style.display = 'none';
+            error8.innerHTML = '';
+            return true;
+        }
+    }
+
+    async function updateAddress(event) {
+        event.preventDefault(); 
+        const form = document.getElementById('address-form');
+        const addressId = form["addressId"].value;
+        const name = form["name"].value.trim();
+        const phone = form["phone"].value.trim();
+        const altPhone = form["altPhone"].value.trim();
+        const city = form["city"].value.trim();
+        const state = form["state"].value;
+        const pincode = form["pincode"].value.trim();
+        const landMark = form["landMark"].value.trim();
+        const addressType = form["addressType"].value;
+        const isDefault = form["isDefault"].checked;
+        
+        const isNameValid = nameValidateChecking(name);
+        const isPhoneValid = phoneValidateChecking(phone);
+        const isAltPhoneValid = altPhoneValidateChecking(altPhone);
+        const isCityValid = cityValidateChecking(city);
+        const isStateValid = stateValidateChecking(state);
+        const isPincodeValid = pincodeValidateChecking(pincode);
+        const isAddressTypeValid = addressTypeValidateChecking(addressType);
+        
+        if(isNameValid && isPhoneValid && isAltPhoneValid && isCityValid && isStateValid && isPincodeValid && isAddressTypeValid) {
+            const formData = {
+                addressId,
+                name,
+                phone,
+                altPhone: altPhone || undefined,
+                city,
+                state,
+                pincode,
+                landMark: landMark || undefined,
+                addressType,
+                isDefault
+            };
+            
+            try {
+                const response = await fetch('/updateAddress', {
+                    method: 'PUT',
+                    headers: {'Content-Type': "application/json"},
+                    body: JSON.stringify(formData)
+                });
+                
+                if(response.ok) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Address updated successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/getAddress';
+                    });
+                } else {
+                    throw new Error('Server returned an error');
+                }
+            } catch (error) {
+                console.log("The error " + error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'There was an issue with the network. Please try again later.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Orders</title>
+  <link rel="stylesheet" href="css/orders.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    /* Main Theme Colors */
+    :root {
+      --primary-pink: #FFC0CB;
+      --secondary-pink: #FFE4E1;
+      --accent-gold: #DDB882;
+      --text-brown: #4A3C32;
+      --light-cream: #FFF5EE;
+      --success-green: #98C1A9;
+      --danger-red: #E8989A;
+      --warning-yellow: #FFE5B4;
+    }
+
+    /* Body Styles */
+    body {
+      background-color: var(--light-cream);
+      color: var(--text-brown);
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      background-color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    /* Headings */
+    h2 {
+      color: var(--text-brown);
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--primary-pink);
+      padding-bottom: 0.5rem;
+    }
+
+    /* Table Styles */
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table-dark {
+      background-color: var(--text-brown) !important;
+    }
+
+    .table thead th {
+      background-color: var(--text-brown);
+      color: var(--light-cream);
+      border: none;
+      padding: 15px;
+      font-weight: 500;
+    }
+
+    .table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background-color: var(--secondary-pink);
+    }
+
+    .table td {
+      padding: 15px;
+      vertical-align: middle;
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+
+    .status-badge.pending {
+      background-color: var(--warning-yellow);
+      color: #96691A;
+    }
+
+    .status-badge.shipped {
+      background-color: var(--accent-gold);
+      color: #5C4827;
+    }
+
+    .status-badge.delivered {
+      background-color: var(--success-green);
+      color: #2C4A3E;
+    }
+
+    .status-badge.canceled {
+      background-color: var(--danger-red);
+      color: #943E3F;
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 25px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #C4A272;
+      border-color: #C4A272;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-red);
+      border-color: var(--danger-red);
+    }
+
+    .btn-danger:hover {
+      background-color: #D37E7F;
+      border-color: #D37E7F;
+    }
+
+    .btn-success {
+      background-color: var(--success-green);
+      border-color: var(--success-green);
+    }
+
+    .btn-success:hover {
+      background-color: #7EA98F;
+      border-color: #7EA98F;
+    }
+
+    /* Pagination */
+    .pagination-container {
+      margin-top: 2rem;
+    }
+
+    .pagination .page-link {
+      color: var(--text-brown);
+      border: 1px solid var(--primary-pink);
+      margin: 0 3px;
+      border-radius: 5px;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: var(--primary-pink);
+      border-color: var(--primary-pink);
+      color: var(--text-brown);
+    }
+
+    .pagination .page-link:hover {
+      background-color: var(--secondary-pink);
+      color: var(--text-brown);
+    }
+
+    /* No Orders Message */
+    .no-orders {
+      padding: 3rem;
+      background-color: var(--secondary-pink);
+      border-radius: 15px;
+      margin: 2rem 0;
+    }
+
+    .no-orders p {
+      color: var(--text-brown);
+      font-size: 1.2rem;
+    }
+
+    .shop-now-btn {
+      background-color: var(--accent-gold);
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+    }
+
+    .shop-now-btn:hover {
+      background-color: #C4A272;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .main-content {
+        padding: 15px;
+      }
+
+      .status-badge {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+      }
+
+      .table thead {
+        display: none;
+      }
+
+      .table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+      }
+
+      .table tbody td {
+        display: block;
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      .table tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: bold;
+        text-align: left;
+      }
+    }
+    /* Product Image Styles */
+.product-card-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.product-card-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Detailed Product Card Styles */
+.order-product-card {
+    background-color: var(--light-cream);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.order-product-card:hover {
+    background-color: var(--secondary-pink);
+}
+
+.product-details-container {
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.product-name {
+    color: var(--text-brown);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.product-details {
+    color: var(--text-brown);
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+/* Responsive Image Adjustments */
+@media (max-width: 768px) {
+    .product-card-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .order-product-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    .product-details-container {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+/* Order Summary Styles */
+.order-summary {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+}
+
+.order-summary-title {
+    color: var(--text-brown);
+    border-bottom: 2px solid var(--primary-pink);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.order-summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: var(--text-brown);
+}
+
+.order-summary-total {
+    font-weight: bold;
+    border-top: 1px solid var(--primary-pink);
+    padding-top: 10px;
+}
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <%- include("../partials/user/profileSide.ejs") %>
+      <%- include("../partials/user/navbar.ejs") %>
+      
+      <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+        <h2 class="mt-3">Your Orders</h2>
+      
+        <% if (orders && orders.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>Product Image</th>
+                  <th>Product Name</th>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Payment Method</th>
+                  <th>Payment Status</th>
+                  <th>Total</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach(order => { %>
+                  <% order.orderedItems.forEach(item => { %>
+                    <tr data-order-id="<%= order._id %>">
+                      <td data-label="Product Image">
+                        <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
+                        alt="<%= item.product.productName %>" class="product-card-img">
+                      </td>
+                      <td data-label="Product Name">
+                        <%= item.product?.productName %>
+                      </td>
+                      <td data-label="Order ID"><%= order.orderId %></td>
+                      <td data-label="Date"><%= order.createdAt ? order.createdAt.toLocaleDateString('en-IN') : 'N/A' %></td>
+                      <td data-label="Status">
+                        <span class="status-badge <%= order.status.toLowerCase() %>">
+                          <%= order.status %>
+                        </span>
+                      </td>
+                      <td data-label="Payment Method"><%= order.paymentMethod %></td>
+                      <td data-label="Payment Status">
+                        <span class="status-badge <%= order.status === 'Delivered' ? 'delivered' : order.paymentStatus.toLowerCase() %>">
+                          <%= order.status === 'Delivered' ? 'Paid' : order.paymentStatus %>
+                        </span>
+                      </td>
+                      <td data-label="Total">₹ <%= order.finalAmount || order.totalPrice %></td>
+                      <td data-label="Details">
+                        <a href="/user/view-order/<%= order._id %>" class="btn btn-primary btn-sm">
+                          View Details
+                        </a>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+
+          <nav aria-label="Page navigation" class="pagination-container mt-4">
+            <ul class="pagination justify-content-center">
+              <% for (let i = 1; i <= totalpages; i++) { %>
+                <li class="page-item <%= page === i ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+              <% } %>
+            </ul>
+          </nav>
+        <% } else { %>
+          <div class="no-orders text-center mt-5">
+            <p class="fs-4">You haven't placed any orders yet.</p>
+            <a href="/shop" class="shop-now-btn btn btn-primary btn-lg mt-3">Start Shopping</a>
+          </div>
+        <% } %>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const statusSelects = document.querySelectorAll(".statusSelect");
+
+    statusSelects.forEach((statusSelect) => {
+      statusSelect.addEventListener("change", async (event) => {
+        const selectedStatus = event.target.value;
+        const orderId = event.target.dataset.orderId;
+        try {
+          const response = await fetch("/admin/order-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              status: selectedStatus,
+              orderId,
+            }),
+          });
+        } catch (error) {
+          console.log("The error" + error);
+        }
+      });
+    });
+
+    async function handleReturn(orderId, productId, action) {
+      try {
+        const response = await fetch("/admin/handleReturn", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId, productId, action }),
+        });
+        if (response.ok) {
+          Swal.fire({
+            title: "Are you sure?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              location.reload();
+            }
+          });
+        }
+      } catch (error) {
+        console.log("The error is" + error);
+      }
+    }
+
+    async function canceled(orderId, productId) {
+      try {
+        const confirmation = await Swal.fire({
+          title: "Are you sure?",
+          text: "Do you really want to cancel this order?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, cancel it!",
+          cancelButtonText: "No, keep it",
+        });
+
+        if (confirmation.isConfirmed) {
+          const response = await fetch("/admin/cancelorder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId,
+              productId,
+            }),
+          });
+
+          if (response.ok) {
+            await Swal.fire({
+              title: "Canceled!",
+              text: "The order has been canceled successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
+            location.reload();
+          } else {
+            await Swal.fire({
+              title: "Error",
+              text: "Failed to cancel the order. Please try again.",
+              icon: "error",
+              confirmButtonText: "OK",
+            });
+          }
+        } else {
+          await Swal.fire({
+            title: "Cancelled",
+            text: "Your order is safe and has not been canceled.",
+            icon: "info",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        await Swal.fire({
+          title: "Error",
+          text: "An unexpected error occurred.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        console.error("Error:", error);
+      }
+    }
+  </script>
+</body>
+</html>

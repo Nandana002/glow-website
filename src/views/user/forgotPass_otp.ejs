@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* Importing Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@300;400;500&display=swap');
+
+:root {
+    --primary-color: #F5B7B1;
+    --secondary-color: #FADBD8;
+    --accent-color: #EC7063;
+    --text-color: #4A4A4A;
+    --border-radius: 12px;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FDF2F1, #FBEEE6);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+}
+
+.container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 24px rgba(236, 112, 99, 0.1);
+    width: 90%;
+    max-width: 480px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--accent-color);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+p {
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.otp-input {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.otp-input input {
+    width: 45px;
+    height: 45px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.otp-input input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(236, 112, 99, 0.2);
+    outline: none;
+}
+
+.otp-input input:disabled {
+    background-color: #f8f8f8;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+button {
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    border: none;
+    padding: 12px 40px;
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(236, 112, 99, 0.3);
+}
+
+.resend-text {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.resend-link {
+    color: var(--accent-color);
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.resend-link:hover {
+    color: var(--primary-color);
+}
+
+#timer {
+    margin-left: 8px;
+    color: #888;
+}
+
+#timer.expired {
+    color: var(--accent-color);
+}
+
+/* Remove input number arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Sweet Alert Customization */
+.swal2-popup {
+    border-radius: var(--border-radius) !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.swal2-title {
+    color: var(--text-color) !important;
+    font-family: 'Playfair Display', serif !important;
+}
+
+.swal2-confirm {
+    background: var(--accent-color) !important;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OTP Verification</h1>
+        <p>Enter the OTP you received to <span id="email"></span></p>
+        <div class="otp-input">
+            <input type="number" min="0" max="9" required>
+            <input type="number" min="0" max="9" required>
+            <input type="number" min="0" max="9" required>
+            <input type="number" min="0" max="9" required>
+            <input type="number" min="0" max="9" required>
+            <input type="number" min="0" max="9" required>
+        </div>
+        <button onclick="verifyOTP()">Verify</button>
+        <div class="resend-text">
+            Didn't receive the code? 
+            <span class="resend-link" onclick="resendOTP()">Resend Code</span>
+            <span id="timer"></span>
+        </div>
+    </div>
+
+    <script>
+         const inputs = document.querySelectorAll('.otp-input input');
+          const timerDisplay = document.getElementById('timer');
+          const resendLink = document.querySelector('.resend-link');
+          const emailSpan = document.getElementById('email');
+          let timeLeft = 60; // 1 minutes in seconds
+          let timerId;
+          let canResend = true;
+
+          // Simulating an email for demonstration
+
+          function startTimer() {
+            canResend = false
+              timerId = setInterval(() => {
+                  if (timeLeft <= 0) {
+                      clearInterval(timerId);
+                      timerDisplay.textContent = "Code expired";
+                      timerDisplay.classList.add('expired');
+                      inputs.forEach(input => input.disabled = true);
+                      canResend = true;
+                  } else {
+                      const minutes = Math.floor(timeLeft / 60);
+                      const seconds = timeLeft % 60;
+                      timerDisplay.textContent = `(${minutes}:${seconds.toString().padStart(2, '0')})`;
+                      timeLeft--;
+                  }
+              }, 1000);
+          }
+
+          async function resendOTP() {
+            if (!canResend) {
+                Swal.fire("Error", "Please wait for the timer to expire.", "error");
+                return;
+            }
+                    try {
+                    const email = emailSpan.textContent;
+                    const response = await fetch('/resend-forgot-otp', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+            });
+            const result = await response.json();  
+            console.log("The result is"+result)
+            if (result.success) {
+                 timeLeft = 60;
+                inputs.forEach(input => {
+                    input.value = '';
+                    input.disabled = false;
+                });
+                inputs[0].focus();
+                
+                clearInterval(timerId); 
+                timerDisplay.classList.remove('expired'); 
+                startTimer(); 
+                Swal.fire("New OTP sent!", "", "success");
+               
+            } else {
+                Swal.fire("Error", "Cannot resend code. Time has expired.", "error");
+                
+            }
+        } catch (error) {
+            console.log("TRhe error is "+error)
+            Swal.fire("Error", "An error occurred. Please try again later.", "error");
+           
+        }
+    }
+
+
+       inputs.forEach((input, index) => {
+       input.addEventListener('input', (e) => {
+        if (e.target.value.length > 1) {
+            e.target.value = e.target.value.slice(0, 1);
+        }
+
+        if (e.target.value.length === 1) {
+            if (index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value) {
+            if (index > 0) {
+                inputs[index - 1].focus();
+            }
+        }
+        if (e.key === 'e') {
+            e.preventDefault();
+        }
+    });
+});
+
+async function verifyOTP() {
+    const otps = Array.from(inputs).map(input => input.value).join('');
+    
+    if (otps.length !== 6) {
+        Swal.fire("Warning", "Please enter a 6-digit OTP", "warning");
+        return;
+    }
+
+    if (timeLeft <= 0) {
+        Swal.fire("Error", "OTP has expired. Please request a new one.", "error");
+        return;
+    }
+
+    try {
+        const response = await fetch('/verify-passForgot-otp', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ otps })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+            await Swal.fire({
+                title: "Success",
+                text: "OTP Verified Successfully!",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            window.location.href = result.redirectUrl;
+        } else {
+            Swal.fire("Error", result.message || "Invalid OTP. Please try again.", "error");
+        }
+    } catch (error) {
+        console.error("Verification error:", error);
+        Swal.fire("Error", "Something went wrong. Please try again later.", "error");
+    }
+}
+
+    </script>
+</body>
+</html>

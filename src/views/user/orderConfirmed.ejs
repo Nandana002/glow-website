@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #28a745;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .success-icon::after {
+            content: '✓';
+            font-size: 40px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .thank-you-message {
+            color: #28a745;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .item-image {
+            margin-right: 20px;
+        }
+
+        .item-details h4 {
+            margin: 0;
+            color: #333;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .subtotal-section {
+            border-top: 2px solid #dee2e6;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+        }
+
+        .action-buttons .btn {
+            padding: 10px 25px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon"></div>
+            
+            <div class="text-center mb-4">
+                <h1 class="thank-you-message">Thank You for Your Order!</h1>
+                <p class="lead">Your order has been successfully placed.</p>
+            </div>
+
+            <!-- Order Summary Section -->
+            <div class="order-summary">
+                <h3 class="mb-4">Order Summary</h3>
+                <% cart.items.forEach((product) => { %>
+                <div class="order-item">
+                    <div class="item-image">
+                        <img src="/uploads/re-image/<%= product.product.productImage[0] %>" 
+                             alt="Product" width="80px" height="80px">
+                    </div>
+                    <div class="item-details">
+                        <h4><%= product.name %></h4>
+                        <p>Size: <%= product.size %></p>
+                        <p>Quantity: <%= product.quantity %></p>
+                        <p>Price: ₹<%= product.price %></p>
+                    </div>
+                </div>
+                <% }) %>
+
+                <div class="subtotal-section">
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span>₹<%= cart.bill %></span>
+                    </div>
+                    <div class="price-row" id="discount-row">
+                        <span>Discount</span>
+                        <span id="discount-amount">₹0</span>
+                    </div>
+                    <div class="price-row">
+                        <span><strong>Final Amount</strong></span>
+                        <span><strong>₹<%= cart.bill %></strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details Section -->
+            <div class="order-details">
+                <h3>Delivery Information</h3>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p><strong>Order ID:</strong> <span id="orderId"><%=orderId%></span></p>
+                        <p><strong>Shipping Method:</strong> Standard Delivery</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Estimated Delivery:</strong> 3-5 Business Days</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p>A confirmation email has been sent to your email address.</p>
+                <div class="action-buttons">
+                    <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+                    <button id="downloadInvoice" class="btn btn-outline-success">Download Invoice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('downloadInvoice').addEventListener('click', () => {
+            const orderId = document.querySelector('#orderId').textContent;
+            if (orderId) {
+                window.location.href = `/order/download/pdf/${orderId}`;
+            }
+        });
+    </script>
+</body>
+</html>

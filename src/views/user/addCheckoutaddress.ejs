@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+  .error-message{
+    color:red
+  }
+  /* Main Form Styling */
+body {
+    background: linear-gradient(135deg, #FFF5F5 0%, #FFF0F4 100%);
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+}
+
+.form-control:focus {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+}
+
+#address-form {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.1);
+    max-width: 900px;
+    padding: 2.5rem !important;
+    position: relative;
+    overflow: hidden;
+}
+
+#address-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #FF6B6B, #FFB6B6);
+}
+
+/* Form Header */
+#address-form h1 {
+    color: #FF6B6B;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Form Labels */
+.form-label {
+    color: #4A4A4A;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Form Inputs */
+.form-control {
+    border: 2px solid #FFE5E5;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:hover {
+    border-color: #FFB6B6;
+}
+
+.form-control:focus {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.15);
+}
+
+/* Select Styling */
+.form-select {
+    border: 2px solid #FFE5E5;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FF6B6B' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5l4-4H4l4 4z'/%3E%3C/svg%3E");
+}
+
+.form-select:focus {
+    border-color: #FF6B6B;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.15);
+}
+
+/* Error Messages */
+.error-message {
+    color: #FF6B6B;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    font-weight: 500;
+}
+
+/* Submit Button */
+.btn-primary {
+    background: linear-gradient(90deg, #FF6B6B, #FFB6B6);
+    border: none;
+    border-radius: 25px;
+    padding: 0.8rem 2.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #FF5252, #FFA5A5);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #address-form {
+        width: 90% !important;
+        padding: 1.5rem !important;
+    }
+
+    #address-form h1 {
+        font-size: 1.8rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+/* Input Type Number Styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Placeholder Styling */
+::placeholder {
+    color: #CCCCCC;
+    opacity: 1;
+}
+
+:-ms-input-placeholder {
+    color: #CCCCCC;
+}
+
+::-ms-input-placeholder {
+    color: #CCCCCC;
+}
+
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center bg-light">
+    <form class="row g-3 shadow p-4 bg-white rounded mt-5" style="width: 70%" id="address-form" onsubmit="address(event)">
+      <h1>Add-address</h1>
+        <div class="col-md-6">
+          <label for="inputEmail4" class="form-label">Name</label>
+          <input type="text" class="form-control" id="inputEmail4" name="name">
+          <div id="error1" class="error-message"></div>
+        </div>
+        <div class="col-md-6">
+          <label for="inputEmail4" class="form-label">Email</label>
+          <input type="email" class="form-control" id="inputEmail4" name="email">
+          <div id="error2" class="error-message"></div>
+        </div>
+        <div class="col-md-6">
+          <label for="inputPassword4" class="form-label">Phone</label>
+          <input type="number" class="form-control" id="inputPassword4" name="phone">
+          <div id="error3" class="error-message"></div>
+        </div>
+        <div class="col-md-2">
+          <label for="inputZip" class="form-label">House number</label>
+          <input type="text" class="form-control" id="inputZip" name="houseNumber">
+          <div id="error4" class="error-message"></div>
+        </div>
+        <div class="col-md-6">
+          <label for="inputCity" class="form-label">City</label>
+          <input type="text" class="form-control" id="inputCity" name="city">
+          <div id="error6" class="error-message"></div>
+        </div>
+        <div class="col-md-4">
+          <label for="inputState" class="form-label">State</label>
+          <select id="inputState" class="form-select" name="state">
+            <option selected>Choose...</option>
+            <option>Kerala</option>
+            <option>Tamil Nadu</option>
+          </select>
+          <div id="error7" class="error-message"></div>
+        </div>
+        <div class="col-md-6">
+          <label for="inputCity" class="form-label">district</label>
+          <input type="text" class="form-control" id="inputCity" name="district">
+          <div id="error8" class="error-message"></div>
+        </div>
+        <div class="col-md-2">
+          <label for="inputZip" class="form-label">Zip</label>
+          <input type="text" class="form-control" id="inputZip" name="zipCode">
+          <div id="error9" class="error-message"></div>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+<script>
+   
+function nameValidateChecking(name){
+    const error1 = document.getElementById('error1')
+    const namePattern = /^[a-zA-Z\s'-]+$/;
+    if(name.trim() == ""){
+      error1.style.display = "block"
+      error1.innerHTML = "please enter a valid name"
+    }else if(!namePattern.test(name)){
+      error1.style.display = "block"
+      error1.innerHTML = "Name can only contain alpahbets and spaces"
+    }else{
+      error1.style.display = "none"
+      error1.innerHTML = ''
+    }
+}
+
+function emailValidateChecking(email){
+    const error2 = document.getElementById('error2')
+    const emailPattern =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if(email == ""){
+      error2.style.display = "block"
+      error2.innerHTML = "please enter a valid email"
+    }else if(!emailPattern.test(email)){
+      error2.style.display = "block"
+      error2.innerHTML = "Invalid Email"
+    }else{
+      error2.style.display = "none"
+      error2.innerHTML = ''
+    }
+}
+
+function phoneValidateChecking(phone){
+    const error3 = document.getElementById('error3')
+    if(phone == ""){
+      error3.style.display = "block"
+      error3.innerHTML = "Enter a valid phone number"
+    }else if (phone.length<10 || phone.length>10){
+        error3.style.display = "block"
+        error3.innerHTML = "Enter 10 digits"
+    }else{
+      error3.style.display = "none"
+      error3.innerHTML = ""
+    }
+   
+  }
+
+  function houseValidatechecking(houseNumber){
+    const error4 = document.getElementById('error4')
+    if(houseNumber == ''){
+        error4.style.display = 'block'
+        error4.innerHTML = 'House number is required'
+    }else{
+        error4.style.display = 'none'
+        error4.innerHTML = ''
+    }
+  }
+
+  function cityValidatechecking(city){
+    const error6 = document.getElementById('error6')
+    if(city == ''){
+        error6.style.display = 'block'
+        error6.innerHTML = 'address is required'
+    }else{
+        error6.style.display = 'none'
+        error6.innerHTML = ''
+    }
+  }
+  function stateValidatechecking(state){
+    const error7 = document.getElementById('error7')
+    if(state == ''){
+        error7.style.display = 'block'
+        error7.innerHTML = 'address is required'
+    }else{
+        error7.style.display = 'none'
+        error7.innerHTML = ''
+    }
+  }
+
+  function districtValidastechecking(district){
+    const error8 = document.getElementById('error8')
+    if(district == ''){
+        error8.style.display = 'block'
+        error8.innerHTML = 'district is required'
+    }else{
+        error8.style.display = 'none'
+        error8.innerHTML = ''
+    }
+  }
+
+  function zipCodeValidatechecking(zipCode){
+    if(zipCode == ''){
+        error9.style.display = 'block'
+        error9.innerHTML = 'zipcode is required'
+    }else if(zipCode.length !== 6 ){
+        error9.style.display = 'block'
+        error9.innerHTML = "Zip Code must be 6 digits"
+    }
+    else{
+        error9.style.display = 'none'
+        error9.innerHTML = ''
+    }
+  }
+
+async function address(event){
+    event.preventDefault(); 
+    const form = document.getElementById('address-form');
+    const name = form["name"].value.trim();
+    const email = form["email"].value.trim();
+    const phone = form["phone"].value.trim();
+    const houseNumber = form["houseNumber"].value.trim();
+    const city = form["city"].value.trim();
+    const state = form["state"].value;
+    const district = form["district"].value.trim();
+    const zipCode = form["zipCode"].value.trim();
+    nameValidateChecking(name)
+    emailValidateChecking(email)
+    phoneValidateChecking(phone)
+    houseValidatechecking(houseNumber)
+    cityValidatechecking(city)
+    stateValidatechecking(state)
+    districtValidastechecking(district)
+    zipCodeValidatechecking(zipCode)
+    const formData = {
+        name,
+        email,
+        phone,
+        houseNumber,
+        city,
+        state,
+        district,
+        zipCode,
+    }
+    try {
+        const response = await fetch('/add-checkout-address',{
+            method:'POST',
+            headers:{'Content-Type':"application/json"},
+            body:JSON.stringify(formData)
+    
+        })
+        if(response.ok){
+            await response.json()
+            window.location.href = '/checkout'
+        }
+    } catch (error) {
+        console.log("The error"+error)
+    }
+
+} 
+</script>
+</html>

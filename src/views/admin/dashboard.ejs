@@ -1,0 +1,587 @@
+<%- include("../../views/partials/admin/headers") %>
+<style>
+/* Dark Theme Base Styles */
+:root {
+    --dark-bg: #121212;
+    --darker-bg: #0a0a0a;
+    --card-bg: #1e1e2f;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --neon-blue: #00e5ff;
+    --neon-purple: #ff00c8;
+    --neon-green: #00ff9d;
+    --neon-red: #ff5b5b;
+    --neon-yellow: #ffff00;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    background-color: var(--darker-bg);
+    min-height: calc(100vh - 60px);
+    margin-left: 250px; /* Adjust based on your sidebar width */
+    transition: var(--transition);
+}
+
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+h2, h4 {
+    color: var(--text-primary);
+    text-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+    margin-bottom: 20px;
+}
+
+/* Logout Button */
+.logout-btn {
+    background-color: transparent;
+    color: var(--neon-red);
+    border: 1px solid var(--neon-red);
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}
+
+.logout-btn:hover {
+    background-color: var(--neon-red);
+    color: var(--darker-bg);
+    box-shadow: 0 0 10px var(--neon-red);
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-custom-small {
+    background: linear-gradient(135deg, var(--card-bg), #0d324d);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: var(--transition);
+    padding: 15px;
+    border: 1px solid var(--neon-blue);
+}
+
+.card-custom-small:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.card-gradient-blue-small {
+    background: linear-gradient(135deg, var(--card-bg), #0d324d);
+    border-color: var(--neon-blue);
+}
+
+.card-gradient-warning-small {
+    background: linear-gradient(135deg, var(--card-bg), #4d330d);
+    border-color: var(--neon-yellow);
+}
+
+.card-gradient-purple-small {
+    background: linear-gradient(135deg, var(--card-bg), #3d0d4d);
+    border-color: var(--neon-purple);
+}
+
+.card-icon-small {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.card-gradient-warning-small .card-icon-small {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 10px var(--neon-yellow);
+}
+
+.card-gradient-purple-small .card-icon-small {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+
+.card-title-small {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.card-text-small {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+}
+
+/* Chart Sections */
+.chart-section, .pie-chart-container {
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+/* Form Controls */
+.form-control {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 6px 12px;
+    width: 150px;
+}
+
+.form-control:focus {
+    background-color: var(--darker-bg);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 229, 255, 0.25);
+}
+
+/* Pie Chart Layout */
+.pie-chart-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.pie-chart {
+    max-height: 300px !important;
+    width: 100% !important;
+}
+
+/* Stats Section */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.list-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px rgba(0, 229, 255, 0.3);
+}
+
+.list-group {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.list-group-item {
+    background-color: rgba(30, 30, 47, 0.8);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 15px;
+    transition: var(--transition);
+}
+
+.list-group-item:hover {
+    background-color: rgba(40, 40, 60, 0.8);
+}
+
+.badge {
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.bg-primary { background-color: var(--neon-blue) !important; color: #000; }
+.bg-success { background-color: var(--neon-green) !important; color: #000; }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        margin-left: 200px;
+    }
+}
+
+@media (max-width: 991px) {
+    .main-content {
+        margin-left: 0;
+        padding: 60px 15px 15px;
+    }
+    
+    .logout-btn {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .pie-chart-row, .stats-row {
+        grid-template-columns: 1fr;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h4 {
+        font-size: 1.2rem;
+    }
+    
+    .card-text-small {
+        font-size: 1.2rem;
+    }
+    
+    .card-icon-small {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-custom-small {
+        padding: 10px;
+    }
+    
+    .list-title {
+        font-size: 1.1rem;
+    }
+    
+    .form-control {
+        width: 120px;
+    }
+    
+    .chart-section canvas {
+        height: 300px !important;
+    }
+}
+
+</style>
+
+<!-- Main Content Area -->
+<div class="main-content">
+    <button class="logout-btn" onclick="window.location.href='/admin/logout';">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+    
+    <div class="container-fluid">
+        <h2 class="mb-4">Dashboard Overview</h2>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="card card-custom-small card-gradient-blue-small">
+                    <div class="card-body text-center p-3">
+                        <div class="card-icon-small">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h5 class="card-title-small">Total Sales</h5>
+                        <p class="card-text-small"><%= totalSales %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card card-custom-small card-gradient-warning-small">
+                    <div class="card-body text-center p-3">
+                        <div class="card-icon-small">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h5 class="card-title-small">Total Orders</h5>
+                        <p class="card-text-small"><%= totalOrders %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="summary-card">
+            <div class="card card-custom-small card-gradient-purple-small">
+                <div class="card-body text-center p-3">
+                    <div class="card-icon-small">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5 class="card-title-small">Total Users</h5>
+                    <p class="card-text-small"><%= totalUser %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Sales Chart Section -->
+        <div class="chart-section">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Sales Chart</h4>
+                    <select id="chartFilter" class="form-control w-auto">
+                        <option value="yearly">Yearly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+                </div>
+                <div style="position: relative; height: 400px;">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Charts for Top Selling Products and Categories -->
+        <div class="pie-chart-container">
+            <div class="pie-chart-row">
+                <div class="pie-chart-column">
+                    <div class="dashboard-card">
+                        <h4>Top Selling Products</h4>
+                        <canvas id="productsPieChart" class="pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="pie-chart-column">
+                    <div class="dashboard-card">
+                        <h4>Top Categories</h4>
+                        <canvas id="categoriesPieChart" class="pie-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="dashboard-stats">
+            <!-- Top Selling Products List -->
+            <div class="dashboard-card mb-4">
+                <div class="list-title">Top Selling Products</div>
+                <ul class="list-group">
+                    <% mostSoldProduct.forEach((product, index) => { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <%= index + 1 %>. <%= product.productDetails.productName %>
+                            <span class="badge bg-primary rounded-pill"><%= product.count %></span>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+
+            <!-- Categories and Brands -->
+            <div class="stats-row">
+                <div class="stats-column">
+                    <div class="dashboard-card">
+                        <div class="list-title">Top Categories</div>
+                        <ul class="list-group">
+                            <% bestSellingCategory.forEach((category, index) => { %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <%= index + 1 %>. <%= category.categoryDetails.name %>
+                                    <span class="badge bg-success rounded-pill"><%= category.count %></span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+     
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module">
+    let salesChart = null;
+    let productsPieChart = null;
+    let categoriesPieChart = null;
+
+    async function initializeCharts() {
+        Chart.defaults.color = '#e0e0e0';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        async function fetchChartData(filterType) {
+            try {
+                const response = await fetch(`/admin/sales-data?filterType=${filterType}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'Failed to fetch data');
+                return result;
+            } catch (error) {
+                console.error("Error fetching sales data:", error);
+                throw error;
+            }
+        }
+
+        async function fetchPieChartData() {
+            return {
+                products: {
+                    labels: <%- JSON.stringify(mostSoldProduct.map(p => p.productDetails.productName)) %>,
+                    data: <%- JSON.stringify(mostSoldProduct.map(p => p.count)) %>
+                },
+                categories: {
+                    labels: <%- JSON.stringify(bestSellingCategory.map(c => c.categoryDetails.name)) %>,
+                    data: <%- JSON.stringify(bestSellingCategory.map(c => c.count)) %>
+                }
+            };
+        }
+
+        async function updateSalesChart(filterType) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            try {
+                const chartData = await fetchChartData(filterType);
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(0, 229, 255, 0.6)');
+                gradient.addColorStop(1, 'rgba(0, 229, 255, 0.1)');
+
+                if (salesChart) salesChart.destroy();
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Sales Amount',
+                            data: chartData.data,
+                            backgroundColor: gradient,
+                            borderColor: '#00e5ff',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#00e5ff',
+                            pointBorderColor: '#00e5ff',
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#00c3db',
+                            pointHoverBorderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: {
+                                display: true,
+                                text: `Sales ${filterType.charAt(0).toUpperCase() + filterType.slice(1)} Report`,
+                                color: '#fff',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 30, 47, 0.9)',
+                                titleColor: '#00e5ff',
+                                bodyColor: '#fff',
+                                borderColor: '#00e5ff',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: (context) => '₹' + context.parsed.y.toLocaleString()
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { callback: (value) => '₹' + value.toLocaleString() }
+                            },
+                            x: { grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                        }
+                    }
+                });
+            } catch (error) {
+                document.getElementById('salesChart').parentElement.innerHTML = 
+                    '<div class="alert alert-danger">Error loading sales chart.</div>';
+            }
+        }
+
+        async function initializePieCharts() {
+            const pieData = await fetchPieChartData();
+            const colors = ['#00e5ff', '#ff00c8', '#00ff9d', '#ff5b5b', '#00a6ff'];
+
+            const productsCtx = document.getElementById('productsPieChart').getContext('2d');
+            if (productsPieChart) productsPieChart.destroy();
+            productsPieChart = new Chart(productsCtx, {
+                type: 'pie',
+                data: {
+                    labels: pieData.products.labels,
+                    datasets: [{
+                        data: pieData.products.data,
+                        backgroundColor: colors,
+                        borderColor: '#1e1e2f',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#e0e0e0' } },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 30, 47, 0.9)',
+                            titleColor: '#00e5ff',
+                            bodyColor: '#fff'
+                        }
+                    }
+                }
+            });
+
+            const categoriesCtx = document.getElementById('categoriesPieChart').getContext('2d');
+            if (categoriesPieChart) categoriesPieChart.destroy();
+            categoriesPieChart = new Chart(categoriesCtx, {
+                type: 'pie',
+                data: {
+                    labels: pieData.categories.labels,
+                    datasets: [{
+                        data: pieData.categories.data,
+                        backgroundColor: colors,
+                        borderColor: '#1e1e2f',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#e0e0e0' } },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 30, 47, 0.9)',
+                            titleColor: '#00e5ff',
+                            bodyColor: '#fff'
+                        }
+                    }
+                }
+            });
+        }
+
+        await updateSalesChart('yearly');
+        await initializePieCharts();
+
+        document.getElementById('chartFilter').addEventListener('change', async (e) => {
+            await updateSalesChart(e.target.value);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => initializeCharts().catch(console.error));
+    } else {
+        initializeCharts().catch(console.error);
+    }
+</script>
+</body>
+</html>

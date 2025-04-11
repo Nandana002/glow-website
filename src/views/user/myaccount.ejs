@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowBeauty - My Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha3/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe6f0 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff69b4;
+            text-decoration: none;
+            text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.2);
+        }
+
+        .navbar-brand:hover {
+            color: #ff5ba7;
+        }
+
+        .navbar-nav .nav-link {
+            color: #666;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 25px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ff69b4;
+            background: rgba(255, 105, 180, 0.1);
+        }
+
+        .dropdown-content {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+        }
+
+        .dashboard-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+        }
+
+        .dashboard-sidebar {
+            flex: 0 0 250px;
+        }
+
+        .dashboard-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card-green {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(255, 105, 180, 0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card-header {
+            background: linear-gradient(145deg, #ff8dc7, #ff69b4);
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .card-header h5 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-image-container {
+            width: 140px;
+            height: 140px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff69b4;
+            background: #fff;
+            padding: 4px;
+        }
+
+        .image-upload-overlay {
+            position: absolute;
+            background: #ff69b4;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            bottom: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .card-title {
+            color: #ff69b4;
+            font-size: 26px;
+            font-weight: 600;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .card-text {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .card-text strong {
+            color: #ff69b4;
+            width: 100px;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .btn-success {
+            background: linear-gradient(145deg, #ff8dc7, #ff69b4);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(145deg, #ff5ba7, #ff478f);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+        }
+
+        /* Avatar Dropdown Styling */
+        .avatar-section {
+            margin: 25px 0;
+        }
+
+        .btn-light {
+            background: #fff;
+            border: 2px solid #ff69b4;
+            color: #ff69b4;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-light:hover {
+            background: #ff69b4;
+            color: white;
+            border-color: #ff69b4;
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.2);
+            padding: 10px;
+        }
+
+        .dropdown-item {
+            color: #666;
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 105, 180, 0.1);
+            color: #ff69b4;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-wrapper {
+                flex-direction: column;
+            }
+
+            .dashboard-sidebar {
+                flex: 0 0 auto;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-wrapper {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .profile-image-container {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/user/navbar.ejs") %>
+
+    <div class="dashboard-wrapper">
+        <div class="dashboard-sidebar">
+            <%- include("../partials/user/profileSide.ejs") %>
+        </div>
+        <div class="dashboard-content">
+            <div class="card card-green">
+                <div class="card-header">
+                    <h5 class="mb-0 text-center">User Profile</h5>
+                </div>
+                <!-- <div class="card-body">
+                    <div class="profile-image-container">
+                        <img id="selectedAvatar" class="profile-image" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Avatar">
+                        <div class="image-upload-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div> -->
+
+                    <h5 class="card-title"><%= user.name %></h5>
+                    <p class="card-text">
+                        <strong>Phone:</strong> 
+                        <span>
+                            <% if (user.phone) { %>
+                                <%= user.phone %>
+                            <% } else if (userAddress && userAddress.address[0] && userAddress.address[0].phone) { %>
+                                <%= userAddress.address[0].phone %>
+                            <% } else { %>
+                                Please provide phone number
+                            <% } %>
+                        </span>
+                    </p>
+                    <p class="card-text">
+                        <strong>Email:</strong>
+                        <span><%= user.email %></span>
+                    </p>
+                    <a href="/forgot-password" class="btn btn-success">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to set avatar
+        function setAvatar(avatarUrl) {
+            const avatarImg = document.getElementById('selectedAvatar');
+            avatarImg.src = avatarUrl;
+            // Optionally save to localStorage to persist selection
+            localStorage.setItem('selectedAvatar', avatarUrl);
+        }
+
+        // Initialize avatar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there's a saved avatar in localStorage
+            const savedAvatar = localStorage.getItem('selectedAvatar');
+            const defaultAvatar = '<%= user.profileImage || "https://cdn-icons-png.flaticon.com/512/149/149071.png" %>';
+            
+            if (savedAvatar) {
+                setAvatar(savedAvatar);
+            } else {
+                setAvatar(defaultAvatar);
+            }
+
+            // Avatar selection event listeners
+            document.querySelectorAll('.avatar-option').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedAvatarUrl = this.getAttribute('data-avatar');
+                    setAvatar(selectedAvatarUrl);
+                });
+            });
+            
+            // Add click handler for the camera icon (image upload overlay)
+            document.querySelector('.image-upload-overlay').addEventListener('click', function() {
+                // You could trigger a file input click here if you implement file uploads
+                console.log('Upload photo clicked');
+            });
+        });
+
+        // Image preview for file upload (if you want to add upload functionality later)
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    setAvatar(e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

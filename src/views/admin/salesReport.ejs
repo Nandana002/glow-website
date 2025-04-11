@@ -1,0 +1,407 @@
+<%- include("../../views/partials/admin/headers") %>
+<%- include("../../views/partials/admin/slidebar") %>
+    
+   
+    <style>
+      :root {
+        --primary: #4facfe;
+        --primary-hover: #00f2fe;
+        --dark: #121212;
+        --darker: #0a0a0a;
+        --card-bg: #1e1e1e;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --accent: #4facfe;
+        --accent-gradient: linear-gradient(45deg, #4facfe, #00f2fe);
+        --neon-purple: #b14aed;
+        --neon-cyan: #00f2fe;
+    }
+
+    body {
+        background-color: var(--dark);
+        color: var(--text-primary);
+    }
+
+    .main-content {
+        padding: 25px;
+        background-color: var(--dark);
+        margin-top: 86px;
+    margin-left: 327px;
+    margin-right: 75px;
+    }
+
+    .page-title {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .metrics-card {
+        background: var(--card-bg);
+        color: var(--text-primary);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metrics-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--accent-gradient);
+    }
+    
+    .metrics-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .metric-label {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .filter-section {
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 25px;
+    }
+
+    .report-type-btn {
+        padding: 10px 20px;
+        border: 1px solid #2a2a2a;
+        background: var(--darker);
+        color: var(--text-secondary);
+        border-radius: 8px;
+        transition: all 0.3s;
+        margin-right: 5px;
+    }
+
+    .report-type-btn:hover {
+        background: rgba(79, 172, 254, 0.1);
+        color: var(--accent);
+        border-color: var(--accent);
+    }
+
+    .report-type-btn.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        box-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
+    }
+
+    .export-btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .export-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-danger {
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    }
+    
+    .btn-success {
+        background: linear-gradient(45deg, #11998e, #38ef7d);
+    }
+    
+    .btn-primary {
+        background: var(--accent-gradient);
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status-completed {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    .status-pending {
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .status-cancelled {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    
+    .btn-group {
+        margin-top: 0;
+    }
+    
+    .card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border: none;
+        overflow: hidden;
+    }
+    
+    .table {
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        background-color: var(--darker);
+        color: var(--text-secondary);
+        border-bottom: none;
+        padding: 15px;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    
+    .table tbody td {
+        padding: 15px;
+        border-color: #2a2a2a;
+        vertical-align: middle;
+    }
+    
+    .table-active {
+        background-color: rgba(79, 172, 254, 0.1) !important;
+    }
+    
+    .form-control {
+        background-color: var(--darker);
+        border: 1px solid #2a2a2a;
+        color: var(--text-primary);
+        border-radius: 8px;
+        padding: 10px 15px;
+    }
+    
+    .form-control:focus {
+        background-color: var(--darker);
+        border-color: var(--accent);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+    }
+    
+    /* Custom Animation for Metrics */
+    @keyframes glow {
+        0% {
+            box-shadow: 0 0 5px rgba(79, 172, 254, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.8);
+        }
+        100% {
+            box-shadow: 0 0 5px rgba(79, 172, 254, 0.5);
+        }
+    }
+    
+    /* Add a subtle neon glow effect to metrics cards */
+    .col-md-3:nth-child(1) .metrics-card::before {
+        background: linear-gradient(45deg, var(--primary), var(--neon-cyan));
+    }
+    
+    .col-md-3:nth-child(2) .metrics-card::before {
+        background: linear-gradient(45deg, var(--neon-purple), var(--primary));
+    }
+    
+    .col-md-3:nth-child(3) .metrics-card::before {
+        background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+    }
+    
+    .col-md-3:nth-child(4) .metrics-card::before {
+        background: linear-gradient(45deg, var(--primary), var(--neon-purple));
+    }
+    </style>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="page-title"></h3>
+            <div class="btn-group">
+                <button onclick="exportReport('pdf')" class="btn btn-danger export-btn me-2">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+                <button onclick="exportReport('excel')" class="btn btn-success export-btn">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="metrics-card">
+                    <div class="metric-value">₹<%= reportData.totalSales.toLocaleString() %></div>
+                    <div class="metric-label">Total Sales</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metrics-card">
+                    <div class="metric-value"><%= reportData.totalOrders %></div>
+                    <div class="metric-label">Total Orders</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metrics-card">
+                    <div class="metric-value">₹<%= reportData.totalDiscount.toLocaleString() %></div>
+                    <div class="metric-label">Total Discount</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metrics-card">
+                    <div class="metric-value">₹<%= (reportData.totalSales - reportData.totalDiscount).toLocaleString() %></div>
+                    <div class="metric-label">Net Revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section mb-4">
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="btn-group w-100" role="group">
+                        <button type="button" class="btn report-type-btn <%= reportType === 'daily' ? 'active' : '' %>" 
+                                onclick="changeReportType('daily')">Daily</button>
+                        <button type="button" class="btn report-type-btn <%= reportType === 'weekly' ? 'active' : '' %>"
+                                onclick="changeReportType('weekly')">Weekly</button>
+                        <button type="button" class="btn report-type-btn <%= reportType === 'monthly' ? 'active' : '' %>"
+                                onclick="changeReportType('monthly')">Monthly</button>
+                        <button type="button" class="btn report-type-btn <%= reportType === 'custom' ? 'active' : '' %>"
+                                onclick="toggleCustomDate()">Custom Date</button>
+                    </div>
+                </div>
+                <div class="col-12 custom-date-inputs" style="display: <%= reportType === 'custom' ? 'block' : 'none' %>">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <input type="date" class="form-control" id="startDate" value="<%= startDate?.toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="date" class="form-control" id="endDate" value="<%= endDate?.toISOString().split('T')[0] %>">
+                        </div>
+                        <div class="col-md-2">
+                            <button onclick="applyCustomDate()" class="btn btn-primary w-100">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Data Table -->
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Discount</th>
+                            <th>Final Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% reportData.orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order.orderId %></a></td>
+                            <td><%= new Date(order.date).toLocaleDateString() %></td>
+                            <td>₹<%= order.amount.toLocaleString() %></td>
+                            <td>₹<%= order.discount.toLocaleString() %></td>
+                            <td>₹<%= order.finalAmount.toLocaleString() %></td>
+                            <td><%= order.paymentMethod %></td>
+                            <td>
+                                <span class="status-badge status-<%= order.status.toLowerCase() %>">
+                                    <%= order.status %>
+                                </span>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-active">
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td><strong>₹<%= reportData.totalSales.toLocaleString() %></strong></td>
+                            <td><strong>₹<%= reportData.totalDiscount.toLocaleString() %></strong></td>
+                            <td><strong>₹<%= (reportData.totalSales - reportData.totalDiscount).toLocaleString() %></strong></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function changeReportType(type) {
+            window.location.href = `/admin/salesReport?reportType=${type}`;
+        }
+
+        function toggleCustomDate() {
+            document.querySelector('.custom-date-inputs').style.display = 'block';
+        }
+
+        function applyCustomDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (startDate && endDate) {
+                window.location.href = `/admin/salesReport?reportType=custom&startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                Swal.fire('Error', 'Please select both start and end dates', 'error');
+            }
+        }
+
+        async function exportReport(type) {
+            const reportType = '<%= reportType %>';
+            const startDate = document.getElementById('startDate')?.value;
+            const endDate = document.getElementById('endDate')?.value;
+            
+            let url = `/admin/sales-report/export?type=${type}&reportType=${reportType}`;
+            if (reportType === 'custom' && startDate && endDate) {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+            
+            try {
+                window.location.href = url;
+            } catch (error) {
+                console.error('Export error:', error);
+                Swal.fire('Error', 'Failed to export report', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

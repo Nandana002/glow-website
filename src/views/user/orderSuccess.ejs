@@ -1,0 +1,754 @@
+<%- include("../partials/user/navbar.ejs") %>
+
+<style>
+    body {
+        background-color: #fdf6f6;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .success-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 8px 30px rgba(233, 166, 188, 0.15);
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #fce4ec;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .status-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .success-icon {
+        background: linear-gradient(135deg, #f48fb1, #ec407a);
+    }
+
+    .failure-icon {
+        background: linear-gradient(135deg, #ef5350, #b71c1c);
+    }
+
+    .status-icon i {
+        color: white;
+        font-size: 45px;
+        animation: iconPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes iconPop {
+        0% { transform: scale(0); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .confetti {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: #FFD700; 
+        opacity: 0;
+        animation: confetti 1.8s ease-out infinite;
+    }
+
+    .confetti:nth-child(1) {
+        top: 0;
+        left: 20%;
+        animation-delay: 0.2s;
+        background: #f8bbd0;
+    }
+
+    .confetti:nth-child(2) {
+        top: 0;
+        left: 50%;
+        animation-delay: 0.4s;
+        background: #ffb74d;
+    }
+
+    .confetti:nth-child(3) {
+        top: 0;
+        left: 80%;
+        animation-delay: 0.6s;
+        background: #81d4fa;
+    }
+
+    .confetti:nth-child(4) {
+        top: 0;
+        left: 40%;
+        animation-delay: 0.8s;
+        background: #b39ddb;
+    }
+
+    @keyframes confetti {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(200%) rotate(360deg); opacity: 0; }
+    }
+
+    .status-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .success-title {
+        color: #e91e63;
+    }
+
+    .failure-title {
+        color: #b71c1c;
+    }
+
+    .order-id {
+        font-size: 16px;
+        color: #9e9e9e;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+        background: #f9f9f9;
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: 50px;
+        border: 1px dashed #e0e0e0;
+    }
+
+    .order-details {
+        background: #fff8fa;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 25px 0;
+        text-align: left;
+        border: 1px solid #ffebee;
+    }
+
+    .order-details h3, .order-items h3 {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #ad1457;
+        position: relative;
+        display: inline-block;
+    }
+
+    .order-details h3:after, .order-items h3:after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #f48fb1, transparent);
+    }
+
+    .order-items {
+        margin: 25px 0;
+        border-top: 1px solid #f8bbd0;
+        padding-top: 25px;
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f8bbd0;
+        transition: all 0.3s ease;
+    }
+
+    .order-item:hover {
+        background-color: #fef5f7;
+        transform: translateX(5px);
+        border-radius: 8px;
+        padding-left: 10px;
+    }
+
+    .item-image {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        object-fit: cover;
+        margin-right: 20px;
+        border: 1px solid #fce4ec;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .order-item:hover .item-image {
+        transform: scale(1.08);
+    }
+
+    .item-details {
+        flex-grow: 1;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+
+    .item-sizes {
+        font-size: 0.9em;
+        color: #9e9e9e;
+        margin: 4px 0;
+        font-weight: 500;
+    }
+
+    .item-price {
+        color: #757575;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .item-total {
+        font-weight: 700;
+        color: #e91e63;
+        font-size: 16px;
+    }
+
+    .price-summary {
+        background: #fff8fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 25px 0;
+        border: 1px solid #ffebee;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #616161;
+        padding: 8px 0;
+        transition: background-color 0.3s ease;
+    }
+
+    .detail-row:hover {
+        background-color: #fef5f7;
+        border-radius: 6px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .total-row {
+        border-top: 2px dashed #f48fb1;
+        margin-top: 15px;
+        padding-top: 15px;
+        font-weight: 700;
+        color: #c2185b;
+        font-size: 18px;
+    }
+
+    .delivery-info {
+        background: linear-gradient(135deg, #f8bbd0, #fce4ec);
+        padding: 20px;
+        border-radius: 12px;
+        margin: 25px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(244, 143, 177, 0.15);
+    }
+
+    .delivery-info i {
+        color: #c2185b;
+        margin-right: 15px;
+        font-size: 24px;
+        animation: truckMove 2s infinite ease-in-out;
+    }
+
+    @keyframes truckMove {
+        0% { transform: translateX(0); }
+        50% { transform: translateX(5px); }
+        100% { transform: translateX(0); }
+    }
+
+    .delivery-info h4 {
+        margin: 0;
+        color: #ad1457 !important;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .delivery-info p {
+        margin: 5px 0 0 0;
+        color: #616161;
+        font-weight: 500;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 35px;
+    }
+
+    .btn {
+        padding: 14px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.7s;
+        z-index: -1;
+    }
+
+    .btn:hover:before {
+        left: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ec407a, #ad1457);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(236, 64, 122, 0.3);
+    }
+
+    .btn-primary:hover {
+        background: white;
+        color: #ad1457;
+        border: 2px solid #ec407a;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(236, 64, 122, 0.35);
+    }
+
+    .btn-secondary {
+        background: #fff;
+        color: #e91e63;
+        border: 2px solid #f48fb1;
+        box-shadow: 0 4px 15px rgba(244, 143, 177, 0.15);
+    }
+
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #f48fb1, #f06292);
+        color: #fff;
+        border: 2px solid transparent;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(244, 143, 177, 0.25);
+    }
+
+    .discount-row {
+        color: #ad1457; 
+        font-weight: 500;
+        background: #fce4ec;
+        border-radius: 6px;
+        padding: 8px 12px !important;
+    }
+
+    .discount-row span:last-child {
+        color: #ad1457;
+        font-weight: 700;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.9em;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .status-badge.pending {
+        background: linear-gradient(135deg, #ffe0b2, #ffcc80);
+        color: #e65100;
+    }
+
+    .status-badge.processing {
+        background: linear-gradient(135deg, #bbdefb, #90caf9);
+        color: #0d47a1;
+    }
+
+    .status-badge.shipped {
+        background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+        color: #1b5e20;
+    }
+
+    .status-badge.delivered {
+        background: linear-gradient(135deg, #c8e6c9, #81c784);
+        color: #1b5e20;
+    }
+
+    .status-badge.cancelled {
+        background: linear-gradient(135deg, #ffcdd2, #ef9a9a);
+        color: #b71c1c;
+    }
+
+    .status-badge.failed {
+        background: linear-gradient(135deg, #ffcdd2, #ef5350);
+        color: #b71c1c;
+    }
+
+    .status-badge.success {
+        background: linear-gradient(135deg, #c8e6c9, #81c784);
+        color: #1b5e20;
+    }
+
+    /* Cosmetic theme specific additions */
+    .beauty-icon {
+        position: absolute;
+        opacity: 0.08;
+        z-index: 0;
+    }
+    
+    .lipstick-icon {
+        top: 40px;
+        right: 40px;
+        font-size: 60px;
+        transform: rotate(30deg);
+        color: #e91e63;
+    }
+    
+    .perfume-icon {
+        bottom: 40px;
+        left: 40px;
+        font-size: 50px;
+        color: #ec407a;
+    }
+    
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(244,143,177,0.15), transparent);
+        z-index: 0;
+    }
+    
+    .success-card::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: -50px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(236,64,122,0.1), transparent);
+        z-index: 0;
+    }
+    
+    /* Shimmer effect for order items */
+    .order-item::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30%;
+        height: 100%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+        transform: skewX(-25deg);
+        animation: shimmer 3s infinite;
+        opacity: 0;
+    }
+    
+    .order-item:hover::after {
+        opacity: 1;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-150%) skewX(-25deg); }
+        100% { transform: translateX(250%) skewX(-25deg); }
+    }
+    
+    /* Product image hover effect */
+    .item-image {
+        transition: all 0.4s ease;
+    }
+    
+    .item-image:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 20px rgba(236, 64, 122, 0.2);
+    }
+    
+    /* Additional typography enhancements */
+    .status-title {
+        text-shadow: 1px 1px 1px rgba(233, 30, 99, 0.1);
+    }
+    
+    /* Testimonial form styling - properly integrated with the existing design */
+    .testimonial-section {
+        margin: 35px 0;
+        padding: 25px;
+        background: #fff8fa;
+        border-radius: 12px;
+        border: 1px solid #ffebee;
+        position: relative;
+        text-align: center;
+    }
+    
+    .testimonial-section h2 {
+        color: #b03060;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .testimonial-section p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        color: #555;
+    }
+    
+    .testimonial-form {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .testimonial-form input[type="text"],
+    .testimonial-form textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #fce4ec;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #fff0f5;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    
+    .testimonial-form input[type="text"]:focus,
+    .testimonial-form textarea:focus {
+        outline: none;
+        border-color: #ec407a;
+        box-shadow: 0 0 0 2px rgba(236, 64, 122, 0.2);
+    }
+    
+    .testimonial-form textarea {
+        height: 100px;
+        resize: none;
+    }
+    
+    .testimonial-form button {
+        background: linear-gradient(135deg, #f48fb1, #ec407a);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(236, 64, 122, 0.3);
+    }
+    
+    .testimonial-form button:hover {
+        background: linear-gradient(135deg, #ec407a, #ad1457);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(236, 64, 122, 0.35);
+    }
+    
+    /* Fancy scrollbar for cosmetic theme */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #fce4ec;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #f48fb1, #ec407a);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #ad1457;
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-card">
+        <!-- Decorative cosmetic icons -->
+        <i class="fas fa-magic beauty-icon lipstick-icon"></i>
+        <i class="fas fa-spray-can beauty-icon perfume-icon"></i>
+        
+        <!-- Dynamic Icon based on payment status -->
+        <% if (order.paymentStatus === 'Failed') { %>
+            <div class="status-icon failure-icon">
+                <i class="fas fa-times"></i>
+            </div>
+            <h1 class="status-title failure-title">Payment Failed</h1>
+        <% } else if (order.paymentStatus === 'success') { %>
+            <div class="status-icon success-icon">
+                <i class="fas fa-check"></i>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+            </div>
+            <h1 class="status-title success-title">Payment Successful</h1>
+        <% } else { %>
+            <div class="status-icon success-icon">
+                <i class="fas fa-check"></i>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+            </div>
+            <h1 class="status-title success-title">Thank You for Your Order!</h1>
+        <% } %>
+        
+        <p class="order-id">Order ID: <%= order.orderId %></p>
+
+        <div class="order-status">
+            <span class="status-badge <%= order.status.toLowerCase() %>">
+                <%= order.status %>
+            </span>
+        </div>
+
+        <div class="order-items">
+            <h3>Order Items</h3>
+            <% order.orderedItems.forEach(item => { %>
+                <div class="order-item">
+                    <div class="item-image">
+                        <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
+                            <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" class="item-image">
+                        <% } else { %>
+                            <img src="/images/default-product.jpg" alt="Product Image" class="item-image">
+                        <% } %>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name"><%= item.product ? item.product.productName : 'Product' %></div>
+                        <div class="item-price">
+                            shade: <%= item.shade %>
+                            Qty: <%= item.quantity %> × ₹<%= item.price %>
+                        </div>
+                    </div>
+                    <div class="item-total">
+                        ₹<%= item.quantity * item.price %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="price-summary">
+            <div class="detail-row">
+                <span>Subtotal</span>
+                <span>₹<%= order.totalPrice %></span>
+            </div>
+            <% if (order.discount > 0) { %>
+                <div class="detail-row discount-row">
+                    <span>Coupon Discount</span>
+                    <span>-₹<%= order.discount %></span>
+                </div>
+            <% } %>
+            <div class="detail-row">
+                <span class="detail-label">Payment Method</span>
+                <span><%= order.paymentMethod %></span>
+            </div>
+            <div class="detail-row">
+                <span>Shipping</span>
+                <span>Free</span>
+            </div>
+            <div class="detail-row total-row">
+                <span>Total</span>
+                <span>₹<%= order.finalAmount %></span>
+            </div>
+        </div>
+
+        <div class="order-details">
+            <h3>Shipping Details</h3>
+            <% if (order.address) { %>
+                <div class="detail-row">
+                    <span class="detail-label">Name</span>
+                    <span><%= order.address.name %></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address</span>
+                    <span>
+                        <%= order.address.landMark %>
+                        <%= order.address.city %>, <%= order.address.state %>
+                        <%= order.address.pincode %>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone</span>
+                    <span><%= order.address.phone %></span>
+                </div>
+                <% if (order.address.altPhone) { %>
+                    <div class="detail-row">
+                        <span class="detail-label">Alternative Phone</span>
+                        <span><%= order.address.altPhone %></span>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="detail-row">
+                    <span>Address information not available</span>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (order.status === 'success') { %>
+            <div class="delivery-info">
+                <i class="fas fa-truck"></i>
+                <div>
+                    <h4 style="margin: 0;">Estimated Delivery Date</h4>
+                    <p style="margin: 5px 0 0 0">
+                        <% try { %>
+                            <%= new Date(order.createdOn.getTime() + 7*24*60*60*1000).toLocaleDateString('en-US', { 
+                                weekday: 'long',
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric'
+                            }) %>
+                        <% } catch(e) { %>
+                            Delivery date will be confirmed soon
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Testimonial Section - Properly styled and integrated -->
+        <!-- <div class="testimonial-section">
+            <h2>Thank you for your purchase!</h2>
+            <p>We'd love to hear your thoughts. Submit your testimonial below 👇</p>
+            
+            <form action="/testimonials" method="POST" class="testimonial-form">
+                <input type="text" name="name" placeholder="Your Name" required />
+                <textarea name="message" placeholder="Your Testimonial" required></textarea>
+                <button type="submit">Submit Testimonial</button>
+            </form>
+        </div> -->
+
+        <div class="action-buttons">
+            <a href="/shop" class="btn btn-secondary">Continue Shopping</a>
+            <a href="/download-invoice/<%= order.orderId %>" class="btn btn-primary">Download Invoice</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,404 @@
+<%- include("../../views/partials/admin/headers") %>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+:root {
+    --soft-bg: #1a1a1a;          /* Darker gray instead of pure black */
+    --text-primary: #f0f0f0;    /* Off-white for softer text */
+    --soft-cyan: #80d8ff;       /* Softer cyan */
+    --soft-magenta: #ff80ab;    /* Softer magenta */
+    --soft-green: #80ff80;      /* Softer green */
+    --soft-red: #ff8080;        /* Softer red */
+    --soft-gray: #b0b0b0;       /* Light gray for secondary text */
+    --border-radius: 12px;      /* Increased for softer edges */
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  }
+
+  body {
+    background: linear-gradient(135deg, var(--soft-bg), #2a2a2a); /* Soft gradient background */
+    color: var(--text-primary);
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--soft-bg);
+    border: 1px solid rgba(128, 216, 255, 0.3); /* Softer cyan border */
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+  }
+
+  h2 {
+    color: var(--soft-cyan);
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 8px rgba(128, 216, 255, 0.5); /* Softer glow */
+    font-weight: 500;
+  }
+
+  h3 {
+    color: var(--soft-magenta);
+    text-shadow: 0 0 6px rgba(255, 128, 171, 0.4);
+    font-weight: 400;
+  }
+
+  .order-info {
+    padding: 1.5rem;
+    border-left: 4px solid var(--soft-cyan);
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.05); /* Subtle white overlay */
+    border-radius: 8px;
+  }
+
+  .order-info p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  .order-info strong {
+    color: var(--soft-cyan);
+    font-weight: 500;
+  }
+
+  .table-shopping-cart {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Space between rows */
+    margin-bottom: 2rem;
+  }
+
+  .table-shopping-cart th {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--soft-cyan);
+    padding: 1rem;
+    border-bottom: 2px solid rgba(128, 216, 255, 0.3);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  .table-shopping-cart td {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    color: var(--soft-gray);
+  }
+
+  .table-shopping-cart tr:hover {
+    background: rgba(128, 216, 255, 0.1);
+    transition: background 0.3s ease;
+  }
+
+  .product-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .product-info img {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border: 1px solid rgba(128, 216, 255, 0.4);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .product-info img:hover {
+    transform: scale(1.1);
+  }
+
+  .badge {
+    padding: 0.5rem 0.8rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .bg-warning {
+    color: var(--soft-red);
+    border: 1px solid rgba(255, 128, 128, 0.5);
+  }
+
+  .bg-success {
+    color: var(--soft-green);
+    border: 1px solid rgba(128, 255, 128, 0.5);
+  }
+
+  .bg-danger {
+    color: var(--soft-red);
+    border: 1px solid rgba(255, 128, 128, 0.5);
+  }
+
+  .bg-secondary {
+    color: var(--soft-gray);
+    border: 1px solid rgba(176, 176, 176, 0.5);
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+
+  .btn-sm {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-success {
+    color: var(--soft-green);
+    border: 1px solid rgba(128, 255, 128, 0.5);
+  }
+
+  .btn-success:hover {
+    background: rgba(128, 255, 128, 0.15);
+    box-shadow: 0 0 8px rgba(128, 255, 128, 0.4);
+  }
+
+  .btn-danger, .btn-cancel {
+    color: var(--soft-red);
+    border: 1px solid rgba(255, 128, 128, 0.5);
+  }
+
+  .btn-danger:hover, .btn-cancel:hover {
+    background: rgba(255, 128, 128, 0.15);
+    box-shadow: 0 0 8px rgba(255, 128, 128, 0.4);
+  }
+
+  .btn-cancel:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: rgba(255, 128, 128, 0.3);
+  }
+
+  .mx-1 {
+    margin: 0 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    .table-shopping-cart {
+      display: block;
+      overflow-x: auto;
+    }
+    .product-info {
+      flex-direction: column;
+      text-align: center;
+    }
+    .product-info img {
+      margin-bottom: 0.8rem;
+    }
+  }
+</style>
+
+<div class="container">
+    <h2>Order Details</h2>
+
+    <% if (order) { %>
+        <div class="order-info">
+          <p><strong>product Name</strong> <%= order.orderedItems
+            .map(item => item.product?.productName) 
+            .join(", ") %></p>
+            <p><strong>Order ID:</strong> <%= order.orderId %></p>
+        
+            <p><%= order.createdAt ? order.createdAt.toDateString() : 'Date not available' %></p>
+            <p><strong>Status:</strong> <%= order.status %></p>
+        </div>
+
+        <table class="table-shopping-cart">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    
+                    <th>Price</th>
+                    <th>Return Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.orderedItems.forEach((item) => { %>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
+                                    <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
+                                         alt="<%= item.product.name %>" 
+                                         width="50" 
+                                         height="50">
+                                <% } else { %>
+                                    <img src="/uploads/re-image/<%=product.productImage[0]%>"
+                                         alt="Product image not available" 
+                                         width="50" 
+                                         height="50">
+                                <% } %>
+                                <p><%= item.product ? item.product.name : 'Product not available' %></p>
+                            </div>
+                        </td>
+                        <td><%= item.quantity %></td>
+                      
+                        <td>₹<%= item.price %></td>
+                        <td>
+                            <% if (item.returnStatus === 'Requested') { %>
+                                <span class="badge bg-warning">Requested</span>
+                                <button class="btn btn-success btn-sm mx-1" 
+                                        onclick="handleReturn('<%= order.orderId %>', '<%= item._id %>', 'approve')">
+                                    Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm mx-1" 
+                                        onclick="handleReturn('<%= order.orderId %>', '<%= item._id %>', 'reject')">
+                                    Reject
+                                </button>
+                            <% } else if (item.returnStatus === 'Approved') { %>
+                                <span class="badge bg-success">Approved</span>
+                            <% } else if (item.returnStatus === 'Rejected') { %>
+                                <span class="badge bg-danger">Rejected</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Not Requested</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (order.status === 'Pending' || order.status === 'Shipped') { %>
+                                <% if (item.returnStatus !== "Approved") { %>
+                                    <% if(item.cancelStatus == 'canceled') { %>
+                                        <span class="badge bg-danger">Canceled</span>
+                                    <% } else { %>
+                                        <button type="button" class="btn-cancel" 
+                                                onclick="cancelOrder('<%= order.orderId %>', '<%= item._id %>')">
+                                            Cancel
+                                        </button>
+                                    <% } %>
+                                <% } else { %>
+                                    <button type="button" class="btn-cancel" disabled>Item Returned</button>
+                                <% } %>
+                            <% } else { %>
+                                <button type="button" class="btn-cancel" disabled>Cannot Cancel</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <h3>Total Amount: ₹<%= order.finalAmount || order.totalPrice %></h3>
+    <% } else { %>
+        <p>No order data available.</p>
+    <% } %>
+</div>
+
+<script>
+      const statusSelects = document.querySelectorAll(".statusSelect"); 
+
+statusSelects.forEach((statusSelect) => {
+  statusSelect.addEventListener("change", async (event) => {
+    const selectedStatus = event.target.value;
+    const orderId = event.target.dataset.orderId;
+    console.log("The selected status is: " + selectedStatus);
+    try {
+      const response = await fetch("/admin/order-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: selectedStatus,
+          orderId,
+        }),
+      });
+    } catch (error) {
+      console.log("The error" + error);
+    }
+  });
+});
+
+async function handleReturn(orderId, productId, action) {
+  try {
+    const response = await fetch("/admin/handleReturn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, productId, action }),
+    });
+    if (response.ok) {
+      Swal.fire({
+        title: "Are you sure?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          location.reload(); 
+        }
+      });
+    }
+  } catch (error) {
+    console.log("The error is" + error);
+  }
+}
+async function cancelOrder(orderId, productId) {
+  try {
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to cancel this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No, keep it",
+    });
+
+    if (confirmation.isConfirmed) {
+      const response = await fetch("/admin/cancelorder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          productId,
+        }),
+      });
+
+      if (response.ok) {
+        await Swal.fire({
+          title: "Canceled!",
+          text: "The order has been canceled successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        location.reload();
+      } else {
+        await Swal.fire({
+          title: "Error",
+          text: "Failed to cancel the order. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } else {
+      await Swal.fire({
+        title: "Cancelled",
+        text: "Your order is safe and has not been canceled.",
+        icon: "info",
+        confirmButtonText: "OK",
+      });
+    }
+  } catch (error) {
+    await Swal.fire({
+      title: "Error",
+      text: "An unexpected error occurred.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+    console.error("Error:", error);
+  }
+}
+
+</script>

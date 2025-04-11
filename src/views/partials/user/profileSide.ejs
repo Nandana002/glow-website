@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmetic Dashboard</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Body and Main Container */
+        body {
+            background-color: #f7f8f9; /* Light grey background */
+            color: #333;
+            font-size: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background-color: #ff5e5b; /* Cosmetic red color */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease; /* Smooth slide effect */
+            z-index: 1000;
+        }
+
+        /* Sidebar Links */
+        .menu-item {
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 10px 0;
+            display: block;
+            transition: background-color 0.3s ease;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .menu-item:hover {
+            background-color: #f4a7a5; /* Lighter red on hover */
+        }
+
+        .menu-item.active {
+            background-color: #d85d5b; /* Darker red for active link */
+        }
+
+        /* Main Content */
+        .container {
+            display: flex;
+            margin-left: 260px;
+            width: 100%;
+            transition: margin-left 0.3s ease; /* Smooth content shift */
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* Header */
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff5e5b;
+            margin-bottom: 20px;
+        }
+
+        /* Toggle Button */
+        .menu-toggle {
+            display: none; /* Hidden by default on desktop */
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #ff5e5b;
+            padding: 10px;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+                transform: translateX(-100%); /* Hidden by default on mobile */
+            }
+
+            .sidebar.active {
+                transform: translateX(0); /* Show when active */
+            }
+
+            .container {
+                margin-left: 0; /* No margin when sidebar is hidden */
+            }
+
+            .menu-toggle {
+                display: block; /* Show toggle button on mobile */
+            }
+
+            .content {
+                padding: 60px 15px 15px; /* Adjust padding for toggle button */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                max-width: 260px; /* Cap width on very small screens */
+            }
+
+            .menu-item {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 50px 10px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" aria-label="Toggle Sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="container">
+        <nav class="sidebar">
+            <a href="/home" class="menu-item">Home</a>
+            <a href="/myaccount" class="menu-item">Dashboard</a>
+            <a href="/orders" class="menu-item">Orders</a>
+            <a href="/wallet" class="menu-item">Wallet</a>
+            <a href="/referal" class="menu-item">Referal</a>
+            <a href="/getAddress" class="menu-item">My Address</a>
+        </nav>
+    </div>
+
+    <!-- Font Awesome for hamburger icon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            toggleButton.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggleButton.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

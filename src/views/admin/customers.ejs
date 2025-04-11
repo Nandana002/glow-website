@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            /* Adjust based on your sidebar width */
+            --navbar-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-navbar {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #00ffbb;
+            box-shadow: 0 2px 15px rgba(0, 255, 187, 0.2);
+            padding: clamp(8px, 2vw, 12px) clamp(10px, 3vw, 20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: var(--navbar-height);
+        }
+
+        .navbar-content {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            color: #00ffbb;
+            font-size: clamp(1.2rem, 3vw, 1.4rem);
+            font-weight: bold;
+            text-decoration: none;
+            text-shadow: 0 0 10px rgba(0, 255, 187, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn {
+            background: linear-gradient(to right, #ff00cc, #bd00ff);
+            padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 16px);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .main-content {
+            padding: clamp(15px, 3vw, 30px) clamp(10px, 2vw, 20px);
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: calc(100vh - var(--navbar-height));
+            transition: all 0.3s ease;
+            margin-top: 60px;
+        }
+
+        h2 {
+            color: #00ffbb;
+            text-align: center;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            text-shadow: 0 0 10px rgba(0, 255, 187, 0.4);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            animation: header-glow 3s infinite;
+        }
+
+        .input-group {
+            max-width: 600px;
+            margin: 0 auto clamp(15px, 3vw, 25px);
+            display: flex;
+            gap: 10px;
+        }
+
+        #searchInput {
+            background-color: #252525;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            padding: clamp(8px, 2vw, 10px) 15px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .input-group .btn {
+            padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
+            white-space: nowrap;
+        }
+
+        .table-container {
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 187, 0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .table thead th {
+            padding: clamp(8px, 2vw, 12px) 15px;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+        }
+
+        .table td {
+            padding: clamp(8px, 2vw, 12px) 15px;
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
+        }
+
+        .btn-sm {
+            padding: clamp(4px, 1vw, 5px) clamp(8px, 2vw, 12px);
+            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+        }
+
+        .pagination-container {
+            margin-top: clamp(15px, 3vw, 20px);
+            padding: 0 10px;
+        }
+
+        .pagination {
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .page-link {
+            padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 12px);
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .table {
+                min-width: 100%;
+                display: block;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tbody,
+            .table tr,
+            .table td {
+                display: block;
+                width: 100%;
+            }
+
+            .table tr {
+                margin-bottom: 15px;
+                background: #1e1e1e;
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+
+            .table td {
+                border-top: none;
+                padding: 10px 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #00ffbb;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                flex: 0 0 40%;
+                margin-right: 10px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            #searchInput,
+            .input-group .btn {
+                width: 100%;
+                border-radius: 4px;
+            }
+
+            .navbar-content {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-navbar {
+                padding: 8px 10px;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+
+            .table td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+
+            .table td:before {
+                flex: 0 0 35%;
+            }
+
+            .btn-sm {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .pagination {
+                gap: 3px;
+            }
+
+            .page-link {
+                padding: 5px 8px;
+            }
+        }
+
+        /* Rest of your existing styles */
+        .navbar-brand:hover {
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0, 255, 187, 0.8);
+        }
+
+        .logout-btn:hover {
+            box-shadow: 0 0 15px rgba(189, 0, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        #searchInput:focus {
+            background-color: #333;
+            border-color: #00ffbb;
+            box-shadow: 0 0 8px rgba(0, 255, 187, 0.5);
+        }
+
+        .input-group .btn {
+            background: linear-gradient(to right, #00ffbb, #00ccff);
+        }
+
+        .input-group .btn:hover {
+            background: linear-gradient(to right, #00ccff, #00ffbb);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.6);
+        }
+
+        .table-dark {
+            background-color: #1a1a1a;
+        }
+
+        .table thead th {
+            background-color: #222;
+            border-bottom: 2px solid #00ffbb;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #1e1e1e;
+        }
+
+        .table tbody tr:hover {
+            background-color: #252525;
+            box-shadow: 0 0 10px rgba(0, 255, 187, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(to right, #ff3366, #ff5555);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(to right, #ff5555, #ff3366);
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #00ffbb, #00ddaa);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(to right, #00ddaa, #00ffbb);
+            box-shadow: 0 0 10px rgba(0, 255, 187, 0.6);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(to right, #00ffbb, #00ccff);
+        }
+
+        .page-item:not(.active) .page-link:hover {
+            background-color: #333;
+            border-color: #00ffbb;
+            box-shadow: 0 0 8px rgba(0, 255, 187, 0.4);
+            color: #fff;
+        }
+
+        @keyframes neon-pulse {
+            0% {
+                box-shadow: 0 0 5px rgba(0, 255, 187, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(0, 255, 187, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(0, 255, 187, 0.5);
+            }
+        }
+
+        .btn-success:focus {
+            animation: neon-pulse 1.5s infinite;
+        }
+
+        @keyframes header-glow {
+            0% {
+                text-shadow: 0 0 5px rgba(0, 255, 187, 0.4);
+            }
+
+            50% {
+                text-shadow: 0 0 15px rgba(0, 255, 187, 0.7);
+            }
+
+            100% {
+                text-shadow: 0 0 5px rgba(0, 255, 187, 0.4);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("../../views/partials/admin/headers") %>
+        <%- include("../../views/partials/admin/slidebar") %>
+            <!-- Navbar -->
+            </nav>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <h2 class="text-center mb-4">Customers List</h2>
+
+                <!-- Search Bar -->
+                <form method="GET" action="/admin/customers">
+                    <div class="input-group">
+                        <input type="text" placeholder="Search products" name="search" id="searchInput"
+                            value="<%=search%>">
+                        <button class="btn" type="submit">Search</button>
+                    </div>
+                </form>
+                <!-- Table Container -->
+                <div class="table-container">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% userData.forEach((user)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= user.name %>
+                                    </td>
+                                    <td>
+                                        <%= user.email %>
+                                    </td>
+                                    <td>
+                                        <%= user.phone %>
+                                    </td>
+                                    <td>
+                                        <% if (!user.isBlocked) { %>
+                                            <a href="/admin/blockUser?id=<%= user._id %>"
+                                                class="btn btn-danger btn-sm">Block</a>
+                                            <% } else { %>
+                                                <a href="/admin/unblockUser?id=<%= user._id %>"
+                                                    class="btn btn-success btn-sm">Unblock</a>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation" class="pagination-container">
+                        <ul class="pagination justify-content-center">
+                            <% for (let i=1; i <=totalpages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- <script>
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll("tbody tr");
+                
+                rows.forEach(row => {
+                    let name = row.cells[0].textContent.toLowerCase();
+                    let email = row.cells[1].textContent.toLowerCase();
+                    let phone = row.cells[2].textContent.toLowerCase();
+                    
+                    if (name.includes(filter) || email.includes(filter) || phone.includes(filter)) {
+                        row.style.display = ""; // Show the row
+                    } else {
+                        row.style.display = "none"; // Hide the row
+                    }
+                });
+            });
+        </script> -->
+
+            <!-- Pagination -->
+
+
+
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create An Account - GlowGazey</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #FF79B0;
+            --secondary-color: #FFF0F5;
+            --accent-color: #FFB6C1;
+            --text-color: #4A4A4A;
+        }
+
+        body {
+            background-color: #FFF9FA;
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            padding: 15px 0;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(255, 121, 176, 0.1);
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+            padding: 60px 0;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/api/placeholder/400/320') center/cover;
+            opacity: 0.1;
+        }
+
+        .banner-title {
+            font-size: 36px;
+            color: var(--primary-color);
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(255, 121, 176, 0.2);
+        }
+
+        .breadcrumb {
+            justify-content: center;
+            background: transparent;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .registration-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px;
+            border: none;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 8px 32px rgba(255, 121, 176, 0.1);
+        }
+
+        .form-label {
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #FFE4E1;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(255, 121, 176, 0.25);
+        }
+
+        .create-account-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #FF5C8D 100%);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .create-account-btn:hover {
+            background: linear-gradient(135deg, #FF5C8D 0%, var(--primary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 121, 176, 0.3);
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFE4E1;
+            border-radius: 10px;
+            background-color: white;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .google-btn:hover {
+            border-color: var(--primary-color);
+            background-color: var(--secondary-color);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #FFB6C1, transparent);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text-color);
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: #FF4466;
+            font-size: 0.75rem;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner-border {
+            color: var(--primary-color) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Rest of your HTML remains the same -->
+    <!-- Your existing HTML content here -->
+</body>
+</html>
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div id="loader" class="loader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+        <div class="container">
+            <h1 class="banner-title">Create An Account</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Create an account</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="container mb-5">
+        <div class="registration-form">
+            <div class="login-link mb-4">
+                Already have an account? <a href="/login">Log in instead</a>
+            </div>
+            
+            <form id="signForm" method="post" action="/signup">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="name" id="Username" placeholder="Enter Name">
+                    <div id="error1" class="error-message"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter email">
+                    <div id="error2" class="error-message"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" name="phone" id="phone" placeholder="Enter Phone Number">
+                    <div id="error3" class="error-message"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
+                        <button type="button" class="show-password"><i class="bi bi-eye-slash"></i></button>
+                        <div id="error4" class="error-message"></div>
+                    </div>
+                    <small class="text-muted">Password must be at least 8 characters with letters, numbers, and special characters</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Confirm password</label>
+                    <div class="password-field">
+                        <input type="password" class="form-control" name="CPassword" id="confirmPassword" placeholder="Enter confirm password">
+                        <button type="button" class="show-password"><i class="bi bi-eye-slash"></i></button>
+                        <div id="error5" class="error-message"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Referral Code</label>
+                    <input type="text" class="form-control" name="referralCode" id="referralCode" placeholder="Referral Code (Optional)">
+                    <div id="referralError" class="error-message"></div>
+                </div>
+                <!-- <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="savePassword">
+                    <label class="form-check-label" for="savePassword">Save the password</label>
+                </div> -->
+                
+                <button type="submit" class="create-account-btn">Create an account</button>
+            </form>
+            
+            <div class="divider">or continue with</div>
+            
+            <a href="/auth/google" class="google-btn">
+                <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/icons/google.svg" alt="Google" width="20">
+                Google
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function referralCodeValidation() {
+    const referralCode = document.getElementById('referralCode').value;
+    const referralError = document.getElementById('referralError');
+    
+    if (referralCode && !/^REF[A-Z0-9]{6}$/.test(referralCode)) {
+        referralError.style.display = "block";
+        referralError.innerHTML = "Invalid referral code format";
+        return false;
+    }
+    referralError.style.display = "none";
+    referralError.innerHTML = "";
+    return true;
+}
+      
+
+
+
+   // Get form elements
+const form = document.getElementById('signForm'); // Fixed typo in ID
+const name = document.getElementById('Username');
+const phone = document.getElementById('phone');
+const email = document.getElementById('email');
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('confirmPassword');
+const error1 = document.getElementById('error1');
+const error2 = document.getElementById('error2');
+const error3 = document.getElementById('error3');
+const error4 = document.getElementById('error4');
+const error5 = document.getElementById('error5');
+
+// Show/Hide Password Functionality
+const showPasswordButtons = document.querySelectorAll('.show-password');
+showPasswordButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const icon = this.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        }
+    });
+});
+
+// Validation Functions
+function validateUsername() {
+    const usernameVal = name.value.trim();
+    const usernamePattern = /^[A-Za-z\s]+$/;
+    
+    if (usernameVal === "") {
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter a valid username";
+        return false;
+    } else if (!usernamePattern.test(usernameVal)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Username can only contain alphabets and spaces";
+        return false;
+    }
+    error1.style.display = "none";
+    error1.innerHTML = "";
+    return true;
+}
+
+function validatePhone() {
+    const phoneVal = phone.value.trim();
+    const phonePattern = /^\d{10}$/;
+    
+    if (!phonePattern.test(phoneVal)) {
+        error2.style.display = "block";
+        error2.innerHTML = "Please enter a valid 10-digit phone number";
+        return false;
+    }
+    error2.style.display = "none";
+    error2.innerHTML = "";
+    return true;
+}
+
+function validateEmail() {
+    const emailVal = email.value.trim();
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailPattern.test(emailVal)) {
+        error3.style.display = "block";
+        error3.innerHTML = "Please enter a valid email address";
+        return false;
+    }
+    error3.style.display = "none";
+    error3.innerHTML = "";
+    return true;
+}
+
+function validatePassword() {
+    const passwordVal = password.value;
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    
+    if (!passwordPattern.test(passwordVal)) {
+        error4.style.display = "block";
+        error4.innerHTML = "Password must be at least 8 characters with letters, numbers, and special characters";
+        return false;
+    }
+    error4.style.display = "none";
+    error4.innerHTML = "";
+    return true;
+}
+
+function validateConfirmPassword() {
+    const confirmPasswordVal = confirmPassword.value;
+    const passwordVal = password.value;
+    
+    if (confirmPasswordVal !== passwordVal) {
+        error5.style.display = "block";
+        error5.innerHTML = "Passwords do not match";
+        return false;
+    }
+    error5.style.display = "none";
+    error5.innerHTML = "";
+    return true;
+}
+
+// Form submission handler
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const isUsernameValid = validateUsername();
+    const isPhoneValid = validatePhone();
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    const isConfirmPasswordValid = validateConfirmPassword();
+    
+    if (isUsernameValid && isPhoneValid && isEmailValid && 
+        isPasswordValid && isConfirmPasswordValid) {
+        // Show loader
+        document.getElementById('loader').style.display = 'flex';
+        // Submit the form
+        this.submit();
+    }
+});
+
+// Real-time validation
+name.addEventListener('input', validateUsername);
+phone.addEventListener('input', validatePhone);
+email.addEventListener('input', validateEmail);
+password.addEventListener('input', validatePassword);
+confirmPassword.addEventListener('input', validateConfirmPassword);
+</script>
+</body>
+</html>

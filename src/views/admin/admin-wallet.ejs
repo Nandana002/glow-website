@@ -1,0 +1,494 @@
+<%- include("../../views/partials/admin/headers") %>
+<%- include("../../views/partials/admin/slidebar") %>
+
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+</head>
+
+<style>
+:root {
+        --dark-bg: #0a0a0a;
+        --dark-card: #1a1a1a;
+        --dark-input: #252525;
+        --text-light: #e0e0e0;
+        --text-secondary: #a0a0a0;
+        --neon-primary: #00ffd5;
+        --neon-secondary: #ff00e1;
+        --neon-success: #00ff73;
+        --neon-warning: #ffeb3b;
+        --neon-danger: #ff3366;
+        --neon-info: #00b0ff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--text-light);
+        font-family: 'Roboto', sans-serif;
+        min-height: 100vh;
+        line-height: 1.6;
+    }
+
+    .content-main {
+        padding: 1rem;
+        transition: margin-left 0.3s ease;
+        margin-left:260px;
+        margin-top:75px
+    }
+
+    .content-header {
+        margin-bottom: 2rem;
+    }
+
+    .content-title {
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-align: center;
+        animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 5px rgba(0, 255, 213, 0.5); }
+        to { text-shadow: 0 0 15px rgba(0, 255, 213, 0.8); }
+    }
+
+    .card {
+        background: var(--dark-card);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 255, 213, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px rgba(0, 255, 213, 0.2);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, rgba(0, 255, 213, 0.1), rgba(255, 0, 225, 0.1));
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+        color: var(--neon-primary);
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        text-align: center;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        background: var(--dark-card);
+        border-radius: 15px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 20px rgba(0, 255, 213, 0.1);
+    }
+
+    .filter-title {
+        color: var(--neon-primary);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-form {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-control {
+        background: var(--dark-input);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem;
+        color: var(--text-light);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+    }
+
+    .filter-button {
+        background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary));
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        color: #000;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 255, 213, 0.5);
+    }
+
+    /* Table Styles */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background: rgba(0, 0, 0, 0.3);
+        color: var(--neon-primary);
+        padding: 1rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-striped tbody tr:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-hover tbody tr:hover {
+        background: rgba(0, 255, 213, 0.1);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        box-shadow: 0 0 10px currentColor;
+    }
+
+    .badge-deposit { background: var(--neon-success); color: #000; }
+    .badge-refund { background: var(--neon-info); color: #000; }
+    .badge-purchase { background: var(--neon-danger); color: #000; }
+    .badge-wallet-to-wallet { background: var(--neon-primary); color: #000; }
+    .badge-manual { background: var(--neon-warning); color: #000; }
+
+    .view-button {
+        background: var(--neon-primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        color: #000;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .view-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px var(--neon-primary);
+    }
+
+    /* Pagination */
+    .pagination-container {
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .page-item .page-link {
+        background: var(--dark-card);
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .page-item.active .page-link {
+        background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary));
+        color: #000;
+    }
+
+    .page-link:hover:not(.active) {
+        background: rgba(0, 255, 213, 0.2);
+    }
+
+    .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Items per page */
+    .items-per-page {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .items-select {
+        background: var(--dark-input);
+        color: var(--text-light);
+        border: none;
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .content-main {
+            padding: 0.5rem;
+        }
+
+        .table th, .table td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .filter-form {
+            grid-template-columns: 1fr;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .table {
+            display: block;
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+
+        .view-button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Wallet Transactions</h2>
+    </div>
+
+    <div class="filter-section">
+        <h5 class="filter-title">Filter Transactions</h5>
+        <form class="filter-form" action="/admin/wallets" method="GET">
+            <div class="form-group">
+                <label for="search">Search User</label>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Name or Email" value="<%= search || '' %>">
+            </div>
+            <!-- <div class="form-group">
+                <label for="transactionType">Transaction Type</label>
+                <select class="form-control" id="transactionType" name="transactionType">
+                    <option value="">All Types</option>
+                    <option value="deposit" <%= transactionType === 'deposit' ? 'selected' : '' %>>Deposit</option>
+                    <option value="purchase" <%= transactionType === 'purchase' ? 'selected' : '' %>>Purchase</option>
+                    <option value="refund" <%= transactionType === 'refund' ? 'selected' : '' %>>Refund</option>
+                    <option value="wallet-to-wallet" <%= transactionType === 'wallet-to-wallet' ? 'selected' : '' %>>Wallet to Wallet</option>
+                    <option value="manual" <%= transactionType === 'manual' ? 'selected' : '' %>>Manual</option>
+                </select>
+            </div> -->
+            <div class="form-group">
+                <label for="minBalance">Min Balance</label>
+                <input type="number" class="form-control" id="minBalance" name="minBalance" placeholder="Min ₹" value="<%= minBalance || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="maxBalance">Max Balance</label>
+                <input type="number" class="form-control" id="maxBalance" name="maxBalance" placeholder="Max ₹" value="<%= maxBalance || '' %>">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="filter-button">Apply Filters</button>
+            </div>
+        </form>
+        <div class="items-per-page">
+            <span class="items-label">Items per page:</span>
+            <select class="items-select" id="transactionLimitSelect" onchange="changeTransactionLimit()">
+                <option value="10" <%= transactionLimit == 10 ? 'selected' : '' %>>10</option>
+                <option value="25" <%= transactionLimit == 25 ? 'selected' : '' %>>25</option>
+                <option value="50" <%= transactionLimit == 50 ? 'selected' : '' %>>50</option>
+                <option value="100" <%= transactionLimit == 100 ? 'selected' : '' %>>100</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Transactions</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Transaction Date</th>
+                            <th>User</th>
+                            <th>Transaction Type</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (recentTransactions && recentTransactions.length > 0) { %>
+                            <% recentTransactions.forEach(transaction => { %>
+                                <% const wallet = wallets.find(w => w._id.toString() === transaction.walletId.toString()); %>
+                                <% if (wallet && wallet.userId) { %>
+                                    <tr>
+                                        <td><%= wallet.userId._id %></td>
+                                        <td><%= new Date(transaction.transactionDate).toLocaleString() %></td>
+                                        <td><%= wallet.userId.name %></td>
+                                        <td>
+                                            <span class="badge badge-<%= transaction.transactionType %>">
+                                                <%= transaction.transactionType %>
+                                            </span>
+                                        </td>
+                                        <td>₹<%= transaction.transactionAmount.toLocaleString('en-IN') %></td>
+                                        <td>
+                                            <a href="/admin/wallets/<%= wallet.userId._id %>">
+                                                <button class="view-button">View Details</button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">No transactions found</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalTransactionPages > 1) { %>
+        <div class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item <%= transactionPage == 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= page %>&limit=<%= limit %>&transactionPage=<%= transactionPage-1 %>&transactionLimit=<%= transactionLimit %>&search=<%= search || '' %>&minBalance=<%= minBalance || '' %>&maxBalance=<%= maxBalance || '' %>&transactionType=<%= transactionType || '' %>">«</a>
+                </li>
+                
+                <% 
+                let startPage = Math.max(1, transactionPage - 2);
+                let endPage = Math.min(totalTransactionPages, startPage + 4);
+                
+                if (endPage - startPage < 4) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) { %>
+                    <li class="page-item <%= i == transactionPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= page %>&limit=<%= limit %>&transactionPage=<%= i %>&transactionLimit=<%= transactionLimit %>&search=<%= search || '' %>&minBalance=<%= minBalance || '' %>&maxBalance=<%= maxBalance || '' %>&transactionType=<%= transactionType || '' %>"><%= i %></a>
+                    </li>
+                <% } %>
+                
+                <li class="page-item <%= transactionPage == totalTransactionPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= page %>&limit=<%= limit %>&transactionPage=<%= transactionPage+1 %>&transactionLimit=<%= transactionLimit %>&search=<%= search || '' %>&minBalance=<%= minBalance || '' %>&maxBalance=<%= maxBalance || '' %>&transactionType=<%= transactionType || '' %>">»</a>
+                </li>
+            </ul>
+        </div>
+        <div class="text-center text-secondary">
+            Showing <%= Math.min((transactionPage - 1) * transactionLimit + 1, totalTransactions) %> to <%= Math.min(transactionPage * transactionLimit, totalTransactions) %> of <%= totalTransactions %> transactions
+        </div>
+    <% } %>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const contentMain = document.querySelector('.content-main');
+
+        sidebar.classList.toggle('active');
+
+        if (sidebar.classList.contains('active')) {
+            contentMain.style.marginLeft = window.innerWidth <= 768 ? '0' : '0';
+        } else {
+            contentMain.style.marginLeft = window.innerWidth <= 768 ? '0' : '220px';
+        }
+
+        if (sidebar.classList.contains('active')) {
+            document.addEventListener('click', closeSidebarOutside);
+        } else {
+            document.removeEventListener('click', closeSidebarOutside);
+        }
+    }
+
+    function closeSidebarOutside(event) {
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.querySelector('.menu-toggle');
+        if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+            sidebar.classList.remove('active');
+            document.querySelector('.content-main').style.marginLeft = window.innerWidth <= 768 ? '0' : '220px';
+            document.removeEventListener('click', closeSidebarOutside);
+        }
+    }
+
+    // Change transaction limit per page
+    function changeTransactionLimit() {
+        const newLimit = document.getElementById('transactionLimitSelect').value;
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('transactionLimit', newLimit);
+        currentUrl.searchParams.set('transactionPage', 1); 
+        window.location.href = currentUrl.toString();
+    }
+
+    window.addEventListener('load', function() {
+        const sidebar = document.getElementById('sidebar');
+        const contentMain = document.querySelector('.content-main');
+        const menuToggle = document.querySelector('.menu-toggle');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (window.innerWidth <= 768) {
+            contentMain.style.marginLeft = '0';
+        }
+    });
+
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const contentMain = document.querySelector('.content-main');
+
+        if (window.innerWidth <= 768) {
+            contentMain.style.marginLeft = '0';
+        } else {
+            contentMain.style.marginLeft = sidebar.classList.contains('active') ? '0' : '220px';
+        }
+    });
+</script>

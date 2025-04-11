@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orders List</title>
+  <style>
+:root {
+      /* Existing color variables */
+      --dark-bg: #121212;
+      --dark-surface: #1E1E1E;
+      --dark-border: #333333;
+      --dark-text: #E0E0E0;
+      --dark-text-secondary: #A0A0A0;
+      --dark-hover: #2A2A2A;
+      --accent-primary: #3699FF;
+      --accent-hover: #2684FF;
+      --status-pending: #FFA500;
+      --status-shipped: #00BCD4;
+      --status-delivered: #4CAF50;
+      --status-canceled: #FF5252;
+      --status-returned: #9C27B0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-main {
+      padding: clamp(1rem, 4vw, 2rem);
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 81%;
+      flex: 1;
+      margin-left: 269px;
+      margin-top: -40px;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(1.5rem, 3vw, 2rem);
+      gap: 1rem;
+    }
+
+    .content-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+    }
+
+    .card {
+      background-color: var(--dark-surface);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table thead th {
+      background-color: var(--dark-surface);
+      padding: clamp(0.75rem, 2vw, 1.25rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+      color: var(--dark-text);
+      border-bottom: 2px solid var(--dark-border);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      text-align: left;
+    }
+
+    .table tbody td {
+      padding: clamp(0.75rem, 2vw, 1rem);
+      vertical-align: middle;
+      border-bottom: 1px solid var(--dark-border);
+      color: var(--dark-text-secondary);
+      font-size: clamp(0.8rem, 1.8vw, 1rem);
+    }
+
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tbody tr:hover {
+      background-color: var(--dark-hover);
+      transition: background-color 0.2s ease;
+    }
+
+    .statusSelect {
+      background-color: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 150px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23E0E0E0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 0.75rem) center;
+    }
+
+    .view-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .view-link:hover {
+      background-color: var(--accent-hover);
+      color: white;
+    }
+
+    .pagination-container {
+      margin: clamp(1.5rem, 3vw, 2rem) 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+      padding: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .page-link {
+      background-color: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+    }
+
+    .page-link:hover {
+      background-color: var(--dark-hover);
+    }
+
+    .page-item.active .page-link {
+      background-color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+    }
+
+    .text-center {
+      padding: 2rem 1rem;
+      color: var(--dark-text-secondary);
+      font-style: italic;
+      text-align: center;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+    }
+
+    .product-card-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--dark-border);
+      transition: transform 0.3s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .content-main {
+        padding: 1rem;
+      }
+
+      .table thead th,
+      .table tbody td {
+        padding: 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .table thead {
+        display: none;
+      }
+
+      .table tbody,
+      .table tr,
+      .table td {
+        display: block;
+        width: 100%;
+      }
+
+      .table tr {
+        margin-bottom: 1rem;
+        background-color: var(--dark-surface);
+        border-radius: 8px;
+        padding: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .table td {
+        border-bottom: none;
+        padding: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--dark-text);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        margin-right: 1rem;
+        flex: 0 0 40%;
+      }
+
+      .product-card-img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .statusSelect {
+        max-width: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content-main {
+        padding: 0.5rem;
+      }
+
+      .content-title {
+        font-size: 1.25rem;
+      }
+
+      .table td {
+        padding: 0.5rem;
+      }
+
+      .table td:before {
+        flex: 0 0 35%;
+      }
+
+      .statusSelect {
+        max-width: 100px;
+        padding: 0.4rem 0.8rem;
+      }
+
+      .view-link {
+        padding: 0.4rem 0.8rem;
+      }
+
+      .pagination {
+        gap: 0.3rem;
+      }
+
+      .page-link {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <%- include("../../views/partials/admin/headers") %>
+  <%- include("../../views/partials/admin/slidebar") %>
+
+
+  <section class="content-main">
+    <div class="content-header">
+      <h2 class="content-title">Orders List</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Order ID</th>
+                <th>shade</th>
+                <th>User</th>
+                <th>Total Price</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (orders && orders.length > 0) { %>
+                <% orders.forEach((order) => { %>
+                  <% order.orderedItems.forEach((item) => { %>
+                    <tr>
+                      <td>
+                        <div class="product-image-wrapper">
+                          <img src="/uploads/re-image/<%= item.product?.productImage?.[0] || 'default.jpg' %>"
+                            class="product-card-img" alt="Product">
+                          
+                        </div>
+                      </td>
+                      <td><%= item.product?.productName %></td>
+                      <td><%= order.orderId %></td>
+                      <td><%= item.shade %></td>
+                      <td><%= order.productName %></td>
+                      <td>₹<%= order.finalAmount || order.totalPrice %></td>
+                      <td><%= order.paymentMethod %></td>
+                      <td>
+                        <select name="status" class="statusSelect" data-order-id="<%= order.orderId %>">
+                          <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                          <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                          <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                          <option value="Canceled" <%= order.status === 'Canceled' ? 'selected' : '' %>>Canceled</option>
+                          <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                        </select>
+                      </td>
+                      <td>
+                        <a href="/admin/view-orders/<%= order._id %>" class="view-link">View Details</a>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="8" class="text-center">No orders found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination-container">
+      <ul class="pagination">
+        <% if (hasPrevPage) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+          </li>
+        <% } %>
+    
+        <% if (currentPage > 2) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=1">1</a>
+          </li>
+          <% if (currentPage > 3) { %>
+            <li class="page-item">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+        <% } %>
+    
+        <% for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) { %>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+          </li>
+        <% } %>
+    
+        <% if (currentPage < totalPages - 1) { %>
+          <% if (currentPage < totalPages - 2) { %>
+            <li class="page-item">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+          </li>
+        <% } %>
+    
+        <% if (hasNextPage) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll(".statusSelect").forEach((select) => {
+      select.dataset.currentStatus = select.value;
+      
+      select.addEventListener("change", async (event) => {
+        const newStatus = event.target.value;
+        const orderId = event.target.dataset.orderId;
+        const currentStatus = event.target.dataset.currentStatus;
+        
+        const isValidTransition = (() => {
+          if (currentStatus === "Returned" && newStatus === "Canceled") return false;
+          if (currentStatus === "Shipped" && newStatus === "Pending") return false;
+          if (currentStatus === "Delivered" && newStatus === "Shipped") return false;
+          if (currentStatus === "Canceled" && newStatus === "Shipped") return false;
+          return true;
+        })();
+
+        if (!isValidTransition) {
+          alert(`Cannot change order status from "${currentStatus}" to "${newStatus}".`);
+          event.target.value = currentStatus;
+          return;
+        }
+        
+        try {
+          const response = await fetch("/admin/order-status", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus, orderId }),
+          });
+          
+          if (!response.ok) throw new Error('Failed to update status');
+          
+          event.target.dataset.currentStatus = newStatus;
+          
+          const statusColor = getStatusColor(newStatus);
+          const feedbackElement = document.createElement("span");
+          feedbackElement.textContent = "✓ Updated";
+          feedbackElement.style.color = statusColor;
+          feedbackElement.style.marginLeft = "10px";
+          feedbackElement.style.fontSize = "0.8rem";
+          feedbackElement.style.fontWeight = "bold";
+          
+          const existingFeedback = select.parentNode.querySelector(".status-feedback");
+          if (existingFeedback) existingFeedback.remove();
+          
+          feedbackElement.classList.add("status-feedback");
+          select.parentNode.appendChild(feedbackElement);
+          
+          setTimeout(() => feedbackElement.remove(), 3000);
+          
+        } catch (error) {
+          console.error("Error updating status:", error);
+          event.target.value = currentStatus;
+        }
+      });
+    });
+
+    function getStatusColor(status) {
+      const colors = {
+        "Pending": "var(--status-pending)",
+        "Shipped": "var(--status-shipped)",
+        "Delivered": "var(--status-delivered)",
+        "Canceled": "var(--status-canceled)",
+        "Returned": "var(--status-returned)"
+      };
+      return colors[status] || "var(--dark-text)";
+    }
+  </script>
+</body>
+</html>

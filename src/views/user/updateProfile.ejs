@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+
+</head>
+
+<%- include("../../views/partials/user/navbar") %>
+
+<%- include("../../views/partials/user/profileSide.ejs") %>
+      <!-- Loader -->
+      <div id="loader" class="loader-container" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+        <main class="main-content">
+            <section class="profile-section">
+                <h1>Update Profile</h1>
+                <form id="updateProfile" onsubmit="updateProfile(event)">
+                    <div class="form-group">
+                        <input type="password" placeholder="Password">
+                        <div id="error1" class="error-message"></div>
+                        <input type="hidden" name="email" value="<%=userData.email%>">
+                    </div>
+                    <button type="submit" class="save-btn">Save</button>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/javascript/updateProfile.js"></script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>FloraGems Cosmetics</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Cosmetics, Beauty Products, Skincare" name="keywords">
+    <meta content="Premium beauty products and cosmetics" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    
+    <style>
+        /* Cosmetic-themed styles */
+        :root {
+            --soft-pink: #ffe4e6;        /* Light pink background */
+            --pastel-pink: #ffcad4;     /* Subtle pink accent */
+            --lavender: #d4c4fb;        /* Soft lavender for highlights */
+            --beige: #f5e8c7;           /* Warm beige for cards */
+            --white: #ffffff;           /* Pure white for contrast */
+            --text-dark: #4a2c2a;       /* Deep brown for text */
+            --text-light: #7b5e5a;      /* Soft brown for secondary text */
+            --shadow: rgba(255, 202, 212, 0.2); /* Subtle pink shadow */
+        }
+
+        body {
+            background-color: var(--soft-pink);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Page Header */
+        .bg-header {
+            background: linear-gradient(135deg, var(--pastel-pink), var(--lavender));
+            color: var(--white);
+            text-align: center;
+            padding: 60px 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .bg-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .bg-header p {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-top: 10px;
+        }
+
+        /* Contact Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .text-center.mb-5 h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .text-center.mb-5 p {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        /* Contact Cards */
+        .contact-card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 196, 251, 0.2);
+            color: var(--lavender);
+            border-radius: 50%;
+            font-size: 24px;
+            margin: 0 auto 15px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-icon:hover {
+            background: var(--lavender);
+            color: var(--white);
+        }
+
+        .contact-card h5 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .contact-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            padding: 30px;
+        }
+
+        .contact-form h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid var(--beige);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            background: var(--white);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-control:focus {
+            border-color: var(--lavender);
+            box-shadow: 0 0 0 0.2rem rgba(212, 196, 251, 0.25);
+            outline: none;
+        }
+
+        textarea.form-control {
+            height: 150px;
+            resize: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--pastel-pink), var(--lavender));
+            color: var(--white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 3px 10px var(--shadow);
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, var(--lavender), var(--pastel-pink));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        /* Contact Info */
+        .contact-info {
+            background: linear-gradient(135deg, var(--pastel-pink), var(--lavender));
+            color: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .contact-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .contact-info p {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .info-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            color: var(--white);
+        }
+
+        .social-links a {
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--white);
+            color: var(--lavender);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .contact-info, .contact-form {
+                width: 100%;
+                padding: 20px;
+            }
+
+            .bg-header h1 {
+                font-size: 2rem;
+            }
+
+            .bg-header p {
+                font-size: 1rem;
+            }
+
+            .contact-card {
+                padding: 15px;
+            }
+
+            .contact-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .contact-form h4, .contact-info h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .contact-card h5 {
+                font-size: 1rem;
+            }
+
+            .contact-card p {
+                font-size: 0.8rem;
+            }
+
+            .btn-submit {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* SweetAlert2 Customization */
+        .swal2-popup {
+            font-family: 'Poppins', sans-serif;
+            border-radius: 15px;
+        }
+
+        .swal2-title {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .swal2-confirm {
+            background-color: var(--pastel-pink) !important;
+            border-radius: 20px !important;
+            padding: 10px 25px !important;
+        }
+
+        .swal2-icon.swal2-success {
+            border-color: var(--lavender);
+        }
+
+        .swal2-icon.swal2-success [class^=swal2-success-line] {
+            background-color: var(--lavender);
+        }
+
+        .swal2-icon.swal2-success .swal2-success-ring {
+            border-color: rgba(212, 196, 251, 0.3);
+        }
+        .btn-primary {
+    background-color: #ca97ce; /* Primary Blue */
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff; /* White text */
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #e292e2; /* Darker shade on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+    background-color: #dda1dc; /* Even darker on click */
+    transform: scale(0.98);
+}
+
+.btn-block {
+    width: 100%; /* Full width */
+}
+
+.py-3 {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+/* Map Container Styling */
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    box-shadow: 0 5px 25px var(--shadow);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Map Section Heading */
+.map-section-heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.map-section-heading h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.map-section-heading p {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+/* Map Container Overlay for Hover Effect */
+.map-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 202, 212, 0.2), rgba(212, 196, 251, 0.2));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.map-container:hover::before {
+    opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .map-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .map-container {
+        height: 250px;
+    }
+    
+    .map-section-heading h3 {
+        font-size: 1.5rem;
+    }
+}
+
+    </style>
+</head>
+
+<%- include("../partials/user/navbar.ejs") %>
+<body>
+    
+<!--             
+            <!-- Middle section - Moving banner -->
+            <!-- <div class="col-lg-4 col-6 text-center">
+                <div class="moving-banner d-flex justify-content-center align-items-center h-100">
+                    <span>Free Shipping on Products Above ₹1000</span>
+                </div> -->
+            <!-- </div> --> 
+
+<!-- Page Header Start -->
+<div class="container-fluid bg-header text-white text-center py-5">
+    <h1 class="display-4 font-weight-bold">Connect With Us</h1>
+    <p class="lead">We're here to help you discover your perfect beauty routine</p>
+</div>
+<!-- Page Header End -->
+<section class="contact-section">
+    <div class="container">
+        <div class="d-none d-sm-block mb-5 pb-4">
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3913.923806548072!2d75.85867231479552!3d11.18173399206873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba659a7f11b2e2f%3A0x4b9e0f7e8b8e8e8e!2sRamanattukara%2C%20Kerala%2C%20India!5e0!3m2!1sen!2sus!4v1634567890123" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+<!-- Contact Section Start -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="font-weight-bold">Get In Touch</h2>
+        <p>Have questions about our products? Our beauty experts are ready to help!</p>
+    </div>
+    
+    <!-- Info Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="contact-card text-center">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">Visit Our Store</h5>
+                <p class="mb-0">123 Beauty Lane, glow City, Cosmetic Country</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="contact-card text-center">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">Email Us</h5>
+                <p class="mb-0">glow@gazey.com</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="contact-card text-center">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h5 class="font-weight-bold mb-2">Call Us</h5>
+                <p class="mb-0">+1 800 123 456</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Contact Form -->
+        <div class="col-lg-7 mb-5">
+            <div class="contact-card">
+                <h4 class="font-weight-bold mb-4">Send Us A Message</h4>
+                <form action="/contact" method="POST">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control" placeholder="Enter subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" class="form-control" rows="5" placeholder="Write your message here" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block py-3">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="col-lg-5">
+            <div class="contact-card h-100">
+                <h4 class="font-weight-bold mb-4">Beauty Consultation Hours</h4>
+                <p>Our beauty experts are available to answer your questions about skincare, makeup, and hair care products.</p>
+                
+                <div class="d-flex mb-3">
+                    <div class="mr-3">
+                        <i class="far fa-clock text-primary" style="font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-weight-bold">Operating Hours</h5>
+                        <p class="mb-0">Monday - Friday: 9:00 AM - 7:00 PM</p>
+                        <p class="mb-0">Saturday: 11:00 AM - 6:00 PM</p>
+                        <p>Sunday: 10:00 PM - 6:00 PM</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-3">
+                    <div class="mr-3">
+                        <i class="fas fa-users text-primary" style="font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-weight-bold">Beauty Consultations</h5>
+                        <p>Book a free 30-minute consultation with our beauty experts for personalized product recommendations.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="mr-3">
+                        <i class="fas fa-gift text-primary" style="font-size: 20px;"></i>
+                    </div>
+                    <div>
+                        <h5 class="font-weight-bold">First-Time Customer Gift</h5>
+                        <p>Mention "First Visit" in your message to receive a special welcome gift with your first purchase!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact Section End -->
+
+<!-- Footer Start -->
+
+<%- include("../partials/user/footer.ejs") %>
+                
+    
+<!-- Footer End -->
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.12/sweetalert2.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Contact Javascript File -->
+<script src="mail/jqBootstrapValidation.min.js"></script>
+<script src="mail/contact.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.12/sweetalert2.min.js"></script>
+<!-- Template Javascript -->
+<script>
+  $(document).ready(function() {
+    // Select the form by its action attribute since it doesn't have an ID
+    $('form[action="/contact"]').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            name: $('#name').val(),
+            email: $('#email').val(),
+            subject: $('#subject').val(),
+            message: $('#message').val()
+        };
+        
+        // Show loading state
+        Swal.fire({
+            title: 'Sending...',
+            text: 'Please wait while we send your message',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Send Ajax request
+        $.ajax({
+            url: '/contact',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Message Sent!',
+                    text: 'Thank you for contacting FloraGems Cosmetics. Our beauty experts will respond to your inquiry within 24 hours.',
+                    confirmButtonText: 'Great!',
+                    confirmButtonColor: '#ff8fbf'
+                });
+                // Reset the form
+                $('form[action="/contact"]')[0].reset();
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: xhr.responseJSON?.error || 'Something went wrong!',
+                    confirmButtonText: 'Try Again',
+                    confirmButtonColor: '#ff8fbf'
+                });
+            }
+        });
+    });
+});
+</script>
+</body>
+
+</html>

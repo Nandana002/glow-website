@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowGazey - Wallet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha3/css/bootstrap.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f7f8f9;
+            color: #333;
+            font-size: 16px;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff5e5b;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            color: #d6336c;
+        }
+
+        .navbar-nav {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .navbar-nav .nav-item {
+            margin: 0 15px;
+        }
+
+        .navbar-nav .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 10px 15px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ff5e5b;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            right: 0;
+            border-radius: 5px;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .navbar-nav .nav-link i {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: #ff5e5b;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 90px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+        }
+
+        .menu-item {
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 10px;
+            display: block;
+            transition: background-color 0.3s ease;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .menu-item:hover {
+            background-color: #f4a7a5;
+        }
+
+        .menu-item.active {
+            background-color: #d85d5b;
+        }
+
+        .main-container {
+            margin-left: 260px;
+            padding: 30px;
+            flex-grow: 1;
+            margin-top: 47px;
+        }
+
+        .wallet-section .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .wallet-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .wallet-column {
+            padding: 0 15px;
+        }
+
+        .col-lg-8 {
+            flex: 0 0 66.666667%;
+            max-width: 66.666667%;
+        }
+
+        .col-lg-4 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+
+        .wallet-card {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .wallet-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .wallet-card h5 {
+            color: #ff5e5b;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f4a7a5;
+            padding-bottom: 10px;
+        }
+
+        .wallet-balance {
+            font-size: 36px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .transaction-history {
+            margin-top: 15px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .transaction-details h6 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .transaction-date {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .transaction-amount {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .transaction-amount.Credit {
+            color: #28a745;
+        }
+
+        .transaction-amount.Debit {
+            color: #dc3545;
+        }
+
+        .benefits-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .benefits-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+
+        .benefits-list li:before {
+            content: "\f058";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            color: #ff5e5b;
+            margin-right: 10px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .page-link {
+            color: #ff5e5b;
+            border: 1px solid #f4a7a5;
+            border-radius: 5px;
+            margin: 0 5px;
+            padding: 8px 14px;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-amount.Credit {
+            color: #28a745;
+            /* This is green */
+        }
+
+        .transaction-amount.Debit {
+            color: #dc3545;
+            /* This is red */
+        }
+
+        .page-link:hover {
+            background-color: #ff5e5b;
+            color: white;
+            border-color: #ff5e5b;
+        }
+
+        .page-item.active .page-link {
+            background-color: #ff5e5b;
+            border-color: #ff5e5b;
+            color: white;
+        }
+
+        .page-item.disabled .page-link {
+            color: #ccc;
+            border-color: #eee;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 992px) {
+
+            .col-lg-8,
+            .col-lg-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .main-container {
+                margin-left: 260px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-container {
+                margin-left: 220px;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+
+            .navbar-nav .nav-item {
+                margin: 0 8px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding-top: 70px;
+                padding-bottom: 10px;
+            }
+
+            .main-container {
+                margin-left: 0;
+                margin-top: 200px;
+            }
+
+            .menu-item {
+                padding: 10px;
+                margin: 5px 10px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" href="#">GlowGazey</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+                    <% if (locals.user) { %>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">
+                                <%= locals.user.name %>
+                            </a>
+                            <div class="dropdown-content">
+                                <a href="/myaccount">Profile</a>
+                                <a href="/logout">Logout</a>
+                            </div>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                            <% } %>
+                                <li class="nav-item">
+                                    <a class="nav-link ms-3" href="/wishlist">
+                                        <i class="fas fa-heart"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link ms-3" href="/cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </a>
+                                </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="sidebar">
+        <a href="/home" class="menu-item">Home</a>
+        <a href="/myaccount" class="menu-item">Dashboard</a>
+        <a href="/orders" class="menu-item">Orders</a>
+        <a href="/wallet" class="menu-item active">Wallet</a>
+        <a href="/referal" class="menu-item">Referal</a>
+        <a href="/getAddress" class="menu-item">My Address</a>
+    </nav>
+
+    <div class="main-container">
+        <h1>My Wallet</h1>
+
+        <section class="wallet-section">
+            <div class="container-fluid">
+                <div class="wallet-row">
+                    <div class="wallet-column col-lg-8">
+                        <div class="wallet-card">
+                            <h5><i class="fas fa-wallet"></i> Available Balance</h5>
+                            <div class="wallet-balance">₹ <%= wallet.balance.toFixed(2) %>
+                            </div>
+                        </div>
+
+                        <div class="wallet-card">
+                            <h5><i class="fas fa-history"></i> Transaction History</h5>
+                            <div class="transaction-history">
+                                <% if (wallet.transactionHistory && wallet.transactionHistory.length> 0) { %>
+                                    <% wallet.transactionHistory.forEach(transaction=> { %>
+                                        <div class="transaction-item">
+                                            <div class="transaction-details">
+                                                <h6 style="font-weight: 800;">
+                                                    <%= transaction.description %>
+                                                </h6>
+                                                <h6>Wallet Transaction</h6>
+                                                <span class="transaction-date">
+                                                    <%= new
+                                                        Date(transaction.transactionDate).toLocaleDateString('en-US', {
+                                                        year: 'numeric' , month: 'short' , day: 'numeric' ,
+                                                        hour: '2-digit' , minute: '2-digit' }) %>
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="transaction-amount <%= transaction.transactionType === 'deposit' ? 'Credit' : 'Debit' %>">
+                                                <%= transaction.transactionType==='deposit' ? '+' : '-' %>₹<%=
+                                                        transaction.transactionAmount.toFixed(2) %>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <div class="transaction-item">
+                                                    <p>No transactions found.</p>
+                                                </div>
+                                                <% } %>
+                            </div>
+
+                            <% if (totalPages> 1) { %>
+                                <nav aria-label="Transaction history pagination" class="mt-4">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                            <a class="page-link" href="/wallet?page=<%= currentPage - 1 %>"
+                                                aria-label="Previous">
+                                                <span aria-hidden="true">«</span>
+                                            </a>
+                                        </li>
+                                        <% for(let i=1; i <=totalPages; i++) { %>
+                                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                <a class="page-link" href="/wallet?page=<%= i %>">
+                                                    <%= i %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                                <li
+                                                    class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                                    <a class="page-link" href="/wallet?page=<%= currentPage + 1 %>"
+                                                        aria-label="Next">
+                                                        <span aria-hidden="true">»</span>
+                                                    </a>
+                                                </li>
+                                    </ul>
+                                </nav>
+                                <% } %>
+                        </div>
+                    </div>
+
+                    <div class="wallet-column col-lg-4">
+                        <div class="wallet-card">
+                            <h5><i class="fas fa-gift"></i> Wallet Benefits</h5>
+                            <ul class="benefits-list">
+                                <li>Instant refunds on returns</li>
+                                <li>Faster checkout process</li>
+                                <li>Secure payment method</li>
+                                <li>Easy money tracking</li>
+                                <li>Special offers for wallet users</li>
+                            </ul>
+                        </div>
+
+                        <div class="wallet-card">
+                            <h5><i class="fas fa-lightbulb"></i> Wallet Tips</h5>
+                            <ul class="benefits-list">
+                                <li>Keep your wallet funded for faster checkout</li>
+                                <li>Get exclusive discounts with wallet payments</li>
+                                <li>Use wallet for membership renewals</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
