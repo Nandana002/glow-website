@@ -461,6 +461,7 @@
     // Change transaction limit per page
     function changeTransactionLimit() {
         const newLimit = document.getElementById('transactionLimitSelect').value;
+        console.log("me",newLimit)
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set('transactionLimit', newLimit);
         currentUrl.searchParams.set('transactionPage', 1); 

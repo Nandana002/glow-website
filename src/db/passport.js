@@ -2,13 +2,14 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/userSchema.js"; 
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
 passport.use(new GoogleStrategy({
-    clientID:process.env.GOOGLE_CLIENT_ID,
-    clientSecret:process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL:'/auth/google/callback'
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback'
 },
 async (req, accessToken, refreshToken, profile, done) => {
     try {
@@ -31,11 +32,12 @@ async (req, accessToken, refreshToken, profile, done) => {
                 googleId: profile.id,
                 isAdmin: false,
                 isBlocked: false,
-                referalCode: '', 
+                referralCode: uuidv4().substring(0, 8),
                 redeemed: false
             });
 
             await newUser.save();
+            console.log("New user created with referralCode:", newUser.referralCode);
             return done(null, newUser);
         }
     } catch (error) {
@@ -43,6 +45,7 @@ async (req, accessToken, refreshToken, profile, done) => {
         return done(error, null);
     }
 }));
+
 passport.serializeUser((user, done) => {
     try {
         done(null, user.id);
@@ -50,11 +53,10 @@ passport.serializeUser((user, done) => {
         done(err, null);
     }
 });
+
 passport.deserializeUser(async (id, done) => {
     try {
-        const user = await User.findById(id)
-            .select('-password');
-        
+        const user = await User.findById(id).select('-password');
         if (!user) {
             return done(new Error('User not found'), null);
         }
@@ -66,5 +68,3 @@ passport.deserializeUser(async (id, done) => {
 });
 
 export { passport };
-
-

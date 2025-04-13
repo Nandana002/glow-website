@@ -147,34 +147,34 @@ const securePassword = async (password) => {
 //using for verify otp
 const verifyOtp = async (req, res) => {
   try {
-      const { otps } = req.body
-      console.log("Body ", req.body)
+      const { otps } = req.body;
+      console.log("Body ", req.body);
       if (otps == req.session.userOtp) {
-
-          const user = req.session.userData
+          const user = req.session.userData;
           const passwordHash = await securePassword(user.password);
           const saveUserData = new User({
               name: user.name,
               phone: user.phone,
               email: user.email,
-              password: passwordHash,
-              referralCode: generateReferralCode(user.email)
-          })
-          console.log("============user======",saveUserData._id)
+              password: passwordHash
+          });
+          const referralCode = generateReferralCode(user.email);
+          if (referralCode) saveUserData.referralCode = referralCode;
+
+          console.log("Generated referralCode:", referralCode);
           await saveUserData.save();
           req.session.user = saveUserData._id;
 
           if (user.referralCode) {
-            const referrer = await User.findOne({ referralCode: user.referralCode });
-            if (referrer) {
-                referrer.referralCount += 1;
-                referrer.referralRewards += 100;         
-                referrer.wallet += referrer.referralRewards; 
-                await referrer.save();
-                console.log("Referrer updated:", referrer);
-            }
-        }
-
+              const referrer = await User.findOne({ referralCode: user.referralCode });
+              if (referrer) {
+                  referrer.referralCount += 1;
+                  referrer.referralRewards += 100;         
+                  referrer.wallet += referrer.referralRewards; 
+                  await referrer.save();
+                  console.log("Referrer updated:", referrer);
+              }
+          }
 
           return res.status(200).json({
               success: true,
@@ -184,13 +184,10 @@ const verifyOtp = async (req, res) => {
       } else {
           return res.status(400).json({
               success: false,
-              message: "Wrong OTP .",
+              message: "Wrong OTP.",
               redirectUrl: "user/verify-otp",
           });
       }
-
-
-
   } catch (error) {
       console.error("Error verifying OTP:", error);
       return res.status(500).json({ success: false, message: "An error occurred." });
@@ -381,12 +378,23 @@ const loadshoppingPage = async (req, res) => {
 //load user Profile page
 const loadProfile = async (req, res) => {
   try {
-    const users = req.session.user;
-    const userProfile = await User.findOne({ _id: users });
+    const userId = req.session.user; // Changed 'users' to 'userId' for clarity
+    const userProfile = await User.findById(userId);
     
-    return res.render("myaccount", { user: userProfile });
+    if (!userProfile) {
+      return res.status(HttpStatus.NOT_FOUND).render('user/pageNotFound', { message: 'User not found' });
+    }
+
+    // Fetch userAddress from Address model (adjust based on your schema)
+    const userAddress = await Address.findOne({ user: userId }); // Example query
+
+    return res.render('myaccount', {
+      user: userProfile,
+      userAddress: userAddress || null // Pass userAddress, fallback to null
+    });
   } catch (error) {
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send("An error occurred");
+    console.error('Error loading profile:', error);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).render('user/pageNotFound', { message: 'An error occurred' });
   }
 };
 
