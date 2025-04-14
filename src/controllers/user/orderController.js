@@ -19,7 +19,7 @@ const orders = async(req,res) => {
             .sort({createdAt: -1});
         let count = await Order.find({userId: user}).countDocuments()
         let totalpages = Math.ceil(count/limit)
-        return res.render('orders', {orders, page, totalpages}) 
+        return res.render('orders', { orders, page, totalpages, user });
     } catch (error) {
         console.log("The error is" + error)
     }

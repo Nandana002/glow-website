@@ -447,16 +447,22 @@ const address = async (req, res) => {
 
 const getAddress = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const user = req.session.user;
+    const userId = user._id || user;
+    
     const existingAddress = await Address.findOne({ userId });
+
     if (!existingAddress) {
-      return res.render("getAddress", { address: [] });
+      return res.render("getAddress", { address: [], user });
     }
-    return res.render("getAddress", { address: existingAddress.address });
+
+    return res.render("getAddress", { address: existingAddress.address, user });
   } catch (error) {
-    console.log("The error is" + error);
+    console.log("The error is: " + error);
+    res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 
