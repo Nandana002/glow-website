@@ -260,6 +260,11 @@
             margin-top: 20px;
         }
 
+        .transaction-amount i {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
         .page-link {
             color: #ff5e5b;
             border: 1px solid #f4a7a5;
@@ -278,12 +283,29 @@
             color: #dc3545;
             /* This is red */
         }
+        .transaction-amount.Credit {
+  color: #28a745; /* Green for credited amounts */
+}
+.transaction-amount.Debit {
+  color: #dc3545; /* Red for debited amounts */
+}
 
         .page-link:hover {
             background-color: #ff5e5b;
             color: white;
             border-color: #ff5e5b;
         }
+
+        .transaction-amount.Credit {
+            color: #28a745;
+        }
+
+        /* Green */
+        .transaction-amount.Debit {
+            color: #dc3545;
+        }
+
+        /* Red */
 
         .page-item.active .page-link {
             background-color: #ff5e5b;
@@ -419,34 +441,34 @@
                         <div class="wallet-card">
                             <h5><i class="fas fa-history"></i> Transaction History</h5>
                             <div class="transaction-history">
-                                <% if (wallet.transactionHistory && wallet.transactionHistory.length> 0) { %>
-                                    <% wallet.transactionHistory.forEach(transaction=> { %>
-                                        <div class="transaction-item">
-                                            <div class="transaction-details">
-                                                <h6 style="font-weight: 800;">
-                                                    <%= transaction.description %>
-                                                </h6>
-                                                <h6>Wallet Transaction</h6>
-                                                <span class="transaction-date">
-                                                    <%= new
-                                                        Date(transaction.transactionDate).toLocaleDateString('en-US', {
-                                                        year: 'numeric' , month: 'short' , day: 'numeric' ,
-                                                        hour: '2-digit' , minute: '2-digit' }) %>
-                                                </span>
-                                            </div>
-                                            <div
-                                                class="transaction-amount <%= transaction.transactionType === 'deposit' ? 'Credit' : 'Debit' %>">
-                                                <%= transaction.transactionType==='deposit' ? '+' : '-' %>₹<%=
-                                                        transaction.transactionAmount.toFixed(2) %>
-                                            </div>
-                                        </div>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <div class="transaction-item">
-                                                    <p>No transactions found.</p>
-                                                </div>
-                                                <% } %>
-                            </div>
+                                <% if (wallet.transactionHistory && wallet.transactionHistory.length > 0) { %>
+                                  <% wallet.transactionHistory.forEach(transaction => { %>
+                                    <div class="transaction-item">
+                                      <div class="transaction-details">
+                                        <h6 style="font-weight: 800;"><%= transaction.description %></h6>
+                                        <h6>Wallet Transaction</h6>
+                                        <span class="transaction-date">
+                                          <%= new Date(transaction.transactionDate).toLocaleDateString('en-US', {
+                                            year: 'numeric', month: 'short', day: 'numeric',
+                                            hour: '2-digit', minute: '2-digit'
+                                          }) %>
+                                        </span>
+                                      </div>
+                                      <div class="transaction-amount <%= transaction.transactionType === 'refund' ? 'Credit' : 'Debit' %>">
+                                        <% if (transaction.transactionType === 'refund') { %>
+                                          <i class="fas fa-plus-circle"></i> ₹<%= transaction.transactionAmount.toFixed(2) %>
+                                        <% } else { %>
+                                          <i class="fas fa-minus-circle"></i> ₹<%= transaction.transactionAmount.toFixed(2) %>
+                                        <% } %>
+                                      </div>
+                                    </div>
+                                  <% }) %>
+                                <% } else { %>
+                                  <div class="transaction-item">
+                                    <p>No transactions found.</p>
+                                  </div>
+                                <% } %>
+                              </div>
 
                             <% if (totalPages> 1) { %>
                                 <nav aria-label="Transaction history pagination" class="mt-4">
