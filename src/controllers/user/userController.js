@@ -291,22 +291,27 @@ const loadshoppingPage = async (req, res) => {
     const limit = 8;
     const skip = (page - 1) * limit;
 
-    const categoryFilter = req.query.category;
+    const categoryFilter = req.query.category; // Now can be a string or array
     const sortBy = req.query.sort || 'default';
     const minPrice = req.query.minPrice;
     const maxPrice = req.query.maxPrice;
     const searchQuery = req.query.query;
 
     let query = {
-      isBlocked: false
+      isBlocked: false,
     };
 
     if (searchQuery) {
-      query.productName = { $regex: searchQuery, $options: 'i' }; 
+      query.productName = { $regex: searchQuery, $options: 'i' };
     }
 
+    // Handle category filter
     if (categoryFilter) {
-      query.category = categoryFilter;
+      // Convert single category to array for consistency
+      const categories = Array.isArray(categoryFilter)
+        ? categoryFilter
+        : [categoryFilter];
+      query.category = { $in: categories };
     } else {
       let categories = await Category.find({ isListed: true });
       const categoriesId = categories.map((category) => category._id.toString());
@@ -344,7 +349,7 @@ const loadshoppingPage = async (req, res) => {
       .sort(sortOptions)
       .skip(skip)
       .limit(limit)
-      .populate("category");
+      .populate('category');
 
     const totalProducts = await Product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / limit);
@@ -353,26 +358,24 @@ const loadshoppingPage = async (req, res) => {
     let user = req.session.user;
     let userData = user ? await User.findOne({ _id: user }) : null;
 
-    res.render("shop", {
+    res.render('shop', {
       user: userData,
       products: products,
       category: categories.map((cat) => ({ _id: cat._id, name: cat.name })),
       totalProducts,
       currentPage: page,
       totalPages,
-      activeCategory: categoryFilter,
+      activeCategory: categoryFilter, // Pass as array or single value
       currentSort: sortBy,
       currentMinPrice: minPrice,
       currentMaxPrice: maxPrice,
-      searchQuery: searchQuery // Pass search term to template
+      searchQuery: searchQuery,
     });
-
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 };
-
 
 
 //load user Profile page

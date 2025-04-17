@@ -40,6 +40,29 @@
   color: var(--dark-color) !important;
   transition: var(--transition);
 }
+.category-brand-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.category-brand-container li {
+  margin: 10px 0;
+}
+
+.category-brand-container label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.category-brand-container input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: #ff6b6b; /* Customize checkbox color */
+}
+
+.category-brand-container input[type="checkbox"]:checked + span {
+  font-weight: bold;
+}
 
 .nav-link:after {
   content: '';
@@ -630,42 +653,53 @@
     <div class="product-list-container">
         <aside class="sidebar">
             <div class="filter-section">
-                <div class="filter-title">Categories</div>
-                <div class="category-brand-container">
-                    <ul>
-                        <li class="filter-item">
-                            <a href="/shop" class="<%= !activeCategory ? 'active' : '' %>">All Products</a>
-                        </li>
-                        <% for(let i=0; i < category.length; i++) { %>
-                            <li class="filter-item">
-                                <a href="/shop?category=<%= category[i]._id %>"
-                                    class="<%= activeCategory === category[i]._id.toString() ? 'active' : '' %>">
-                                    <%= category[i].name %>
-                                </a>
-                            </li>
-                            <% } %>
-                    </ul>
-                </div>
+              <div class="filter-title">Categories</div>
+              <div class="category-brand-container">
+                <form id="categoryFilterForm" action="/shop" method="GET">
+                  <ul>
+                    <!-- All Products link to clear category filters -->
+                    <li class="filter-item">
+                      <a href="/shop" class="<%= !activeCategory ? 'active' : '' %>">All Products</a>
+                    </li>
+                    <% category.forEach(cat => { %>
+                      <li class="filter-item">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="category"
+                            value="<%= cat._id %>"
+                            <%= activeCategory && activeCategory.includes(cat._id.toString()) ? 'checked' : '' %>
+                            onchange="this.form.submit()"
+                          />
+                          <%= cat.name %>
+                        </label>
+                      </li>
+                    <% }) %>
+                  </ul>
+                  <!-- Preserve other filters -->
+                  <input type="hidden" name="sort" value="<%= currentSort || 'default' %>">
+                  <input type="hidden" name="minPrice" value="<%= currentMinPrice || '' %>">
+                  <input type="hidden" name="maxPrice" value="<%= currentMaxPrice || '' %>">
+                  <input type="hidden" name="query" value="<%= searchQuery || '' %>">
+                </form>
+              </div>
             </div>
+            <!-- Rest of the filter section (Price Range) remains the same -->
             <div class="filter-section">
-                <div class="filter-title">Price Range</div>
-                <div class="price-filter">
-                    <form id="priceFilterForm" onsubmit="return applyPriceFilter(event)">
-                        <div class="price-inputs">
-                            <input type="number" id="minPrice" placeholder="Min Price" value="<%= currentMinPrice %>"
-                                class="price-input" />
-                            <span>to</span>
-                            <input type="number" id="maxPrice" placeholder="Max Price" value="<%= currentMaxPrice %>"
-                                class="price-input" />
-                        </div>
-                        <button type="submit" class="apply-filter-btn">Apply Filter</button>
-                        <button type="button" class="clear-filter-btn" onclick="clearFilters()">Clear All
-                            Filters</button>
-
-                    </form>
-                </div>
+              <div class="filter-title">Price Range</div>
+              <div class="price-filter">
+                <form id="priceFilterForm" onsubmit="return applyPriceFilter(event)">
+                  <div class="price-inputs">
+                    <input type="number" id="minPrice" placeholder="Min Price" value="<%= currentMinPrice %>" class="price-input" />
+                    <span>to</span>
+                    <input type="number" id="maxPrice" placeholder="Max Price" value="<%= currentMaxPrice %>" class="price-input" />
+                  </div>
+                  <button type="submit" class="apply-filter-btn">Apply Filter</button>
+                  <button type="button" class="clear-filter-btn" onclick="clearFilters()">Clear All Filters</button>
+                </form>
+              </div>
             </div>
-        </aside>
+          </aside>
 
         </aside>
 
@@ -693,23 +727,33 @@
         </main>
     </div>
     <div class="pagination">
-        <% if (currentPage> 1) { %>
-            <a class="btn"
-                href="/shop?page=<%= currentPage - 1 %><%= activeCategory ? '&category=' + activeCategory : '' %>">Prev</a>
-            <% } %>
-
-                <% for (let i=1; i <=totalPages; i++) { %>
-                    <a class="btn <%= currentPage === i ? 'active' : '' %>"
-                        href="/shop?page=<%= i %><%= activeCategory ? '&category=' + activeCategory : '' %>">
-                        <%= i %>
-                    </a>
-                    <% } %>
-
-                        <% if (currentPage < totalPages) { %>
-                            <a class="btn"
-                                href="/shop?page=<%= currentPage + 1 %><%= activeCategory ? '&category=' + activeCategory : '' %>">Next</a>
-                            <% } %>
-    </div>
+        <% if (currentPage > 1) { %>
+          <a
+            class="btn"
+            href="/shop?page=<%= currentPage - 1 %><%= activeCategory ? (Array.isArray(activeCategory) ? activeCategory.map(cat => '&category=' + cat).join('') : '&category=' + activeCategory) : '' %>&sort=<%= currentSort || 'default' %>&minPrice=<%= currentMinPrice || '' %>&maxPrice=<%= currentMaxPrice || '' %>&query=<%= searchQuery || '' %>"
+          >
+            Prev
+          </a>
+        <% } %>
+      
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a
+            class="btn <%= currentPage === i ? 'active' : '' %>"
+            href="/shop?page=<%= i %><%= activeCategory ? (Array.isArray(activeCategory) ? activeCategory.map(cat => '&category=' + cat).join('') : '&category=' + activeCategory) : '' %>&sort=<%= currentSort || 'default' %>&minPrice=<%= currentMinPrice || '' %>&maxPrice=<%= currentMaxPrice || '' %>&query=<%= searchQuery || '' %>"
+          >
+            <%= i %>
+          </a>
+        <% } %>
+      
+        <% if (currentPage < totalPages) { %>
+          <a
+            class="btn"
+            href="/shop?page=<%= currentPage + 1 %><%= activeCategory ? (Array.isArray(activeCategory) ? activeCategory.map(cat => '&category=' + cat).join('') : '&category=' + activeCategory) : '' %>&sort=<%= currentSort || 'default' %>&minPrice=<%= currentMinPrice || '' %>&maxPrice=<%= currentMaxPrice || '' %>&query=<%= searchQuery || '' %>"
+          >
+            Next
+          </a>
+        <% } %>
+      </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
