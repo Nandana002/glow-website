@@ -35,7 +35,7 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
     const { name, description } = req.body;
     console.log(req.body)
-    
+
     try {
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
@@ -55,50 +55,50 @@ const addCategory = async (req, res) => {
 //using to add category
 const addCategoryOffer = async (req, res) => {
     try {
-      const percentage = parseInt(req.body.percentage);
-      const categoryId = req.body.categoryId;
-  
-      if (isNaN(percentage) || percentage <= 0 || percentage >= 100) {
-        return res.status(HttpStatus.BAD_REQUEST).json({ 
-          status: false, 
-          message: "Offer percentage must be between 1 and 99" 
-        });
-      }
-  
-      const category = await Category.findById(categoryId);
-      if (!category) {
-        return res.status(HttpStatus.NOT_FOUND).json({ status: false, message: "Category not found" });
-      }
-      const products = await Product.find({ category: category._id });
-      
-      const hasProductOffer = products.some(product => product.productOffer > 0);
-      if (hasProductOffer) {
-        return res.json({ 
-          status: false, 
-          message: "Cannot add category offer when products have individual offers" 
-        });
-      }
-  
-      await Category.updateOne(
-        { _id: categoryId }, 
-        { $set: { categoryOffer: percentage } }
-      );
-  
-      for (const product of products) {
-        product.productOffer = 0;
-        const discountAmount = Math.floor((product.regularPrice * percentage) / 100);
-        product.salePrice = Math.max(0, product.regularPrice - discountAmount);
-        await product.save();
-      }
-  
-      res.json({ status: true, message: "Category offer added successfully" });
+        const percentage = parseInt(req.body.percentage);
+        const categoryId = req.body.categoryId;
+
+        if (isNaN(percentage) || percentage <= 0 || percentage >= 100) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                status: false,
+                message: "Offer percentage must be between 1 and 99"
+            });
+        }
+
+        const category = await Category.findById(categoryId);
+        if (!category) {
+            return res.status(HttpStatus.NOT_FOUND).json({ status: false, message: "Category not found" });
+        }
+        const products = await Product.find({ category: category._id });
+
+        const hasProductOffer = products.some(product => product.productOffer > 0);
+        if (hasProductOffer) {
+            return res.json({
+                status: false,
+                message: "Cannot add category offer when products have individual offers"
+            });
+        }
+
+        await Category.updateOne(
+            { _id: categoryId },
+            { $set: { categoryOffer: percentage } }
+        );
+
+        for (const product of products) {
+            product.productOffer = 0;
+            const discountAmount = Math.floor((product.regularPrice * percentage) / 100);
+            product.salePrice = Math.max(0, product.regularPrice - discountAmount);
+            await product.save();
+        }
+
+        res.json({ status: true, message: "Category offer added successfully" });
     } catch (error) {
-      console.error("Error in addCategoryOffer:", error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal server error" });
+        console.error("Error in addCategoryOffer:", error);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal server error" });
     }
-  };
+};
 //using to remove offer
-  const removeCategoryOffer = async (req, res) => {
+const removeCategoryOffer = async (req, res) => {
     try {
         const categoryId = req.body.categoryId;
 
@@ -110,12 +110,12 @@ const addCategoryOffer = async (req, res) => {
         const products = await Product.find({ category: category._id });
 
         for (const product of products) {
-            product.salePrice = product.regularPrice; 
-            product.productOffer = 0; 
+            product.salePrice = product.regularPrice;
+            product.productOffer = 0;
             await product.save();
         }
 
-        category.categoryOffer = 0; 
+        category.categoryOffer = 0;
         await category.save();
 
         res.json({ status: true, message: "Category offer removed successfully" });
@@ -127,22 +127,22 @@ const addCategoryOffer = async (req, res) => {
 
 
 //using for list category
-const getListCategory=async(req,res)=>{
-    try{
-        let id=req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:false}})
-    
+const getListCategory = async (req, res) => {
+    try {
+        let id = req.query.id;
+        await Category.updateOne({ _id: id }, { $set: { isListed: false } })
+
         res.redirect('/admin/categoryInfo')
-    }catch(error){
+    } catch (error) {
 
         res.redirect('/pageerror')
     }
 }
 //using for unlist category
-const getUnlistCategory=async(req,res)=>{
+const getUnlistCategory = async (req, res) => {
     try {
-        let id=req.query.id;
-        await Category.updateOne({_id:id},{$set:{isListed:true}});
+        let id = req.query.id;
+        await Category.updateOne({ _id: id }, { $set: { isListed: true } });
         res.redirect('/admin/categoryInfo')
 
     } catch (error) {
@@ -150,14 +150,14 @@ const getUnlistCategory=async(req,res)=>{
     }
 }
 // get the edit category page
-const edit=async(req,res)=>{
+const edit = async (req, res) => {
     try {
-        const id=req.query.id;
-        const category=await Category.findOne({_id:id})
-        res.render("edit-category",{category:category})
+        const id = req.query.id;
+        const category = await Category.findOne({ _id: id })
+        res.render("edit-category", { category: category })
     } catch (error) {
         res.redirect('/pageerror')
-        
+
     }
 }
 //edit category
@@ -211,4 +211,4 @@ const editCategory = async (req, res) => {
     }
 };
 
-export { categoryInfo, addCategory ,removeCategoryOffer,addCategoryOffer,getListCategory,getUnlistCategory,edit,editCategory};
+export { categoryInfo, addCategory, removeCategoryOffer, addCategoryOffer, getListCategory, getUnlistCategory, edit, editCategory };

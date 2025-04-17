@@ -1,4 +1,4 @@
-import  User from '../../models/userSchema.js'
+import User from '../../models/userSchema.js'
 import { Order } from "../../models/orderSchema.js"
 import { Product } from '../../models/productSchema.js'
 //using to load dashboard
@@ -44,53 +44,63 @@ const loadDashboard = async (req, res) => {
         const totalDiscountPrice = results.totalDiscountPrice || 0;
         const totalDiscountCount = results.totalDiscountCount || 0;
         const totalQuantitySold = results.totalQuantitySold || 0;
-        
-//find the mostsoldProduct
+
+        //find the mostsoldProduct
         const mostSoldProduct = await Order.aggregate([
             { $match: { status: "Delivered" } },
             { $unwind: "$orderedItems" },
-            { $group: { 
-                _id: "$orderedItems.product",
-                count: { $sum: "$orderedItems.quantity" } 
-            }},
+            {
+                $group: {
+                    _id: "$orderedItems.product",
+                    count: { $sum: "$orderedItems.quantity" }
+                }
+            },
             { $sort: { count: -1 } },
             { $limit: 10 },
-            { $lookup: {
-                from: 'products',
-                localField: '_id',
-                foreignField: '_id',
-                as: 'productDetails'
-            }},
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
             { $unwind: '$productDetails' }
         ]) || [];
-//find the best selling category
+        //find the best selling category
         const bestSellingCategory = await Order.aggregate([
             { $match: { status: "Delivered" } },
             { $unwind: "$orderedItems" },
-            { $lookup: {
-                from: 'products',
-                localField: 'orderedItems.product',
-                foreignField: '_id',
-                as: 'productDetails'
-            }},
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'orderedItems.product',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
             { $unwind: '$productDetails' },
-            { $group: { 
-                _id: "$productDetails.category", 
-                count: { $sum: "$orderedItems.quantity" } 
-            }},
+            {
+                $group: {
+                    _id: "$productDetails.category",
+                    count: { $sum: "$orderedItems.quantity" }
+                }
+            },
             { $sort: { count: -1 } },
             { $limit: 10 },
-            { $lookup: {
-                from: 'categories',
-                localField: '_id',
-                foreignField: '_id',
-                as: 'categoryDetails'
-            }},
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
+            },
             { $unwind: '$categoryDetails' }
         ]) || [];
 
-       
-        
+
+
         const countUser = await User.countDocuments() || 0;
         res.render('dashboard', {
             totalOrders,
@@ -100,7 +110,7 @@ const loadDashboard = async (req, res) => {
             totalUser: countUser,
             mostSoldProduct: mostSoldProduct.length ? mostSoldProduct : [],
             bestSellingCategory: bestSellingCategory.length ? bestSellingCategory : [],
-          
+
         });
 
     } catch (error) {

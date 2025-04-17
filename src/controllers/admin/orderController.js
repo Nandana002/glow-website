@@ -6,7 +6,7 @@ import { Messages } from "../../responseMessages.js";
 //using order List
 const orderList = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 10; 
+    const limit = 10;
     const skip = (page - 1) * limit;
 
 
@@ -16,13 +16,13 @@ const orderList = async (req, res) => {
     if (status) filter.status = status;
     if (paymentStatus) filter.paymentStatus = paymentStatus;
 
-   
+
 
     try {
         const orders = await Order.find(filter)
             .populate('userId')
             .populate('orderedItems.product')
-            .sort({createdAt:-1})
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
@@ -46,26 +46,26 @@ const orderList = async (req, res) => {
     }
 };
 //using to show orderStatus
-const orderStatus = async(req, res) => {
+const orderStatus = async (req, res) => {
     try {
         const { status, orderId } = req.body
         const orders = await Order.find()
-        const order = await Order.findOneAndUpdate({orderId}, {status:status}, {new:true})
-        if(order) {
-            res.status(HttpStatus.OK).json({message:"Order is updated successfully"})
+        const order = await Order.findOneAndUpdate({ orderId }, { status: status }, { new: true })
+        if (order) {
+            res.status(HttpStatus.OK).json({ message: "Order is updated successfully" })
         } else {
-            res.status(HttpStatus.UNAUTHORIZED).json({message:"order is not updated"})
+            res.status(HttpStatus.UNAUTHORIZED).json({ message: "order is not updated" })
         }
     } catch (error) {
-        console.log("The error is"+error);
+        console.log("The error is" + error);
     }
 }
 //using show view order
-const viewOrders = async(req, res) => {
+const viewOrders = async (req, res) => {
     try {
         const { orderid } = req.params
-        const order = await Order.findOne({_id:orderid}).populate('orderedItems.product')
-        return res.render('viewOrder', {order})
+        const order = await Order.findOne({ _id: orderid }).populate('orderedItems.product')
+        return res.render('viewOrder', { order })
     } catch (error) {
         console.log(error)
     }
@@ -92,9 +92,9 @@ const handleReturn = async (req, res) => {
 
         if (action === 'approve') {
             productItem.returnStatus = 'Approved';
-            
+
             const refundAmount = productItem.price * productItem.quantity;
-        
+
             if (order.finalAmount !== undefined) {
                 order.finalAmount = Math.max(0, order.finalAmount - refundAmount);
             }
@@ -109,7 +109,7 @@ const handleReturn = async (req, res) => {
         }
 
         order.markModified('orderedItems');
-        
+
         await order.save();
 
         return res.status(HttpStatus.OK).json({
@@ -120,20 +120,20 @@ const handleReturn = async (req, res) => {
 
     } catch (error) {
         console.error("Error in handleReturn:", error);
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ 
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             error: 'Something went wrong',
-            details: error.message 
+            details: error.message
         });
     }
 };
 
 //using to orderCancelled
 
-const orderCancelled = async(req, res) => {
+const orderCancelled = async (req, res) => {
     try {
         const { orderId, productId } = req.body;
-        console.log("==============",productId)
-        const orderedProducts = await Order.findOne({orderId})
+        console.log("==============", productId)
+        const orderedProducts = await Order.findOne({ orderId })
 
         const itemIndex = orderedProducts.orderedItems.findIndex(
             item => item._id.toString() === productId
@@ -145,18 +145,18 @@ const orderCancelled = async(req, res) => {
 
         const items = orderedProducts.orderedItems[itemIndex];
         items.cancelStatus = 'canceled'
-        
+
         if (items.cancelStatus === 'canceled') {
             const product = await Product.findById(items.product);
             if (product) {
                 const shadeVariant = product.shadeVariants.find(v => v.shade === items.shade);
                 if (shadeVariant) {
-                    shadeVariant.quantity += items.quantity; 
+                    shadeVariant.quantity += items.quantity;
                     await product.save();
                 }
             }
         }
-        
+
 
         const allItemsCancelled = orderedProducts.orderedItems.every(
             item => item.cancelStatus === 'canceled'
@@ -168,7 +168,7 @@ const orderCancelled = async(req, res) => {
 
         orderedProducts.totalPrice -= items.price * items.quantity;
         await orderedProducts.save();
-           
+
         return res.status(HttpStatus.OK).json({ message: "Item canceled successfully" });
 
     } catch (error) {

@@ -5,8 +5,8 @@ import { Messages } from '../../responseMessages.js';
 
 import bcrypt from "bcrypt"
 //using for showing login page
-const loginPage = async(req,res)=>{   
-  res.render('adminLogin') 
+const loginPage = async (req, res) => {
+    res.render('adminLogin')
 }
 //using to login
 const login = async (req, res) => {
@@ -24,10 +24,10 @@ const login = async (req, res) => {
             return res.render('adminLogin', { message: "Invalid credentials" });
         }
 
-     
+
         req.session.admin = admin._id;
 
-        return res.redirect('/admin/dashboard');  
+        return res.redirect('/admin/dashboard');
 
     } catch (error) {
         console.error("Error in login:", error);
@@ -36,20 +36,20 @@ const login = async (req, res) => {
 };
 
 //using to render pagenotfound
-const pageNotFound = async(req,res)=>{
-   return res.render('pageerror')
+const pageNotFound = async (req, res) => {
+    return res.render('pageerror')
 
 }
 //using for logout
 const logout = async (req, res) => {
     try {
         req.session.admin = null
-            return res.redirect('/admin/adminlogin')
-        } catch (error) {
+        return res.redirect('/admin/adminlogin')
+    } catch (error) {
         console.log("Logout error ", error)
         res.redirect('/pageNotFound')
 
     }
 }
 
-export{loginPage,login,pageNotFound,logout}
+export { loginPage, login, pageNotFound, logout }

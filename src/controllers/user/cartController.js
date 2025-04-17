@@ -31,7 +31,7 @@ const loadCart = async (req, res) => {
             });
         }
 
-        const filteredItems = cart.items.filter(item => 
+        const filteredItems = cart.items.filter(item =>
             item.productId && !item.productId.isBlocked
         );
 
@@ -136,8 +136,8 @@ const addToCart = async (req, res) => {
         if (shadeVariant) {
             console.log(`Before update: Shade ${shade} quantity = ${shadeVariant.quantity}, Total quantity = ${product.quantity}`);
             shadeVariant.quantity -= quantity;
-            product.quantity -= quantity; 
-            product.markModified("shadeVariants"); 
+            product.quantity -= quantity;
+            product.markModified("shadeVariants");
             console.log(`After update: Shade ${shade} quantity = ${shadeVariant.quantity}, Total quantity = ${product.quantity}`);
         } else {
             console.log(`Before update: Product quantity = ${product.quantity}`);
@@ -228,7 +228,7 @@ const updateCartQuantity = async (req, res) => {
         if (product.shadeVariants && product.shadeVariants.length > 0) {
             shadeVariant = product.shadeVariants.find(v => v.shade === cartItem.shade);
             if (shadeVariant) {
-                availableStock = shadeVariant.quantity + cartItem.quantity; 
+                availableStock = shadeVariant.quantity + cartItem.quantity;
             }
         }
 
@@ -250,7 +250,7 @@ const updateCartQuantity = async (req, res) => {
             } else {
                 product.quantity -= quantityDifference;
             }
-            await product.save(); 
+            await product.save();
         }
 
         if (quantity <= 0) {
@@ -308,7 +308,7 @@ const verifyCartStock = async (userId) => {
         }
 
         const stockCheckDetails = cart.items.map(item => {
-            const stockAvailable = item.productId.stock; 
+            const stockAvailable = item.productId.stock;
             const stockSufficient = stockAvailable >= item.quantity;
 
             return {

@@ -1,5 +1,5 @@
 import { Order } from "../../models/orderSchema.js"
-import  User  from '../../models/userSchema.js';
+import User from '../../models/userSchema.js';
 import { Wallet } from "../../models/walletSchema.js";
 import { Product } from "../../models/productSchema.js";
 import PDFDocument from "pdfkit-table";
@@ -7,71 +7,71 @@ import { HttpStatus } from "../../statusCode.js";
 import { Address } from "../../models/addressSchema.js";
 
 //using to showing orders
-const orders = async(req,res) => {
+const orders = async (req, res) => {
     try {
         const user = req.session.user
         let page = parseInt(req.query.page) || 1
         let limit = 10
-        const orders = await Order.find({userId: user})
-            .skip((page-1) * limit)
+        const orders = await Order.find({ userId: user })
+            .skip((page - 1) * limit)
             .limit(limit)
             .populate('orderedItems.product')
-            .sort({createdAt: -1});
-        let count = await Order.find({userId: user}).countDocuments()
-        let totalpages = Math.ceil(count/limit)
+            .sort({ createdAt: -1 });
+        let count = await Order.find({ userId: user }).countDocuments()
+        let totalpages = Math.ceil(count / limit)
         return res.render('orders', { orders, page, totalpages, user });
     } catch (error) {
         console.log("The error is" + error)
     }
 }
 //using to render view order page
-const viewOrder = async(req, res) => {
+const viewOrder = async (req, res) => {
     try {
         const user = req.session.user
-        const {orderid} = req.params
-        
-        
-        const order = await Order.findOne({_id: orderid})
-                              .populate('orderedItems.product')
-                              
-   
+        const { orderid } = req.params
+
+
+        const order = await Order.findOne({ _id: orderid })
+            .populate('orderedItems.product')
+
+
         if (order && order.address) {
-     
-            const userData = await User.findOne({_id: user})
-            
-           
+
+            const userData = await User.findOne({ _id: user })
+
+
             const addressDoc = await Address.findOne(
                 { userId: user, "address._id": order.address }
             );
-            
-          
+
+
 
             for (let item of order.orderedItems) {
                 const product = item.product;
                 if (product && product.reviews) {
-                  const hasReviewed = product.reviews.some(
-                    (review) => review.user.toString() === userId.toString()
-                  );
-                  item.hasReviewed = hasReviewed;
+                    const hasReviewed = product.reviews.some(
+                        (review) => review.user.toString() === userId.toString()
+                    );
+                    item.hasReviewed = hasReviewed;
                 } else {
-                  item.hasReviewed = false;
+                    item.hasReviewed = false;
                 }
-              }
+            }
             if (addressDoc) {
-            
+
                 const selectedAddress = addressDoc.address.find(
                     addr => addr._id.toString() === order.address.toString()
                 );
-                
-               
+
+
                 order.selectedAddress = selectedAddress;
             }
-            
-            return res.render('viewOrders', {user: userData, order})
+
+            return res.render('viewOrders', { user: userData, order })
         } else {
-    
-            const userData = await User.findOne({_id: user})
-            return res.render('viewOrders', {user: userData, order})
+
+            const userData = await User.findOne({ _id: user })
+            return res.render('viewOrders', { user: userData, order })
         }
     } catch (error) {
         console.log(error)
@@ -113,7 +113,7 @@ const cancelOrder = async (req, res) => {
 
         if (order.paymentMethod !== 'COD' && order.paymentStatus === 'Success') {
             const wallet = await Wallet.findOne({ userId: order.userId });
-            
+
             const totalItems = order.orderedItems.length;
             const originalItemPrice = itemToCancel.price * itemToCancel.quantity;
             const itemDiscountShare = order.discount ? (order.discount / totalItems) : 0;
@@ -188,7 +188,7 @@ const returnOrder = async (req, res) => {
         const originalItemPrice = returnItem.price * returnItem.quantity;
         const itemDiscountShare = order.discount ? (order.discount / totalItems) : 0;
         const refundAmount = Math.max(0, originalItemPrice - itemDiscountShare);
-      
+
 
         if (wallet) {
             wallet.balance += refundAmount;
@@ -222,7 +222,7 @@ const returnOrder = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
-        
+
         const order = await Order.findOne({ _id: orderId });
         if (!order) {
             return res.status(HttpStatus.NOT_FOUND).json({ message: "Order not found" });
@@ -238,7 +238,7 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-           
+
 
 
 export {

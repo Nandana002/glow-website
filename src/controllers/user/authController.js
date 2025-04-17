@@ -14,9 +14,9 @@ const googleCallback = async (req, res) => {
           console.error('Error logging out:', err);
           return res.redirect('/signup');
         }
-        return res.render('login',{message:"User is blocked by admin"}); 
+        return res.render('login', { message: "User is blocked by admin" });
       });
-      return; 
+      return;
     }
 
     req.session.user = req.user._id;
@@ -32,4 +32,4 @@ const googleCallback = async (req, res) => {
     return res.redirect('/signup');
   }
 };
-export {googleCallback}
+export { googleCallback }

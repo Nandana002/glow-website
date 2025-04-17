@@ -8,7 +8,7 @@ dotenv.config();
 // Render the Contact Us page
 const getContactPage = async (req, res) => {
     try {
-        const user = req.session.user; 
+        const user = req.session.user;
         res.render('contact', { user });
     } catch (error) {
         console.error('Error rendering contact page:', error);
@@ -28,14 +28,14 @@ const handleContactForm = async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.NODEMAILER_EMAIL, 
-                pass: process.env.NODEMAILER_PASSWORD, 
+                user: process.env.NODEMAILER_EMAIL,
+                pass: process.env.NODEMAILER_PASSWORD,
             },
         });
 
         const mailOptions = {
-            from: `"${name}" <${email}>`, 
-            to: 'nandanakodiveettil@gmail.com', 
+            from: `"${name}" <${email}>`,
+            to: 'nandanakodiveettil@gmail.com',
             subject: `Contact Form Submission: ${subject}`,
             text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
         };

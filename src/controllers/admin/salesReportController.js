@@ -3,104 +3,104 @@ import { HttpStatus } from "../../statusCode.js";
 //using to get the salers report
 const getSalesReport = async (req, res) => {
     try {
-      const { startDate, endDate, reportType } = req.query;
-      let query = {};
-      let dateRange = {};
-      switch (reportType) {
-        case 'daily':
-          dateRange = {
-            startDate: new Date(new Date().setHours(0, 0, 0, 0)),
-            endDate: new Date(new Date().setHours(23, 59, 59, 999))
-          };
-          break;
-        case 'weekly':
-          const weekStart = new Date();
-          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-          weekStart.setHours(0, 0, 0, 0);
-          dateRange = { startDate: weekStart, endDate: new Date() };
-          break;
-        case 'monthly':
-          const monthStart = new Date();
-          monthStart.setDate(1);
-          monthStart.setHours(0, 0, 0, 0);
-          dateRange = { startDate: monthStart, endDate: new Date() };
-          break;
-        case 'custom':
-          dateRange = { startDate: new Date(startDate), endDate: new Date(endDate) };
-          break;
-        default:
-          dateRange = {
-            startDate: new Date(new Date().setHours(0, 0, 0, 0)),
-            endDate: new Date(new Date().setHours(23, 59, 59, 999))
-          };
-      }
-  
-      query = {
-        createdOn: { $gte: dateRange.startDate, $lte: dateRange.endDate },
-        status: { $nin: ['Cancelled', 'Pending', 'Processing', 'Return Requested', 'Returned'] }
-      };
-  
-      const orders = await Order.find(query).sort({ createdOn: -1 });
-  
-      console.log('Raw Orders from DB:', JSON.stringify(orders.map(o => ({
-        orderId: o.orderId,
-        totalPrice: o.totalPrice,
-        discount: o.discount,
-        finalAmount: o.finalAmount,
-        couponApplied: o.couponApplied,
-        status: o.status
-      })), null, 2));
-  
-      const reportData = {
-        totalOrders: orders.length,
-        totalSales: orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0),
-        totalDiscount: orders.reduce((sum, order) => {
-          return sum + (order.totalPrice && order.finalAmount 
-            ? order.totalPrice - order.finalAmount 
-            : order.discount || 0);
-        }, 0),
-        couponDiscount: orders.reduce((sum, order) => {
-          if (order.couponApplied) {
-            return sum + (order.totalPrice && order.finalAmount 
-              ? order.totalPrice - order.finalAmount 
-              : order.discount || 0);
-          }
-          return sum;
-        }, 0),
-        orders: orders.map(order => ({
-          orderId: order.orderId || 'N/A',
-          date: order.createdOn,
-          amount: order.totalPrice || 0,
-          discount: order.totalPrice && order.finalAmount 
-            ? order.totalPrice - order.finalAmount 
-            : order.discount || 0,
-          finalAmount: order.finalAmount || order.totalPrice || 0,
-          status: order.status || 'Unknown',
-          paymentMethod: order.paymentMethod || 'N/A'
-        }))
-      };
-  
-      console.log('Processed Report Data:', JSON.stringify(reportData, null, 2));
-  
-      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-        return res.json(reportData);
-      } else {
-        return res.render('salesReport', {
-          reportData,
-          startDate: dateRange.startDate,
-          endDate: dateRange.endDate,
-          reportType,
-          title: 'Sales Report'
-        });
-      }
+        const { startDate, endDate, reportType } = req.query;
+        let query = {};
+        let dateRange = {};
+        switch (reportType) {
+            case 'daily':
+                dateRange = {
+                    startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+                    endDate: new Date(new Date().setHours(23, 59, 59, 999))
+                };
+                break;
+            case 'weekly':
+                const weekStart = new Date();
+                weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                weekStart.setHours(0, 0, 0, 0);
+                dateRange = { startDate: weekStart, endDate: new Date() };
+                break;
+            case 'monthly':
+                const monthStart = new Date();
+                monthStart.setDate(1);
+                monthStart.setHours(0, 0, 0, 0);
+                dateRange = { startDate: monthStart, endDate: new Date() };
+                break;
+            case 'custom':
+                dateRange = { startDate: new Date(startDate), endDate: new Date(endDate) };
+                break;
+            default:
+                dateRange = {
+                    startDate: new Date(new Date().setHours(0, 0, 0, 0)),
+                    endDate: new Date(new Date().setHours(23, 59, 59, 999))
+                };
+        }
+
+        query = {
+            createdOn: { $gte: dateRange.startDate, $lte: dateRange.endDate },
+            status: { $nin: ['Cancelled', 'Pending', 'Processing', 'Return Requested', 'Returned'] }
+        };
+
+        const orders = await Order.find(query).sort({ createdOn: -1 });
+
+        console.log('Raw Orders from DB:', JSON.stringify(orders.map(o => ({
+            orderId: o.orderId,
+            totalPrice: o.totalPrice,
+            discount: o.discount,
+            finalAmount: o.finalAmount,
+            couponApplied: o.couponApplied,
+            status: o.status
+        })), null, 2));
+
+        const reportData = {
+            totalOrders: orders.length,
+            totalSales: orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0),
+            totalDiscount: orders.reduce((sum, order) => {
+                return sum + (order.totalPrice && order.finalAmount
+                    ? order.totalPrice - order.finalAmount
+                    : order.discount || 0);
+            }, 0),
+            couponDiscount: orders.reduce((sum, order) => {
+                if (order.couponApplied) {
+                    return sum + (order.totalPrice && order.finalAmount
+                        ? order.totalPrice - order.finalAmount
+                        : order.discount || 0);
+                }
+                return sum;
+            }, 0),
+            orders: orders.map(order => ({
+                orderId: order.orderId || 'N/A',
+                date: order.createdOn,
+                amount: order.totalPrice || 0,
+                discount: order.totalPrice && order.finalAmount
+                    ? order.totalPrice - order.finalAmount
+                    : order.discount || 0,
+                finalAmount: order.finalAmount || order.totalPrice || 0,
+                status: order.status || 'Unknown',
+                paymentMethod: order.paymentMethod || 'N/A'
+            }))
+        };
+
+        console.log('Processed Report Data:', JSON.stringify(reportData, null, 2));
+
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.json(reportData);
+        } else {
+            return res.render('salesReport', {
+                reportData,
+                startDate: dateRange.startDate,
+                endDate: dateRange.endDate,
+                reportType,
+                title: 'Sales Report'
+            });
+        }
     } catch (error) {
-      console.error('Error generating sales report:', error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        status: false,
-        message: 'Error generating sales report'
-      });
+        console.error('Error generating sales report:', error);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            status: false,
+            message: 'Error generating sales report'
+        });
     }
-  };
+};
 
 
 import ExcelJS from 'exceljs';
@@ -154,7 +154,7 @@ const exportSalesReport = async (req, res) => {
                 $gte: dateRange.start,
                 $lte: dateRange.end
             },
-            status: { $nin: ['Cancelled','Pending','Processing', 'Return Requested', 'Returned'] }
+            status: { $nin: ['Cancelled', 'Pending', 'Processing', 'Return Requested', 'Returned'] }
         }).populate('userId', 'name email');
 
         const totals = {
@@ -298,13 +298,13 @@ const generatePDFReport = async (orders, totals, dateRange, res) => {
         prepareHeader: () => doc.font('Helvetica-Bold'),
         prepareRow: () => doc.font('Helvetica')
     });
-    
+
     doc.moveDown();
 
     // Payment Methods Summary
     doc.fontSize(12).text('Payment Methods Summary', { underline: true });
     doc.moveDown(0.5);
-    
+
     const paymentMethodsTable = {
         headers: ['Payment Method', 'Count'],
         rows: Object.entries(totals.paymentMethods).map(([method, count]) => [
@@ -317,7 +317,7 @@ const generatePDFReport = async (orders, totals, dateRange, res) => {
         prepareHeader: () => doc.font('Helvetica-Bold'),
         prepareRow: () => doc.font('Helvetica')
     });
-    
+
     doc.moveDown();
 
     // Orders Table
@@ -371,7 +371,7 @@ const getSalesData = async (req, res) => {
                 });
         }
 
-     
+
         console.log('Date Range:', {
             startDate,
             currentDate
@@ -394,8 +394,8 @@ const getSalesData = async (req, res) => {
         console.log('Match Query:', JSON.stringify(matchQuery, null, 2));
 
         const pipeline = [
-            { 
-                $match: matchQuery 
+            {
+                $match: matchQuery
             },
             {
                 $unwind: '$orderedItems'
@@ -407,7 +407,7 @@ const getSalesData = async (req, res) => {
             },
             {
                 $group: {
-                    _id: filterType === 'yearly' 
+                    _id: filterType === 'yearly'
                         ? { $year: '$createdOn' }
                         : filterType === 'monthly'
                             ? {
@@ -427,26 +427,26 @@ const getSalesData = async (req, res) => {
                     count: { $sum: 1 }
                 }
             },
-            { 
-                $sort: { '_id': 1 } 
+            {
+                $sort: { '_id': 1 }
             }
         ];
-       
+
         console.log('Aggregation Pipeline:', JSON.stringify(pipeline, null, 2));
 
         const salesData = await Order.aggregate(pipeline);
 
-        
+
         console.log('Raw Aggregation Results:', JSON.stringify(salesData, null, 2));
 
-        
+
         let labels = [];
         let data = [];
 
         if (filterType === 'yearly') {
             const years = Array.from({ length: 3 }, (_, i) => currentDate.getFullYear() - 2 + i);
             years.forEach(year => {
-                const yearData = salesData.find(item => 
+                const yearData = salesData.find(item =>
                     typeof item._id === 'number' ? item._id === year : item._id.year === year
                 );
                 labels.push(year.toString());
@@ -465,7 +465,7 @@ const getSalesData = async (req, res) => {
             });
 
             months.forEach(({ year, month, label }) => {
-                const monthData = salesData.find(item => 
+                const monthData = salesData.find(item =>
                     item._id.year === year && item._id.month === month
                 );
                 labels.push(label);
@@ -476,7 +476,7 @@ const getSalesData = async (req, res) => {
             for (let i = 6; i >= 0; i--) {
                 const date = new Date(currentDate);
                 date.setDate(date.getDate() - i);
-                
+
                 const dayData = salesData.find(item =>
                     item._id.year === date.getFullYear() &&
                     item._id.month === (date.getMonth() + 1) &&
@@ -487,7 +487,7 @@ const getSalesData = async (req, res) => {
                 data.push(dayData ? Math.round(dayData.totalAmount) : 0);
             }
         }
-        
+
         console.log('Formatted Data:', {
             labels,
             data
@@ -509,166 +509,166 @@ const getSalesData = async (req, res) => {
     }
 };
 
-  //
-  const generateLedger = async (req, res) => {
-      try {
-  const orders = await Order.aggregate([
-      {
-          $lookup: {
-              from: 'users',
-              localField: 'userId',
-              foreignField: '_id',
-              as: 'userInfo'
-          }
-      },
-      {
-          $unwind: '$userInfo'
-      },
-      {
-          $project: {
-              orderId: 1,
-              userId: 1,
-              finalAmount: 1,
-              paymentMethod: 1,
-              status: 1,
-              createdOn: 1,
-              userName: '$userInfo.name'
-          }
-      },
-      {
-          $sort: { createdOn: -1 }
-      }
-  ]);
-  console.log('orders',orders)
-  
-          if (!orders.length) {
-              return res.status(HttpStatus.NOT_FOUND).json({ message: "No orders found" });
-          }
-  
-          const doc = new PDFDocument({ margin: 40, size: 'A3', layout: 'landscape' });
+//
+const generateLedger = async (req, res) => {
+    try {
+        const orders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userInfo'
+                }
+            },
+            {
+                $unwind: '$userInfo'
+            },
+            {
+                $project: {
+                    orderId: 1,
+                    userId: 1,
+                    finalAmount: 1,
+                    paymentMethod: 1,
+                    status: 1,
+                    createdOn: 1,
+                    userName: '$userInfo.name'
+                }
+            },
+            {
+                $sort: { createdOn: -1 }
+            }
+        ]);
+        console.log('orders', orders)
 
-const reportsDir = path.join(__dirname, '../public/reports');
-if (!fs.existsSync(reportsDir)) {
-fs.mkdirSync(reportsDir, { recursive: true });
-}
+        if (!orders.length) {
+            return res.status(HttpStatus.NOT_FOUND).json({ message: "No orders found" });
+        }
 
-const filePath = path.join(reportsDir, 'ledger.pdf');
-const stream = fs.createWriteStream(filePath);
-doc.pipe(stream);
+        const doc = new PDFDocument({ margin: 40, size: 'A3', layout: 'landscape' });
 
-// Title
-doc.fontSize(26).fillColor('#000').text('Ledger Book', { align: 'center', underline: true }).moveDown(1);
+        const reportsDir = path.join(__dirname, '../public/reports');
+        if (!fs.existsSync(reportsDir)) {
+            fs.mkdirSync(reportsDir, { recursive: true });
+        }
 
-// Column Settings
-const columnWidths = {
-orderId: 120,
-user: 150,
-amount: 100,
-paymentMethod: 120,
-status: 120,
-createdOn: 200
+        const filePath = path.join(reportsDir, 'ledger.pdf');
+        const stream = fs.createWriteStream(filePath);
+        doc.pipe(stream);
+
+        // Title
+        doc.fontSize(26).fillColor('#000').text('Ledger Book', { align: 'center', underline: true }).moveDown(1);
+
+        // Column Settings
+        const columnWidths = {
+            orderId: 120,
+            user: 150,
+            amount: 100,
+            paymentMethod: 120,
+            status: 120,
+            createdOn: 200
+        };
+
+        const totalTableWidth = Object.values(columnWidths).reduce((a, b) => a + b);
+        const startX = (doc.page.width - totalTableWidth) / 2;
+        const startY = doc.y;
+
+        // Table Headers
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(14)
+            .fillColor('#fff')
+            .rect(startX, startY, totalTableWidth, 30)
+            .fill('#333')
+            .fillColor('#fff');
+
+        doc.text('Order ID', startX + 10, startY + 8, { width: columnWidths.orderId, align: 'left' });
+        doc.text('User', startX + 10 + columnWidths.orderId, startY + 8, { width: columnWidths.user, align: 'left' });
+        doc.text('Amount', startX + 10 + columnWidths.orderId + columnWidths.user, startY + 8, { width: columnWidths.amount, align: 'center' });
+        doc.text('Payment', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, startY + 8, { width: columnWidths.paymentMethod, align: 'center' });
+        doc.text('Status', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, startY + 8, { width: columnWidths.status, align: 'center' });
+        doc.text('Order Created', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, startY + 8, { width: columnWidths.createdOn, align: 'center' });
+
+        doc.moveDown(1);
+
+
+        let yPosition = startY + 40;
+        const rowHeight = 40;
+        const pageBottomMargin = doc.page.height - 60;
+
+        orders.forEach((order, index) => {
+
+            if (yPosition + rowHeight > pageBottomMargin) {
+                doc.addPage();
+                yPosition = 50;
+
+
+                doc
+                    .font('Helvetica-Bold')
+                    .fontSize(14)
+                    .fillColor('#fff')
+                    .rect(startX, yPosition, totalTableWidth, 30)
+                    .fill('#333')
+                    .fillColor('#fff');
+
+                doc.text('Order ID', startX + 10, yPosition + 8, { width: columnWidths.orderId, align: 'left' });
+                doc.text('User', startX + 10 + columnWidths.orderId, yPosition + 8, { width: columnWidths.user, align: 'left' });
+                doc.text('Amount', startX + 10 + columnWidths.orderId + columnWidths.user, yPosition + 8, { width: columnWidths.amount, align: 'center' });
+                doc.text('Payment', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, yPosition + 8, { width: columnWidths.paymentMethod, align: 'center' });
+                doc.text('Status', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, yPosition + 8, { width: columnWidths.status, align: 'center' });
+                doc.text('Order Created', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, yPosition + 8, { width: columnWidths.createdOn, align: 'center' });
+
+                yPosition += 40;
+            }
+
+
+            const bgColor = index % 2 === 0 ? '#f3f3f3' : '#fff';
+            doc.rect(startX, yPosition, totalTableWidth, rowHeight).fill(bgColor).fillColor('#000');
+
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .text(order.orderId.slice(-9), startX + 10, yPosition + 8, { width: columnWidths.orderId, align: 'left' })
+                .text(order.userName || 'Guest', startX + 10 + columnWidths.orderId, yPosition + 8, { width: columnWidths.user, align: 'left' })
+                .text(`₹${order.finalAmount.toFixed(2)}`, startX + 10 + columnWidths.orderId + columnWidths.user, yPosition + 8, { width: columnWidths.amount, align: 'center' })
+                .text(order.paymentMethod, startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, yPosition + 8, { width: columnWidths.paymentMethod, align: 'center' })
+                .text(order.status, startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, yPosition + 8, { width: columnWidths.status, align: 'center' })
+                .text(order.createdOn.toLocaleDateString('en-GB') + ' ' + order.createdOn.toLocaleTimeString('en-GB'), startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, yPosition + 8, { width: columnWidths.createdOn, align: 'center' });
+
+            yPosition += rowHeight;
+        });
+
+
+        doc.moveDown(2);
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(12)
+            .text(`Ledger Book Downloaded on: ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')}`, {
+                align: 'right'
+            });
+
+        doc.end();
+
+        stream.on('finish', () => {
+            res.download(filePath, 'ledger.pdf', (err) => {
+                if (err) console.error(err);
+                fs.unlinkSync(filePath);
+            });
+        });
+
+
+    } catch (error) {
+        console.error('Error generating ledger:', error);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error generating ledger" });
+    }
 };
 
-const totalTableWidth = Object.values(columnWidths).reduce((a, b) => a + b); 
-const startX = (doc.page.width - totalTableWidth) / 2; 
-const startY = doc.y;
 
-// Table Headers
-doc
-.font('Helvetica-Bold')
-.fontSize(14)
-.fillColor('#fff')
-.rect(startX, startY, totalTableWidth, 30)
-.fill('#333')
-.fillColor('#fff');
-
-doc.text('Order ID', startX + 10, startY + 8, { width: columnWidths.orderId, align: 'left' });
-doc.text('User', startX + 10 + columnWidths.orderId, startY + 8, { width: columnWidths.user, align: 'left' });
-doc.text('Amount', startX + 10 + columnWidths.orderId + columnWidths.user, startY + 8, { width: columnWidths.amount, align: 'center' });
-doc.text('Payment', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, startY + 8, { width: columnWidths.paymentMethod, align: 'center' });
-doc.text('Status', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, startY + 8, { width: columnWidths.status, align: 'center' });
-doc.text('Order Created', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, startY + 8, { width: columnWidths.createdOn, align: 'center' });
-
-doc.moveDown(1);
-
-
-let yPosition = startY + 40;
-const rowHeight = 40;
-const pageBottomMargin = doc.page.height - 60;
-
-orders.forEach((order, index) => {
-
-if (yPosition + rowHeight > pageBottomMargin) {
-doc.addPage();
-yPosition = 50; 
-
-
-doc
-  .font('Helvetica-Bold')
-  .fontSize(14)
-  .fillColor('#fff')
-  .rect(startX, yPosition, totalTableWidth, 30)
-  .fill('#333')
-  .fillColor('#fff');
-
-doc.text('Order ID', startX + 10, yPosition + 8, { width: columnWidths.orderId, align: 'left' });
-doc.text('User', startX + 10 + columnWidths.orderId, yPosition + 8, { width: columnWidths.user, align: 'left' });
-doc.text('Amount', startX + 10 + columnWidths.orderId + columnWidths.user, yPosition + 8, { width: columnWidths.amount, align: 'center' });
-doc.text('Payment', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, yPosition + 8, { width: columnWidths.paymentMethod, align: 'center' });
-doc.text('Status', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, yPosition + 8, { width: columnWidths.status, align: 'center' });
-doc.text('Order Created', startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, yPosition + 8, { width: columnWidths.createdOn, align: 'center' });
-
-yPosition += 40; 
-}
-
-
-const bgColor = index % 2 === 0 ? '#f3f3f3' : '#fff';
-doc.rect(startX, yPosition, totalTableWidth, rowHeight).fill(bgColor).fillColor('#000');
-
-doc
-.font('Helvetica')
-.fontSize(12)
-.text(order.orderId.slice(-9), startX + 10, yPosition + 8, { width: columnWidths.orderId, align: 'left' })
-.text(order.userName || 'Guest', startX + 10 + columnWidths.orderId, yPosition + 8, { width: columnWidths.user, align: 'left' })
-.text(`₹${order.finalAmount.toFixed(2)}`, startX + 10 + columnWidths.orderId + columnWidths.user, yPosition + 8, { width: columnWidths.amount, align: 'center' })
-.text(order.paymentMethod, startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount, yPosition + 8, { width: columnWidths.paymentMethod, align: 'center' })
-.text(order.status, startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod, yPosition + 8, { width: columnWidths.status, align: 'center' })
-.text(order.createdOn.toLocaleDateString('en-GB') + ' ' + order.createdOn.toLocaleTimeString('en-GB'), startX + 10 + columnWidths.orderId + columnWidths.user + columnWidths.amount + columnWidths.paymentMethod + columnWidths.status, yPosition + 8, { width: columnWidths.createdOn, align: 'center' });
-
-yPosition += rowHeight;
-});
-
-
-doc.moveDown(2);
-doc
-.font('Helvetica-Bold')
-.fontSize(12)
-.text(`Ledger Book Downloaded on: ${new Date().toLocaleDateString('en-GB')} at ${new Date().toLocaleTimeString('en-GB')}`, {
-align: 'right'
-});
-
-doc.end();
-
-stream.on('finish', () => {
-res.download(filePath, 'ledger.pdf', (err) => {
-if (err) console.error(err);
-fs.unlinkSync(filePath);
-});
-});
-
-  
-      } catch (error) {
-          console.error('Error generating ledger:', error);
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error generating ledger" });
-      }
-  };
-  
-  
 
 
 export {
-  getSalesReport,
-  exportSalesReport,
-  getSalesData,
-  generateLedger
+    getSalesReport,
+    exportSalesReport,
+    getSalesData,
+    generateLedger
 }
