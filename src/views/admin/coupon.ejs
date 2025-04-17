@@ -2,331 +2,331 @@
   <%- include("../../views/partials/admin/slidebar") %>
 
     <style>
-      /* Dark Theme with Neon Accents for Coupon Management */
 
-      /* Base Styles */
-      :root {
-        --sidebar-width: 275px;
-        --primary-color: #00ffcc;
-        --secondary-color: #00ccff;
-        --danger-color: #ff6666;
-      }
+:root {
+  --sidebar-width: 275px;
+  --primary-color: #00ffcc;
+  --secondary-color: #00ccff;
+  --danger-color: #ff6666;
+}
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-      body {
-        background-color: #121212;
-        color: #f0f0f0;
-        font-family: 'Poppins', sans-serif;
-        min-height: 100vh;
-      }
+body {
+  background-color: #121212;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+}
 
-      .main-content {
-        background-color: #1a1a1a;
-        padding: clamp(15px, 3vw, 30px) 0;
-        margin-left: var(--sidebar-width);
-        width: calc(100% - var(--sidebar-width));
-        min-height: calc(100vh - 60px);
-        /* Adjust based on header height */
-        transition: all 0.3s ease;
-        margin-top: 81px;
-      }
+.main-content {
+  background-color: #1a1a1a;
+  padding: clamp(15px, 3vw, 30px) 0;
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: calc(100vh - 60px);
+  transition: all 0.3s ease;
+  margin-top: 81px;
+}
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 clamp(10px, 2vw, 20px);
-      }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(10px, 2vw, 20px);
+}
 
-      .card {
-        background-color: #202020;
-        border-radius: 8px;
-        box-shadow: 0 0 15px rgba(0, 255, 200, 0.1);
-        margin-bottom: clamp(15px, 3vw, 30px);
-        border: 1px solid #333;
-        transition: all 0.3s ease;
-      }
+.card {
+  background-color: #202020;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 255, 200, 0.1);
+  margin-bottom: clamp(15px, 3vw, 30px);
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+}
 
-      .card:hover {
-        box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
-        transform: translateY(-3px);
-      }
+.card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+  transform: translateY(-3px);
+}
 
-      .card-body {
-        padding: clamp(15px, 3vw, 25px);
-      }
+.card-body {
+  padding: clamp(15px, 3vw, 25px);
+}
 
-      .content-header {
-        margin-bottom: clamp(15px, 2vw, 20px);
-      }
+.content-header {
+  margin-bottom: clamp(15px, 2vw, 20px);
+}
 
-      .content-title {
-        color: var(--primary-color);
-        font-size: clamp(1.5rem, 4vw, 2rem);
-        font-weight: 600;
-        text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
-        padding-left: 15px;
-        border-left: 4px solid var(--primary-color);
-      }
+.content-title {
+  color: #ffffff;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  padding-left: 15px;
+  border-left: 4px solid var(--primary-color);
+}
 
-      .form-control {
-        background-color: #2a2a2a;
-        border: 1px solid #444;
-        color: #f0f0f0;
-        border-radius: 6px;
-        padding: clamp(8px, 2vw, 12px) 15px;
-        width: 100%;
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-      }
+.form-control {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  color: #ffffff; 
+  border-radius: 6px;
+  padding: clamp(8px, 2vw, 12px) 15px;
+  width: 100%;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
 
-      .form-control:focus {
-        background-color: #2f2f2f;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(0, 255, 204, 0.25);
-        animation: glowBorder 2s infinite;
-      }
+.form-control:focus {
+  background-color: #2f2f2f;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 204, 0.25);
+  color: #ffffff; /* Ensure white text on focus */
+  animation: glowBorder 2s infinite;
+}
 
-      .form-group {
-        margin-bottom: clamp(15px, 2vw, 20px);
-      }
+.form-group {
+  margin-bottom: clamp(15px, 2vw, 20px);
+}
 
-      label {
-        color: #b8b8b8;
-        font-weight: 500;
-        margin-bottom: 8px;
-        display: block;
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-      }
+label {
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
 
-      .btn {
-        border-radius: 6px;
-        padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s;
-        font-size: clamp(0.8rem, 1.5vw, 1rem);
-        width: 100%;
-      }
+.btn {
+  border-radius: 6px;
+  padding: clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  width: 100%;
+}
 
-      .btn-success {
-        background: linear-gradient(135deg, #00ffcc 0%, #00ccff 100%);
-        color: #121212;
-      }
+.btn-success {
+  background: linear-gradient(135deg, #00ffcc 0%, #00ccff 100%);
+  color: #ffffff;
+}
 
-      .btn-success:hover {
-        background: linear-gradient(135deg, #00ffdd 0%, #00d4ff 100%);
-        box-shadow: 0 6px 20px rgba(0, 255, 204, 0.5);
-      }
+.btn-success:hover {
+  background: linear-gradient(135deg, #00ffdd 0%, #00d4ff 100%);
+  box-shadow: 0 6px 20px rgba(0, 255, 204, 0.5);
+}
 
-      .btn-info {
-        background: linear-gradient(135deg, #00ccff 0%, #3366ff 100%);
-        color: white;
-      }
+.btn-info {
+  background: linear-gradient(135deg, #00ccff 0%, #3366ff 100%);
+  color: #ffffff;
+}
 
-      .btn-danger {
-        background: linear-gradient(135deg, #ff6666 0%, #ff0066 100%);
-        color: white;
-      }
+.btn-danger {
+  background: linear-gradient(135deg, #ff6666 0%, #ff0066 100%);
+  color: #ffffff;
+}
 
-      .table {
-        width: 100%;
-        min-width: 600px;
-      }
+.table {
+  width: 100%;
+  min-width: 600px;
+}
 
-      .table thead th {
-        padding: clamp(10px, 2vw, 15px);
-        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-      }
+.table thead th {
+  padding: clamp(10px, 2vw, 15px);
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  color: #020202;
+}
 
-      .table tbody td {
-        padding: clamp(8px, 2vw, 12px) 15px;
-        font-size: clamp(0.85rem, 1.5vw, 1rem);
-      }
+.table tbody td {
+  padding: clamp(8px, 2vw, 12px) 15px;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  color: #040404;
+}
 
-      .action-buttons {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
-      .action-buttons .btn {
-        padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
-        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-      }
+.action-buttons .btn {
+  padding: clamp(4px, 1vw, 6px) clamp(8px, 2vw, 12px);
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+}
 
-      .pagination-container {
-        margin-top: clamp(15px, 3vw, 30px);
-      }
+.pagination-container {
+  margin-top: clamp(15px, 3vw, 30px);
+}
 
-      .pagination {
-        gap: clamp(3px, 1vw, 5px);
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+.pagination {
+  gap: clamp(3px, 1vw, 5px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
-      .pagination li a,
-      .pagination li span {
-        width: clamp(30px, 4vw, 36px);
-        height: clamp(30px, 4vw, 36px);
-        font-size: clamp(0.8rem, 1.5vw, 1rem);
-      }
+.pagination li a,
+.pagination li span {
+  width: clamp(30px, 4vw, 36px);
+  height: clamp(30px, 4vw, 36px);
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  color: #ffffff;
+}
 
-      .entry-count {
-        font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-        margin-top: clamp(10px, 2vw, 15px);
-      }
+.entry-count {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #ffffff;
+  margin-top: clamp(10px, 2vw, 15px);
+}
 
-      .text-danger {
-        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-      }
+.text-danger {
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  color: #ff0000; /* Kept red for visibility */
+}
 
-      /* Responsive Design */
-      @media (max-width: 1024px) {
-        .main-content {
-          margin-left: var(--sidebar-width);
-          width: calc(100% - var(--sidebar-width));
-        }
-      }
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+  }
+}
 
-      @media (max-width: 768px) {
-        .main-content {
-          margin-left: 0;
-          width: 100%;
-        }
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
 
-        .row {
-          flex-direction: column;
-        }
+  .row {
+    flex-direction: column;
+  }
 
-        .col-md-6 {
-          width: 100%;
-        }
+  .col-md-6 {
+    width: 100%;
+  }
 
-        .table {
-          display: block;
-          min-width: 100%;
-        }
+  .table {
+    display: block;
+    min-width: 100%;
+  }
 
-        .table thead {
-          display: none;
-        }
+  .table thead {
+    display: none;
+  }
 
-        .table tbody,
-        .table tr,
-        .table td {
-          display: block;
-          width: 100%;
-        }
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
 
-        .table tr {
-          margin-bottom: 15px;
-          background: #252525;
-          border-radius: 6px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
+  .table tr {
+    margin-bottom: 15px;
+    background: #252525;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
 
-        .table td {
-          border-bottom: none;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 15px;
-        }
+  .table td {
+    border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
 
-        .table td:before {
-          content: attr(data-label);
-          font-weight: 600;
-          color: var(--primary-color);
-          text-transform: uppercase;
-          font-size: 0.85rem;
-          flex: 0 0 40%;
-          margin-right: 10px;
-        }
+  .table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    flex: 0 0 40%;
+    margin-right: 10px;
+  }
 
-        .action-buttons {
-          flex-direction: column;
-          gap: 5px;
-        }
-      }
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
 
-      @media (max-width: 480px) {
-        .card-body {
-          padding: 15px;
-        }
+@media (max-width: 480px) {
+  .card-body {
+    padding: 15px;
+  }
 
-        .content-title {
-          font-size: 1.2rem;
-          padding-left: 10px;
-        }
+  .content-title {
+    font-size: 1.2rem;
+    padding-left: 10px;
+  }
 
-        .form-control {
-          padding: 8px 12px;
-        }
+  .form-control {
+    padding: 8px 12px;
+  }
 
-        .btn {
-          padding: 8px 15px;
-        }
+  .btn {
+    padding: 8px 15px;
+  }
 
-        .table td {
-          padding: 8px 10px;
-          font-size: 0.8rem;
-        }
+  .table td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
 
-        .pagination li a,
-        .pagination li span {
-          width: 30px;
-          height: 30px;
-        }
-      }
+  .pagination li a,
+  .pagination li span {
+    width: 30px;
+    height: 30px;
+  }
+}
 
-      /* Rest of your existing styles */
-      .card:hover {
-        transform: translateY(-5px);
-      }
+.card:hover {
+  transform: translateY(-5px);
+}
 
-      .btn:hover {
-        transform: translateY(-2px);
-      }
+.btn:hover {
+  transform: translateY(-2px);
+}
 
-      .btn-info:hover {
-        box-shadow: 0 4px 12px rgba(0, 204, 255, 0.4);
-      }
+.btn-info:hover {
+  box-shadow: 0 4px 12px rgba(0, 204, 255, 0.4);
+}
 
-      .btn-danger:hover {
-        box-shadow: 0 4px 12px rgba(255, 0, 102, 0.4);
-      }
+.btn-danger:hover {
+  box-shadow: 0 4px 12px rgba(255, 0, 102, 0.4);
+}
 
-      .table tbody tr:hover {
-        background-color: rgba(0, 255, 204, 0.05);
-      }
+.table tbody tr:hover {
+  background-color: rgba(0, 255, 204, 0.05);
+}
 
-      .pagination li.active span {
-        background: linear-gradient(135deg, #00ffcc 0%, #00ccff 100%);
-      }
+.pagination li.active span {
+  background: linear-gradient(135deg, #00ffcc 0%, #00ccff 100%);
+}
 
-      .pagination li a:hover {
-        background-color: #333;
-        box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
-      }
+.pagination li a:hover {
+  background-color: #333;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+}
 
-      @keyframes glowBorder {
-        0% {
-          box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
-        }
-
-        50% {
-          box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
-        }
-
-        100% {
-          box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
-        }
-      }
+@keyframes glowBorder {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+  }
+}
     </style>
 
     <div class="main-content">
