@@ -763,7 +763,6 @@
     const searchInput = document.querySelector(".search-input");
     const productCards = document.querySelectorAll(".product-card");
 
-    // Client-side filtering (optional)
     searchInput.addEventListener("keyup", function () {
         let filter = searchInput.value.toLowerCase();
         productCards.forEach(card => {
@@ -772,9 +771,7 @@
         });
     });
 
-    // Server-side search on form submit
     searchForm.addEventListener("submit", function (e) {
-        // Let the form submit normally to /shop with query parameter
     });
 });
 

@@ -1345,10 +1345,8 @@
                                 text: data.message || 'Payment completed successfully',
                                 confirmButtonColor: '#f7444e',
                             }).then(() => {
-                                // Update all cancel buttons for this order
                                 document.querySelectorAll(`.btn-cancel[id^="cancel-button-"]`).forEach(button => {
                                     const productId = button.id.replace('cancel-button-', '');
-                                    // Check if the button isn't already canceled or disabled due to return
                                     if (!button.classList.contains('bg-danger') && 
                                         button.innerText !== 'The item is returned') {
                                         button.disabled = false;
@@ -1356,7 +1354,6 @@
                                         button.onclick = () => cancel(orderId, productId);
                                     }
                                 });
-                                // Remove the retry payment button
                                 const retryButton = document.querySelector(`.retry-payment-btn[data-order-id="${orderId}"]`);
                                 if (retryButton) retryButton.remove();
                             });

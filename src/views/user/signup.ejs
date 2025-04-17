@@ -328,8 +328,7 @@
 
 
 
-   // Get form elements
-const form = document.getElementById('signForm'); // Fixed typo in ID
+const form = document.getElementById('signForm'); 
 const name = document.getElementById('Username');
 const phone = document.getElementById('phone');
 const email = document.getElementById('email');
@@ -341,7 +340,6 @@ const error3 = document.getElementById('error3');
 const error4 = document.getElementById('error4');
 const error5 = document.getElementById('error5');
 
-// Show/Hide Password Functionality
 const showPasswordButtons = document.querySelectorAll('.show-password');
 showPasswordButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -434,7 +432,6 @@ function validateConfirmPassword() {
     return true;
 }
 
-// Form submission handler
 form.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -446,14 +443,11 @@ form.addEventListener('submit', function(e) {
     
     if (isUsernameValid && isPhoneValid && isEmailValid && 
         isPasswordValid && isConfirmPasswordValid) {
-        // Show loader
         document.getElementById('loader').style.display = 'flex';
-        // Submit the form
         this.submit();
     }
 });
 
-// Real-time validation
 name.addEventListener('input', validateUsername);
 phone.addEventListener('input', validatePhone);
 email.addEventListener('input', validateEmail);

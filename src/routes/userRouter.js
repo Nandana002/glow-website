@@ -107,12 +107,12 @@ router.get('/download-invoice/:orderId', userAuth, checkoutController.downloadIn
 router.post('/place-order', checkoutController.placeOrder)
 
 router.get('/wallet', block, walletController.loadWallet)
-router.post('/place-order/wallet', walletController.wallet)
+router.post('/place-order/wallet',userAuth, walletController.wallet)
 
 router.get('/orders', block, userAuth, orderController.orders)
 router.get('/user/view-order/:orderid', block, orderController.viewOrder)
-router.post('/order-cancel', orderController.cancelOrder)
-router.post('/return-order', orderController.returnOrder)
+router.post('/order-cancel', userAuth,orderController.cancelOrder)
+router.post('/return-order',userAuth, orderController.returnOrder)
 
 
 router.get("/change-email", userAuth, profileController.changeEmail);
@@ -127,8 +127,8 @@ router.post("/verify-changepassword-otp", userAuth, profileController.verifyChan
 router.get('/contact', userAuth, contactController.getContactPage);
 router.post('/contact', userAuth, contactController.handleContactForm)
 
-router.get('/edit-address/:id', userController.getEditPage);
-router.post('/edit-address/:id', userController.edit);
+router.get('/edit-address/:id', userAuth,userController.getEditPage);
+router.post('/edit-address/:id', userAuth,userController.edit);
 
 
 router.get('/')

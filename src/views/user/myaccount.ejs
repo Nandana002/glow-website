@@ -258,13 +258,7 @@
                 <div class="card-header">
                     <h5 class="mb-0 text-center">User Profile</h5>
                 </div>
-                <!-- <div class="card-body">
-                    <div class="profile-image-container">
-                        <img id="selectedAvatar" class="profile-image" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="User Avatar">
-                        <div class="image-upload-overlay">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                    </div> -->
+             
 
                     <h5 class="card-title"><%= user.name %></h5>
                     <p class="card-text">
@@ -290,17 +284,14 @@
     </div>
 
     <script>
-        // Function to set avatar
         function setAvatar(avatarUrl) {
             const avatarImg = document.getElementById('selectedAvatar');
             avatarImg.src = avatarUrl;
-            // Optionally save to localStorage to persist selection
             localStorage.setItem('selectedAvatar', avatarUrl);
         }
 
-        // Initialize avatar
+     
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if there's a saved avatar in localStorage
             const savedAvatar = localStorage.getItem('selectedAvatar');
             const defaultAvatar = '<%= user.profileImage || "https://cdn-icons-png.flaticon.com/512/149/149071.png" %>';
             
@@ -310,7 +301,6 @@
                 setAvatar(defaultAvatar);
             }
 
-            // Avatar selection event listeners
             document.querySelectorAll('.avatar-option').forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -319,14 +309,11 @@
                 });
             });
             
-            // Add click handler for the camera icon (image upload overlay)
             document.querySelector('.image-upload-overlay').addEventListener('click', function() {
-                // You could trigger a file input click here if you implement file uploads
                 console.log('Upload photo clicked');
             });
         });
 
-        // Image preview for file upload (if you want to add upload functionality later)
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();

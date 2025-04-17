@@ -493,15 +493,7 @@
 <%- include("../partials/user/navbar.ejs") %>
 <body>
     
-<!--             
-            <!-- Middle section - Moving banner -->
-            <!-- <div class="col-lg-4 col-6 text-center">
-                <div class="moving-banner d-flex justify-content-center align-items-center h-100">
-                    <span>Free Shipping on Products Above ₹1000</span>
-                </div> -->
-            <!-- </div> --> 
 
-<!-- Page Header Start -->
 <div class="container-fluid bg-header text-white text-center py-5">
     <h1 class="display-4 font-weight-bold">Connect With Us</h1>
     <p class="lead">We're here to help you discover your perfect beauty routine</p>
@@ -649,11 +641,9 @@
 <!-- Template Javascript -->
 <script>
   $(document).ready(function() {
-    // Select the form by its action attribute since it doesn't have an ID
     $('form[action="/contact"]').on('submit', function(e) {
         e.preventDefault();
         
-        // Get form data
         const formData = {
             name: $('#name').val(),
             email: $('#email').val(),
@@ -661,7 +651,6 @@
             message: $('#message').val()
         };
         
-        // Show loading state
         Swal.fire({
             title: 'Sending...',
             text: 'Please wait while we send your message',
@@ -672,7 +661,6 @@
             }
         });
         
-        // Send Ajax request
         $.ajax({
             url: '/contact',
             type: 'POST',
@@ -685,7 +673,6 @@
                     confirmButtonText: 'Great!',
                     confirmButtonColor: '#ff8fbf'
                 });
-                // Reset the form
                 $('form[action="/contact"]')[0].reset();
             },
             error: function(xhr) {

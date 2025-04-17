@@ -69,10 +69,10 @@ router.get('/sales-data',isAuthenticated,getSalesData)
 
 router.get('/coupon',isAuthenticated,laodCoupon)
 router.get('/addCoupon',isAuthenticated,addcoupon)
-router.post('/coupon',createCoupon)
+router.post('/coupon',isAuthenticated,createCoupon)
 router.get('/editCoupon/:edit',isAuthenticated,geteditCoupon)
-router.put('/editCoupon/:edit',editCoupon)
-router.delete('/deleteCoupon/:id',deleteCoupon)
+router.put('/editCoupon/:edit',isAuthenticated,editCoupon)
+router.delete('/deleteCoupon/:id',isAuthenticated,deleteCoupon)
 
 router.get('/wallets',isAuthenticated,getAllWallets);
 router.get('/wallets/:userId',isAuthenticated,getUserWallet);
