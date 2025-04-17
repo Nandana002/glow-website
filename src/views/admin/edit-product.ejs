@@ -633,19 +633,27 @@ input[type="file"]::file-selector-button:hover {
     }
 
     function validateImageFile(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const fileType = file.type;
-            const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
-            if (!validImageTypes.includes(fileType)) {
-                document.getElementById('images-error').innerText = 'Please upload a valid image file (JPEG, PNG, JPG, GIF, or WEBP).';
-                event.target.value = '';
-                document.getElementById('imgView1').src = '';
-            } else {
-                document.getElementById('images-error').innerText = '';
-            }
+    const file = event.target.files[0];
+    const maxSize = 10* 1024 * 1024; 
+
+    if (file) {
+        const fileType = file.type;
+        const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+
+        if (!validImageTypes.includes(fileType)) {
+            document.getElementById('images-error').innerText = 'Please upload a valid image file (JPEG, PNG, JPG, GIF, or WEBP).';
+            event.target.value = '';
+            document.getElementById('imgView1').src = '';
+        } else if (file.size > maxSize) {
+            document.getElementById('images-error').innerText = 'File size must be less than 2MB.';
+            event.target.value = '';
+            document.getElementById('imgView1').src = '';
+        } else {
+            document.getElementById('images-error').innerText = '';
         }
     }
+}
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const shadesContainer = document.getElementById('shadesContainer');
