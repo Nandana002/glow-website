@@ -1066,7 +1066,6 @@ const downloadInvoice = async (req, res) => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send("Error generating invoice");
     }
 };
-
 export {
     getCheckoutPage,
     addAddressCheckout,
