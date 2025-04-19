@@ -183,17 +183,13 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-        const coupon = await Coupon.findOne({
-            code: couponCode
-        });
-
+        const coupon = await Coupon.findOne({ code: couponCode });
         if (!coupon) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: "Invalid coupon code"
             });
         }
-
 
         if (coupon.userBy.includes(userId)) {
             return res.status(HttpStatus.BAD_REQUEST).json({
@@ -210,7 +206,6 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-
         if (orderTotal < coupon.minPurchase) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
@@ -218,9 +213,7 @@ const applyCoupon = async (req, res) => {
             });
         }
 
-
         let discountAmount = 0;
-
         if (coupon.discountType === 'percentage') {
             discountAmount = (orderTotal * coupon.discountValue) / 100;
             if (coupon.maxDiscount) {
@@ -233,7 +226,13 @@ const applyCoupon = async (req, res) => {
         discountAmount = Math.min(discountAmount, orderTotal);
         const newTotal = orderTotal - discountAmount;
 
+        // Store coupon details in session
+        req.session.activeCoupon = coupon.code;
+        req.session.couponDiscount = discountAmount;
+        req.session.finalAmount = newTotal;
+        await req.session.save();
 
+        // Mark coupon as used by the user
         coupon.userBy.push(userId);
         await coupon.save();
 
@@ -243,7 +242,6 @@ const applyCoupon = async (req, res) => {
             discountAmount,
             newTotal
         });
-
     } catch (error) {
         console.error("Error applying coupon:", error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -252,7 +250,6 @@ const applyCoupon = async (req, res) => {
         });
     }
 };
-
 //using to removecopon in checkout page
 const removeCoupon = async (req, res) => {
     try {
@@ -368,6 +365,8 @@ const placeOrder = async (req, res) => {
 
                     req.session.activeCoupon = null;
                     req.session.couponDiscount = null;
+                    req.session.finalAmount = null;
+                    await req.session.save();
 
                     return res.json({
                         success: true,
@@ -395,7 +394,7 @@ const placeOrder = async (req, res) => {
             Cart.findOne({ userId }).populate('items.productId')
         ]);
 
-        if (!addressDoc || !cart?.items.length) {
+        if (!addressDoc || !cart?.items.length) {                         
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: !addressDoc ? 'Invalid address' : 'Cart is empty'
@@ -440,15 +439,71 @@ const placeOrder = async (req, res) => {
             addr._id.toString() === addressId
         );
 
+        const totalPrice = cart.items.reduce((total, item) => total + item.totalPrice, 0);
         const actualDiscount = req.session.activeCoupon ? (req.session.couponDiscount || 0) : 0;
+        const calculatedFinalAmount = totalPrice - actualDiscount;
+
+        if (Math.abs(finalAmount - calculatedFinalAmount) > 0.01) {
+            console.warn(`Final amount mismatch: Request=${finalAmount}, Calculated=${calculatedFinalAmount}`);
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: "Invalid final amount"
+            });
+        }
+
         const coupon = req.session.activeCoupon
-            ? await Coupon.findOne({ name: req.session.activeCoupon })
+            ? await Coupon.findOne({ code: req.session.activeCoupon })
             : null;
-        const couponMinPrice = coupon ? coupon.minimumPrice || 0 : 0;
+        const couponMinPrice = coupon ? coupon.minPurchase || 0 : 0;
+
+        const orderData = {
+            userId,
+            orderId: `ORD${Date.now()}`,
+            orderedItems: cart.items.map(item => ({
+                product: item.productId._id,
+                quantity: item.quantity,
+                price: item.price,
+                shade: item.shade,
+                name: item.productId.productName,
+                discount: item.discount || 0,
+                returnStatus: 'Not Requested',
+                cancelStatus: 'completed',
+                couponCode: req.session.activeCoupon || null
+            })),
+            totalPrice,
+            discount: actualDiscount,
+            finalAmount: calculatedFinalAmount,
+            paymentMethod,
+            address: selectedAddress,
+            couponMinPrice,
+            status: 'Pending',
+            paymentStatus: paymentMethod === 'RAZORPAY' ? 'Pending' : 'Success',
+            createdOn: new Date(),
+            couponApplied: req.session.activeCoupon ? true : false
+        };
+
+        const order = await Order.create(orderData);
+
+        const commonOperations = [
+            User.findByIdAndUpdate(userId, {
+                $push: { orderHistory: order._id }
+            }),
+            Cart.updateOne(
+                { userId },
+                { $set: { items: [], bill: 0 } }
+            ),
+            ...cart.items.map(item =>
+                Product.updateOne(
+                    { _id: item.productId._id, "shadeVariants.shade": item.shade },
+                    { $inc: { "shadeVariants.$.quantity": -item.quantity } }
+                )
+            )
+        ];
 
         if (paymentMethod === 'WALLET') {
-            const userWallet = await Wallet.findOne({ userId: userId });
+            const userWallet = await Wallet.findOne({ userId });
             if (!userWallet) {
+                await Order.findByIdAndDelete(order._id);
                 return res.status(HttpStatus.NOT_FOUND).json({
                     success: false,
                     message: "Wallet not found for this user"
@@ -456,39 +511,12 @@ const placeOrder = async (req, res) => {
             }
 
             if (userWallet.balance < finalAmount) {
+                await Order.findByIdAndDelete(order._id);
                 return res.status(HttpStatus.BAD_REQUEST).json({
                     success: false,
                     message: `Your wallet balance is insufficient. You currently have ₹${userWallet.balance}. Please choose a different payment method.`
                 });
             }
-
-            const orderData = {
-                userId,
-                orderId: `ORD${Date.now()}`,
-                orderedItems: cart.items.map(item => ({
-                    product: item.productId._id,
-                    quantity: item.quantity,
-                    price: item.price,
-                    shade: item.shade,
-                    name: item.productId.productName,
-                    discount: item.discount || 0,
-                    returnStatus: 'Not Requested',
-                    cancelStatus: 'completed',
-                    couponCode: req.session.activeCoupon || null
-                })),
-                totalPrice: cart.items.reduce((total, item) => total + item.totalPrice, 0),
-                discount: actualDiscount,
-                finalAmount,
-                paymentMethod: 'WALLET',
-                address: selectedAddress,
-                couponMinPrice,
-                status: 'Pending',
-                paymentStatus: 'Success',
-                createdOn: new Date(),
-                couponApplied: req.session.activeCoupon ? true : false
-            };
-
-            const order = await Order.create(orderData);
 
             userWallet.balance -= finalAmount;
             userWallet.transactionHistory.push({
@@ -497,27 +525,14 @@ const placeOrder = async (req, res) => {
                 transactionDate: new Date(),
                 description: `Payment for order ${order.orderId}`
             });
-
             await userWallet.save();
 
-            await User.findByIdAndUpdate(userId, {
-                $push: { orderHistory: order._id }
-            });
-
-            for (const item of cart.items) {
-                await Product.updateOne(
-                    { _id: item.productId._id, "shadeVariants.shade": item.shade },
-                    { $inc: { "shadeVariants.$.quantity": -item.quantity } }
-                );
-            }
-
-            await Cart.updateOne(
-                { userId },
-                { $set: { items: [], bill: 0 } }
-            );
+            await Promise.all(commonOperations);
 
             req.session.activeCoupon = null;
             req.session.couponDiscount = null;
+            req.session.finalAmount = null;
+            await req.session.save();
 
             return res.status(HttpStatus.OK).json({
                 success: true,
@@ -527,53 +542,12 @@ const placeOrder = async (req, res) => {
         }
 
         if (paymentMethod === 'COD') {
-            const orderData = {
-                userId,
-                orderId: `ORD${Date.now()}`,
-                orderedItems: cart.items.map(item => ({
-                    product: item.productId._id,
-                    quantity: item.quantity,
-                    price: item.price,
-                    shade: item.shade,
-                    name: item.productId.productName,
-                    discount: item.discount || 0,
-                    returnStatus: 'Not Requested',
-                    cancelStatus: 'completed',
-                    couponCode: req.session.activeCoupon || null
-                })),
-                totalPrice: cart.items.reduce((total, item) => total + item.totalPrice, 0),
-                discount: actualDiscount,
-                finalAmount,
-                paymentMethod,
-                address: selectedAddress,
-                couponMinPrice,
-                status: 'Pending',
-                paymentStatus: 'Success',
-                createdOn: new Date(),
-                couponApplied: req.session.activeCoupon ? true : false
-            };
-
-            const order = await Order.create(orderData);
-
-            await Promise.all([
-                ...cart.items.map(item =>
-                    Product.updateOne(
-                        { _id: item.productId._id, "shadeVariants.shade": item.shade },
-                        { $inc: { "shadeVariants.$.quantity": -item.quantity } }
-                    )
-                ),
-                Cart.updateOne(
-                    { userId },
-                    { $set: { items: [], bill: 0 } }
-                ),
-                User.findByIdAndUpdate(
-                    userId,
-                    { $push: { orderHistory: order._id } }
-                )
-            ]);
+            await Promise.all(commonOperations);
 
             req.session.activeCoupon = null;
             req.session.couponDiscount = null;
+            req.session.finalAmount = null;
+            await req.session.save();
 
             return res.status(HttpStatus.OK).json({
                 success: true,
@@ -583,34 +557,6 @@ const placeOrder = async (req, res) => {
         }
 
         if (paymentMethod === "RAZORPAY") {
-            const orderData = {
-                userId,
-                orderId: `ORD${Date.now()}`,
-                orderedItems: cart.items.map(item => ({
-                    product: item.productId._id,
-                    quantity: item.quantity,
-                    price: item.price,
-                    shade: item.shade,
-                    name: item.productId.productName,
-                    discount: item.discount || 0,
-                    returnStatus: 'Not Requested',
-                    cancelStatus: 'completed',
-                    couponCode: req.session.activeCoupon || null
-                })),
-                totalPrice: cart.items.reduce((total, item) => total + item.totalPrice, 0),
-                discount: actualDiscount,
-                finalAmount,
-                paymentMethod,
-                address: selectedAddress,
-                couponMinPrice,
-                status: 'Pending',
-                paymentStatus: 'Pending',
-                createdOn: new Date(),
-                couponApplied: req.session.activeCoupon ? true : false
-            };
-
-            const order = await Order.create(orderData);
-
             try {
                 const razorpayOrder = await razorpay.orders.create({
                     amount: finalAmount * 100,
@@ -959,15 +905,27 @@ const downloadInvoice = async (req, res) => {
             })
             .lean();
 
-        if (!order) return res.status(HttpStatus.NOT_FOUND).send("Order not found");
+        if (!order) {
+            return res.status(HttpStatus.NOT_FOUND).send("Order not found");
+        }
+
+        if (order.status === "Cancelled" || order.status === "Returned") {
+            return res.status(HttpStatus.BAD_REQUEST).send(
+                `Cannot generate invoice for ${order.status.toLowerCase()} order`
+            );
+        }
 
         const userAddress = await Address.findOne({ 'address._id': order.address });
-        if (!userAddress) return res.status(HttpStatus.NOT_FOUND).send("Address not found");
+        if (!userAddress) {
+            return res.status(HttpStatus.NOT_FOUND).send("Address not found");
+        }
 
         const selectedAddress = userAddress.address.find(
             addr => addr._id.toString() === order.address.toString()
         );
-        if (!selectedAddress) return res.status(HttpStatus.NOT_FOUND).send("Specific address not found");
+        if (!selectedAddress) {
+            return res.status(HttpStatus.NOT_FOUND).send("Specific address not found");
+        }
 
         const doc = new PDFDocument({
             margin: 50,
@@ -1001,10 +959,9 @@ const downloadInvoice = async (req, res) => {
             .text('Bill To:', 50, 170)
             .fontSize(10)
             .text(selectedAddress.name, 50, 190)
-            .text(selectedAddress.addressLine1, 50, 205)
-            .text(selectedAddress.addressLine2 || '', 50, 220)
-            .text(`${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`, 50, 235)
-            .text(`Phone: ${selectedAddress.phone || 'N/A'}`, 50, 250);
+            .text(selectedAddress.landMark || 'N/A', 50, 205)
+            .text(`${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`, 50, 220)
+            .text(`Phone: ${selectedAddress.phone || 'N/A'}`, 50, 235);
 
         const tableTop = 300;
         const tableHeaders = {
@@ -1025,12 +982,19 @@ const downloadInvoice = async (req, res) => {
             .text('Amount', tableHeaders.amount.x, tableTop, { width: tableHeaders.amount.width, align: 'right' });
 
         let yPosition = tableTop + 30;
-        let subtotal = 0
+        let subtotal = 0;
         order.orderedItems.forEach((item) => {
-            const amount = item.quantity * item.price;
-            subtotal += amount;
+            const isCanceled = item.cancelStatus === 'canceled';
+            const isReturned = item.returnStatus === 'Requested' || item.returnStatus === 'Returned';
+            const amount = isCanceled || isReturned ? 0 : item.quantity * item.price;
 
-            doc.text(item.product.productName, tableHeaders.item.x, yPosition, { width: tableHeaders.item.width })
+            if (!isCanceled && !isReturned) {
+                subtotal += amount;
+            }
+
+            const itemName = `${item.product.productName}${isCanceled ? ' (Canceled)' : isReturned ? ' (Returned)' : ''}`;
+
+            doc.text(itemName, tableHeaders.item.x, yPosition, { width: tableHeaders.item.width })
                 .text(item.quantity.toString(), tableHeaders.qty.x, yPosition, { width: tableHeaders.qty.width, align: 'center' })
                 .text(`₹${item.price.toFixed(2)}`, tableHeaders.price.x, yPosition, { width: tableHeaders.price.width, align: 'right' })
                 .text(`₹${amount.toFixed(2)}`, tableHeaders.amount.x, yPosition, { width: tableHeaders.amount.width, align: 'right' });
@@ -1047,15 +1011,22 @@ const downloadInvoice = async (req, res) => {
         const summaryX = 370;
         const summaryWidth = 180;
 
-        doc.text('Subtotal:', summaryX, yPosition, { width: 90, align: 'right' })
-
-        doc.text('Subtotal:', summaryX, yPosition, { width: 90, align: 'right' })
+        doc.fontSize(10)
+            .text('Subtotal:', summaryX, yPosition, { width: 90, align: 'right' })
             .text(`₹${subtotal.toFixed(2)}`, summaryX + 90, yPosition, { width: 90, align: 'right' });
 
-        if (order.discount) {
-            yPosition += 20;
-            doc.text('Discount:', summaryX, yPosition, { width: 90, align: 'right' })
-                .text(`-₹${order.discount.toFixed(2)}`, summaryX + 90, yPosition, { width: 90, align: 'right' });
+        yPosition += 20;
+        const discount = order.discount || 0;
+        const couponDisplay = order.couponApplied && order.couponCode ? `(${order.couponCode})` : '';
+        doc.fontSize(10)
+            .fillColor(discount > 0 ? '#ff0000' : 'black')
+            .text(`Discount ${couponDisplay}:`, summaryX, yPosition, { width: 90, align: 'right' })
+            .text(discount > 0 ? `-₹${discount.toFixed(2)}` : '₹0.00', summaryX + 90, yPosition, { width: 90, align: 'right' });
+
+        const calculatedFinalTotal = subtotal - discount;
+
+        if (Math.abs(calculatedFinalTotal - order.finalAmount) > 0.01) {
+            console.warn(`Final amount mismatch for order ${orderId}: DB=${order.finalAmount}, Calculated=${calculatedFinalTotal}`);
         }
 
         yPosition += 25;
@@ -1065,13 +1036,19 @@ const downloadInvoice = async (req, res) => {
         doc.fillColor('black')
             .fontSize(12)
             .text('Total:', summaryX, yPosition, { width: 90, align: 'right' })
-            .text(`₹${(order.finalAmount || subtotal).toFixed(2)}`, summaryX + 90, yPosition, { width: 90, align: 'right' });
+            .text(`₹${order.finalAmount.toFixed(2)}`, summaryX + 90, yPosition, { width: 90, align: 'right' });
 
         yPosition += 50;
         doc.fontSize(10)
             .text('Payment Information', 50, yPosition)
             .text(`Method: ${order.paymentMethod}`, 50, yPosition + 15)
-            .text(`Status: ${order.paymentStatus || 'Pending'}`, 50, yPosition + 30);
+            .text(`Status: ${order.paymentStatus || 'Pending'}`, 50, yPosition + 30)
+            .text(`Order Status: ${order.status}`, 50, yPosition + 45);
+
+        if (order.couponApplied) {
+            yPosition += 30;
+            doc.text(`Coupon: ${order.couponCode || 'Applied'}`, 50, yPosition);
+        }
 
         doc.fontSize(10)
             .text('Thank you for your business!', 50, doc.page.height - 100, { align: 'center' });
@@ -1080,12 +1057,16 @@ const downloadInvoice = async (req, res) => {
             .text('Terms & Conditions:', 50, doc.page.height - 80)
             .text('1. All prices are in INR and include GST where applicable.', 50, doc.page.height - 70)
             .text('2. This is a computer-generated invoice and requires no signature.', 50, doc.page.height - 60);
+
+        console.log(`Invoice generated for order ${orderId}: subtotal=${subtotal}, discount=${discount}, finalAmount=${order.finalAmount}, couponApplied=${order.couponApplied}, couponCode=${order.couponCode}`);
+
         doc.end();
     } catch (error) {
         console.error("Error generating invoice:", error);
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send("Error generating invoice");
     }
 };
+
 export {
     getCheckoutPage,
     addAddressCheckout,

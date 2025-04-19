@@ -91,25 +91,42 @@ const handleReturn = async (req, res) => {
         }
 
         if (action === 'approve') {
+            if (productItem.returnStatus === 'Approved') {
+                return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Return already approved' });
+            }
             productItem.returnStatus = 'Approved';
 
-            const refundAmount = productItem.price * productItem.quantity;
-
-            if (order.finalAmount !== undefined) {
-                order.finalAmount = Math.max(0, order.finalAmount - refundAmount);
+            const product = await Product.findById(productItem.product);
+            if (product) {
+                const shadeVariant = product.shadeVariants.find(v => v.shade === productItem.shade);
+                if (shadeVariant) {
+                    shadeVariant.quantity += productItem.quantity;
+                    await product.save();
+                }
             }
-            if (order.totalPrice !== undefined) {
-                order.totalPrice = Math.max(0, order.totalPrice - refundAmount);
-            }
-
         } else if (action === 'reject') {
             productItem.returnStatus = 'Rejected';
         } else {
             return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid action provided' });
         }
 
-        order.markModified('orderedItems');
+        let totalPrice = 0;
+        for (const orderItem of order.orderedItems) {
+            if (orderItem.cancelStatus !== 'canceled' && orderItem.returnStatus !== 'Approved') {
+                totalPrice += orderItem.price * orderItem.quantity;
+            }
+        }
+        order.totalPrice = totalPrice;
+        order.finalAmount = totalPrice; 
 
+        const allItemsCancelled = order.orderedItems.every(
+            item => item.cancelStatus === 'canceled' || item.returnStatus === 'Approved'
+        );
+        if (allItemsCancelled) {
+            order.status = 'Canceled';
+        }
+
+        order.markModified('orderedItems');
         await order.save();
 
         return res.status(HttpStatus.OK).json({
@@ -117,7 +134,6 @@ const handleReturn = async (req, res) => {
             message: `Return ${action}d successfully`,
             order
         });
-
     } catch (error) {
         console.error("Error in handleReturn:", error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -126,16 +142,18 @@ const handleReturn = async (req, res) => {
         });
     }
 };
-
 //using to orderCancelled
 
 const orderCancelled = async (req, res) => {
     try {
         const { orderId, productId } = req.body;
-        console.log("==============", productId)
-        const orderedProducts = await Order.findOne({ orderId })
+        const order = await Order.findOne({ orderId });
 
-        const itemIndex = orderedProducts.orderedItems.findIndex(
+        if (!order) {
+            return res.status(HttpStatus.NOT_FOUND).json({ message: "Order not found" });
+        }
+
+        const itemIndex = order.orderedItems.findIndex(
             item => item._id.toString() === productId
         );
 
@@ -143,38 +161,44 @@ const orderCancelled = async (req, res) => {
             return res.status(HttpStatus.NOT_FOUND).json({ message: "Item not found" });
         }
 
-        const items = orderedProducts.orderedItems[itemIndex];
-        items.cancelStatus = 'canceled'
+        const item = order.orderedItems[itemIndex];
+        if (item.cancelStatus === 'canceled') {
+            return res.status(HttpStatus.BAD_REQUEST).json({ message: "Item already canceled" });
+        }
 
-        if (items.cancelStatus === 'canceled') {
-            const product = await Product.findById(items.product);
-            if (product) {
-                const shadeVariant = product.shadeVariants.find(v => v.shade === items.shade);
-                if (shadeVariant) {
-                    shadeVariant.quantity += items.quantity;
-                    await product.save();
-                }
+        item.cancelStatus = 'canceled';
+
+        const product = await Product.findById(item.product);
+        if (product) {
+            const shadeVariant = product.shadeVariants.find(v => v.shade === item.shade);
+            if (shadeVariant) {
+                shadeVariant.quantity += item.quantity;
+                await product.save();
             }
         }
 
+        let totalPrice = 0;
+        for (const orderItem of order.orderedItems) {
+            if (orderItem.cancelStatus !== 'canceled' && orderItem.returnStatus !== 'Approved') {
+                totalPrice += orderItem.price * orderItem.quantity;
+            }
+        }
+        order.totalPrice = totalPrice;
+        order.finalAmount = totalPrice; 
 
-        const allItemsCancelled = orderedProducts.orderedItems.every(
-            item => item.cancelStatus === 'canceled'
+        const allItemsCancelled = order.orderedItems.every(
+            item => item.cancelStatus === 'canceled' || item.returnStatus === 'Approved'
         );
-
         if (allItemsCancelled) {
-            orderedProducts.status = 'Canceled';
+            order.status = 'Canceled';
         }
 
-        orderedProducts.totalPrice -= items.price * items.quantity;
-        await orderedProducts.save();
+        await order.save();
 
         return res.status(HttpStatus.OK).json({ message: "Item canceled successfully" });
-
     } catch (error) {
-        console.log("Error in productCancel:", error);
+        console.error("Error in orderCancelled:", error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Something went wrong" });
     }
-}
-
+};
 export { orderList, orderStatus, handleReturn, orderCancelled, viewOrders }

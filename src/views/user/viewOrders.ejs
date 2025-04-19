@@ -783,15 +783,15 @@
                     <td>
                       <div class="product-info">
                         <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
-                          <img src="/uploads/re-image/<%= item.product.productImage[0] %>" alt="Product" />                          
+                          <img src="/Uploads/re-image/<%= item.product.productImage[0] %>" alt="Product" />
                         <% } else { %>
-                          <img src="/uploads/re-image/default-product-image.jpg" alt="Product image not available" />
+                          <img src="/Uploads/re-image/default-product-image.jpg" alt="Product image not available" />
                         <% } %>
                         <p><%= item.product ? item.product.name : 'Product not available' %></p>
                       </div>
                     </td>
                     <td><%= item.quantity %></td>
-                    <td><%= item.price %></td>
+                    <td><%= item.effectivePrice !== undefined ? item.effectivePrice.toFixed(2) : (item.price * item.quantity).toFixed(2) %></td>
                     <td>
                       <% if (item.returnStatus === 'Requested') { %>
                         <span class="badge bg-warning">Return Requested</span>
@@ -805,21 +805,21 @@
                     </td>
                     <td>
                       <% if (order.status === 'Pending' || order.status === 'Shipped') { %>
-                          <% if (item.returnStatus !== "Approved") { %>
-                              <% if (item.cancelStatus === 'canceled') { %>
-                                  <span class="badge bg-danger">Canceled</span>
-                              <% } else if (order.paymentStatus === 'Failed') { %>
-                                  <button type="button" class="btn-cancel" disabled>Pay First to Cancel</button>
-                              <% } else { %>
-                                  <button type="button" class="btn-cancel" id="cancel-button-<%= item._id%>" onclick="cancel('<%= order._id %>','<%= item._id %>')">Cancel</button>
-                              <% } %>
+                        <% if (item.returnStatus !== "Approved") { %>
+                          <% if (item.cancelStatus === 'canceled') { %>
+                            <span class="badge bg-danger">Canceled</span>
+                          <% } else if (order.paymentStatus === 'Failed') { %>
+                            <button type="button" class="btn-cancel" disabled>Pay First to Cancel</button>
                           <% } else { %>
-                              <button type="button" class="btn-cancel" disabled>The item is returned</button>
+                            <button type="button" class="btn-cancel" id="cancel-button-<%= item._id%>" onclick="cancel('<%= order._id %>','<%= item._id %>')">Cancel</button>
                           <% } %>
+                        <% } else { %>
+                          <button type="button" class="btn-cancel" disabled>The item is returned</button>
+                        <% } %>
                       <% } else { %>
-                          <button type="button" class="btn-cancel" disabled>Cannot Cancel</button>
+                        <button type="button" class="btn-cancel" disabled>Cannot Cancel</button>
                       <% } %>
-                  </td>
+                    </td>
                     <td>
                       <% if (order.status === 'Canceled') { %>
                         <button class="btn-cancel" disabled>Cannot Request Return (Order Canceled)</button>
@@ -830,9 +830,9 @@
                           <button type="button" class="btn-cancel" onclick="returnOrder('<%= item._id %>')">Request Return</button>
                         <% } else { %>
                           <button class="btn-cancel" disabled>
-                            <%= item.returnStatus === 'Requested' ? 'Return Requested' : 
-                                item.returnStatus === 'Approved' ? 'Return Approved' : 
-                                item.returnStatus === 'Rejected' ? 'Return Rejected' : 
+                            <%= item.returnStatus === 'Requested' ? 'Return Requested' :
+                                item.returnStatus === 'Approved' ? 'Return Approved' :
+                                item.returnStatus === 'Rejected' ? 'Return Rejected' :
                                 'Cannot Request Return' %>
                           </button>
                         <% } %>
