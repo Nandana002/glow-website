@@ -75,7 +75,7 @@ const viewOrder = async (req, res) => {
         console.log(error);
         res.status(500).send("Server Error");
     }
-};
+}
 //using to cancel order
 const cancelOrder = async (req, res) => {
     try {
