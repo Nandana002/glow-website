@@ -94,7 +94,6 @@ const cancelOrder = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Item already canceled" });
         }
 
-        // Update product stock
         const product = await Product.findById(itemToCancel.product);
         if (product) {
             const shadeVariant = product.shadeVariants.find(v => v.shade === itemToCancel.shade);
@@ -106,29 +105,24 @@ const cancelOrder = async (req, res) => {
             await product.save();
         }
 
-        // Mark item as canceled
         itemToCancel.cancelStatus = 'canceled';
         itemToCancel.cancelReason = cancelReason;
 
-        // Calculate refund amount for this item
         const originalItemPrice = itemToCancel.price * itemToCancel.quantity;
         const itemDiscountShare = order.discount ? (order.discount / order.orderedItems.length) : 0;
         const refundAmount = Math.max(0, originalItemPrice - itemDiscountShare);
 
-        // Check if all items are now canceled or returned
         const allItemsCanceledOrReturned = order.orderedItems.every(item => 
             item.cancelStatus === 'canceled' || 
             item.returnStatus === 'Approved' || 
             item.returnStatus === 'Requested' ||
-            item._id.toString() === productId // Include the current item being canceled
+            item._id.toString() === productId
         );
 
         if (allItemsCanceledOrReturned) {
-            // If all items are canceled/returned, set final amount to 0
             order.finalAmount = 0;
             order.discount = 0;
         } else {
-            // Recalculate for remaining active items
             const activeItems = order.orderedItems.filter(item => 
                 item.cancelStatus !== 'canceled' && 
                 item.returnStatus !== 'Approved' && 
@@ -139,14 +133,12 @@ const cancelOrder = async (req, res) => {
                 return total + (item.price * item.quantity);
             }, 0);
             
-            // Adjust discount proportionally or set to 0 if no active items
             order.discount = activeItems.length > 0 ? 
                 (order.discount * activeItems.length) / order.orderedItems.length : 0;
             
             order.finalAmount = Math.max(0, subtotal - order.discount);
         }
 
-        // Handle refund to wallet if payment was already made
         if (order.paymentMethod !== 'COD' && order.paymentStatus === 'Success') {
             const wallet = await Wallet.findOne({ userId: order.userId });
 
@@ -203,7 +195,6 @@ const returnOrder = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Return already requested or item canceled" });
         }
 
-        // Update product stock
         const product = await Product.findById(returnItem.product);
         if (product) {
             const shadeVariant = product.shadeVariants.find(v => v.shade === returnItem.shade);
@@ -215,15 +206,12 @@ const returnOrder = async (req, res) => {
             await product.save();
         }
 
-        // Mark item for return
         returnItem.returnStatus = 'Requested';
 
-        // Calculate refund amount for this item
         const originalItemPrice = returnItem.price * returnItem.quantity;
         const itemDiscountShare = order.discount ? (order.discount / order.orderedItems.length) : 0;
         const refundAmount = Math.max(0, originalItemPrice - itemDiscountShare);
 
-        // Check if all items are now canceled or returned
         const allItemsCanceledOrReturned = order.orderedItems.every(item => 
             item.cancelStatus === 'canceled' || 
             item.returnStatus === 'Approved' || 
@@ -231,11 +219,9 @@ const returnOrder = async (req, res) => {
         );
 
         if (allItemsCanceledOrReturned) {
-            // If all items are canceled/returned, set final amount to 0
             order.finalAmount = 0;
             order.discount = 0;
         } else {
-            // Recalculate for remaining active items
             const activeItems = order.orderedItems.filter(item => 
                 item.cancelStatus !== 'canceled' && 
                 item.returnStatus !== 'Approved' && 
@@ -246,14 +232,12 @@ const returnOrder = async (req, res) => {
                 return total + (item.price * item.quantity);
             }, 0);
             
-            // Adjust discount proportionally or set to 0 if no active items
             order.discount = activeItems.length > 0 ? 
                 (order.discount * activeItems.length) / order.orderedItems.length : 0;
             
             order.finalAmount = Math.max(0, subtotal - order.discount);
         }
 
-        // Handle refund to wallet
         const wallet = await Wallet.findOne({ userId: order.userId });
         if (wallet) {
             wallet.balance += refundAmount;

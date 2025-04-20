@@ -226,13 +226,11 @@ const applyCoupon = async (req, res) => {
         discountAmount = Math.min(discountAmount, orderTotal);
         const newTotal = orderTotal - discountAmount;
 
-        // Store coupon details in session
         req.session.activeCoupon = coupon.code;
         req.session.couponDiscount = discountAmount;
         req.session.finalAmount = newTotal;
         await req.session.save();
 
-        // Mark coupon as used by the user
         coupon.userBy.push(userId);
         await coupon.save();
 
