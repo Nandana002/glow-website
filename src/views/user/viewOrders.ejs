@@ -783,9 +783,9 @@
                     <td>
                       <div class="product-info">
                         <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
-                          <img src="/Uploads/re-image/default-product-image.jpg" alt="Product image not available" />
+                          <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
                         <% } else { %>
-                          <img src="/Uploads/re-image/default-product-image.jpg" alt="Product image not available" />
+                          <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
                         <% } %>
                         <p><%= item.product ? item.product.name : 'Product not available' %></p>
                       </div>
