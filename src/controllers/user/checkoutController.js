@@ -13,11 +13,10 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import { HttpStatus } from "../../statusCode.js";
 
-
-
 dotenv.config();
 const { ObjectId } = mongoose.Types;
-//using to get checkout page
+
+// Using to get checkout page
 const getCheckoutPage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -41,7 +40,6 @@ const getCheckoutPage = async (req, res) => {
 
         let isStockSufficient = true;
         const stockCheckDetails = cart.items.map((item) => {
-
             let productStock = item.productId.quantity || 0;
             if (item.productId.shadeVariants && item.productId.shadeVariants.length > 0) {
                 const variant = item.productId.shadeVariants.find(v => v.shade === item.shade);
@@ -91,13 +89,14 @@ const getCheckoutPage = async (req, res) => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).render('error', { message: 'Error loading checkout page' });
     }
 };
-//using to add arredd in checkout page
+
+// Using to add address in checkout page
 const addAddressCheckout = async (req, res) => {
     console.log("the add address hit here");
     try {
         const userId = req.session.user;
         const userData = await User.findOne({ _id: userId });
-        const { addressType, name, city, landMark, state, pincode, phone, altPhone, } = req.body;
+        const { addressType, name, city, landMark, state, pincode, phone, altPhone } = req.body;
         if (!pincode) {
             return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: 'Pincode and email are required.' });
         }
@@ -119,7 +118,8 @@ const addAddressCheckout = async (req, res) => {
         return res.redirect("/pageNotFound");
     }
 };
-//using to edit the address in checkout page
+
+// Using to edit the address in checkout page
 const editAddressCheckout = async (req, res) => {
     try {
         const addressId = req.params.id;
@@ -170,7 +170,7 @@ const editAddressCheckout = async (req, res) => {
     }
 };
 
-//using to applay coupon
+// Using to apply coupon
 const applyCoupon = async (req, res) => {
     try {
         const { couponCode, orderTotal } = req.body;
@@ -213,6 +213,14 @@ const applyCoupon = async (req, res) => {
             });
         }
 
+        const cart = await Cart.findOne({ userId });
+        if (!cart || cart.items.length === 0) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                success: false,
+                message: "Cart is empty"
+            });
+        }
+
         let discountAmount = 0;
         if (coupon.discountType === 'percentage') {
             discountAmount = (orderTotal * coupon.discountValue) / 100;
@@ -226,8 +234,13 @@ const applyCoupon = async (req, res) => {
         discountAmount = Math.min(discountAmount, orderTotal);
         const newTotal = orderTotal - discountAmount;
 
+        // Distribute discount equally among items
+        const itemCount = cart.items.length;
+        const perItemDiscount = itemCount > 0 ? discountAmount / itemCount : 0;
+
         req.session.activeCoupon = coupon.code;
         req.session.couponDiscount = discountAmount;
+        req.session.perItemDiscount = perItemDiscount;
         req.session.finalAmount = newTotal;
         await req.session.save();
 
@@ -238,6 +251,7 @@ const applyCoupon = async (req, res) => {
             success: true,
             message: "Coupon applied successfully",
             discountAmount,
+            perItemDiscount,
             newTotal
         });
     } catch (error) {
@@ -248,7 +262,8 @@ const applyCoupon = async (req, res) => {
         });
     }
 };
-//using to removecopon in checkout page
+
+// Using to remove coupon in checkout page
 const removeCoupon = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -258,12 +273,10 @@ const removeCoupon = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({ message: "Cart not found" });
         }
 
-
-        req.session.coupon = null;
+        req.session.activeCoupon = null;
+        req.session.couponDiscount = null;
+        req.session.perItemDiscount = null;
         req.session.finalAmount = cart.bill;
-        req.session.discount = 0;
-
-
         await req.session.save();
 
         return res.status(HttpStatus.OK).json({
@@ -279,7 +292,8 @@ const removeCoupon = async (req, res) => {
         });
     }
 };
-//using to place order
+
+// Using to place order
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -363,6 +377,7 @@ const placeOrder = async (req, res) => {
 
                     req.session.activeCoupon = null;
                     req.session.couponDiscount = null;
+                    req.session.perItemDiscount = null;
                     req.session.finalAmount = null;
                     await req.session.save();
 
@@ -392,7 +407,7 @@ const placeOrder = async (req, res) => {
             Cart.findOne({ userId }).populate('items.productId')
         ]);
 
-        if (!addressDoc || !cart?.items.length) {                         
+        if (!addressDoc || !cart?.items.length) {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: !addressDoc ? 'Invalid address' : 'Cart is empty'
@@ -438,7 +453,8 @@ const placeOrder = async (req, res) => {
         );
 
         const totalPrice = cart.items.reduce((total, item) => total + item.totalPrice, 0);
-        const actualDiscount = req.session.activeCoupon ? (req.session.couponDiscount || 0) : 0;
+        const actualDiscount = req.session.couponDiscount || 0;
+        const perItemDiscount = req.session.perItemDiscount || 0;
         const calculatedFinalAmount = totalPrice - actualDiscount;
 
         if (Math.abs(finalAmount - calculatedFinalAmount) > 0.01) {
@@ -446,6 +462,17 @@ const placeOrder = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({
                 success: false,
                 message: "Invalid final amount"
+            });
+        }
+
+        // Validate that the sum of per-item discounts matches the total discount
+        const itemCount = cart.items.length;
+        const expectedTotalDiscount = perItemDiscount * itemCount;
+        if (Math.abs(expectedTotalDiscount - actualDiscount) > 0.01) {
+            console.warn(`Discount mismatch: Expected=${expectedTotalDiscount}, Actual=${actualDiscount}`);
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                message: "Discount calculation error"
             });
         }
 
@@ -463,7 +490,7 @@ const placeOrder = async (req, res) => {
                 price: item.price,
                 shade: item.shade,
                 name: item.productId.productName,
-                discount: item.discount || 0,
+                discount: perItemDiscount, // Assign per-item discount
                 returnStatus: 'Not Requested',
                 cancelStatus: 'completed',
                 couponCode: req.session.activeCoupon || null
@@ -529,6 +556,7 @@ const placeOrder = async (req, res) => {
 
             req.session.activeCoupon = null;
             req.session.couponDiscount = null;
+            req.session.perItemDiscount = null;
             req.session.finalAmount = null;
             await req.session.save();
 
@@ -544,6 +572,7 @@ const placeOrder = async (req, res) => {
 
             req.session.activeCoupon = null;
             req.session.couponDiscount = null;
+            req.session.perItemDiscount = null;
             req.session.finalAmount = null;
             await req.session.save();
 
@@ -597,7 +626,7 @@ const placeOrder = async (req, res) => {
     }
 };
 
-//using to verify razorpay payment
+// Using to verify Razorpay payment
 const verifyRazorpayPayment = async (orderData, signature) => {
     const secret = process.env.RAZORPAY_KEY_SECRET;
     if (!secret) {
@@ -616,7 +645,7 @@ const verifyRazorpayPayment = async (orderData, signature) => {
     }
 };
 
-//using to initial retry payment
+// Using to initiate retry payment
 const initiateRetryPayment = async (req, res) => {
     try {
         const { orderId, amount } = req.body;
@@ -647,7 +676,6 @@ const initiateRetryPayment = async (req, res) => {
                 message: 'Maximum payment retry attempts exceeded',
             });
         }
-
 
         if (Math.round(amount * 100) !== Math.round(order.finalAmount * 100)) {
             return res.status(400).json({
@@ -704,7 +732,8 @@ const initiateRetryPayment = async (req, res) => {
         });
     }
 };
-//using to verify retry payment
+
+// Using to verify retry payment
 const verifyRetryPayment = async (req, res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = req.body;
@@ -718,21 +747,18 @@ const verifyRetryPayment = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-
         const generatedSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(`${razorpay_order_id}|${razorpay_payment_id}`)
             .digest('hex');
 
         if (generatedSignature !== razorpay_signature) {
-
             await Order.updateOne(
                 { _id: orderId },
                 { $set: { paymentFailureReason: 'Invalid payment signature' } }
             );
             return res.status(400).json({ success: false, message: 'Invalid payment signature' });
         }
-
 
         await Order.updateOne(
             { _id: orderId },
@@ -766,7 +792,7 @@ const verifyRetryPayment = async (req, res) => {
     }
 };
 
-//payment failed
+// Payment failed
 const paymentFailed = async (req, res) => {
     try {
         const { orderId } = req.body;
@@ -792,8 +818,9 @@ const paymentFailed = async (req, res) => {
         console.error("Payment failure handling error:", error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
     }
-}
-//using to update orderStatus
+};
+
+// Using to update orderStatus
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, status, reason } = req.body;
@@ -834,7 +861,8 @@ const updateOrderStatus = async (req, res) => {
         });
     }
 };
-//using to get order Scucess
+
+// Using to get order success
 const getOrderSuccess = async (req, res) => {
     try {
         const orderId = req.params.orderId;
@@ -891,7 +919,8 @@ const getOrderSuccess = async (req, res) => {
         });
     }
 };
-//using to download Invoice
+
+// Using to download invoice
 const downloadInvoice = async (req, res) => {
     try {
         const orderId = req.params.orderId;
@@ -984,7 +1013,7 @@ const downloadInvoice = async (req, res) => {
         order.orderedItems.forEach((item) => {
             const isCanceled = item.cancelStatus === 'canceled';
             const isReturned = item.returnStatus === 'Requested' || item.returnStatus === 'Returned';
-            const amount = isCanceled || isReturned ? 0 : item.quantity * item.price;
+            const amount = isCanceled || isReturned ? 0 : (item.quantity * item.price - (item.discount || 0));
 
             if (!isCanceled && !isReturned) {
                 subtotal += amount;
@@ -1064,6 +1093,7 @@ const downloadInvoice = async (req, res) => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send("Error generating invoice");
     }
 };
+
 export {
     getCheckoutPage,
     addAddressCheckout,
@@ -1077,4 +1107,4 @@ export {
     downloadInvoice,
     applyCoupon,
     removeCoupon,
-}
+};

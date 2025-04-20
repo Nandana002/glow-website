@@ -454,6 +454,22 @@
       transform: rotate(30deg);
     }
 
+    .summary-details {
+      margin-bottom: 12px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 10px;
+      font-size: clamp(0.9rem, 2.5vw, 1rem);
+      color: #4A3F35;
+    }
+
+    .summary-item strong {
+      color: #E5A4CB;
+    }
+
     .total-amount {
       color: #C48F65;
       font-size: clamp(1.2rem, 3.5vw, 1.6rem);
@@ -783,9 +799,9 @@
                     <td>
                       <div class="product-info">
                         <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
-                          <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
+                          <img src="/Uploads/re-image/<%= item.product.productImage[0] %>" 
                         <% } else { %>
-                          <img src="/uploads/re-image/<%= item.product.productImage[0] %>" 
+                         <img src="/Uploads/re-image/<%= item.product.productImage[0] %>" 
                         <% } %>
                         <p><%= item.product ? item.product.name : 'Product not available' %></p>
                       </div>
@@ -845,8 +861,26 @@
               </tbody>
             </table>
           </div>
-
+          
           <div class="order-summary">
+            <div class="summary-details">
+              <% if (order.displayCouponCode) { %>
+                <div class="summary-item">
+                  <span>Coupon Code:</span>
+                  <strong><%= order.displayCouponCode %></strong>
+                </div>
+              <% } %>
+              <% if (order.couponAmount > 0) { %>
+                <div class="summary-item">
+                  <span>Coupon Discount:</span>
+                  <strong>-<%= order.couponAmount.toFixed(2) %></strong>
+                </div>
+              <% } %>
+              <div class="summary-item">
+                <span>Subtotal:</span>
+                <strong><%= (order.totalPrice + (order.couponAmount || 0)).toFixed(2) %></strong>
+              </div>
+            </div>
             <h3 class="total-amount">Total Amount: <%= order.finalAmount || order.totalPrice %></h3>
             <a href="/download-invoice/<%= order.orderId %>" class="invoice-btn"><i class="fas fa-file-invoice"></i> Download Invoice</a>
           </div>
@@ -898,7 +932,7 @@
                           font-weight: 600;
                           margin-bottom: 1.5rem;
                       }
-                      .swal-cosmetic-label {
+                      .swal-cosmatic-label {
                           color: #2D3748;
                           font-size: 1.1rem;
                           font-weight: 500;
@@ -1118,7 +1152,7 @@
                           padding: 12px;
                           border-radius: 12px;
                           border: 2px solid #FFD1DC;
-                          background-color: white;
+                          background-color: white braces
                           color: #2D3748;
                           font-size: 1rem;
                           transition: all 0.3s ease;
