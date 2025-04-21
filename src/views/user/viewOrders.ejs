@@ -1271,6 +1271,7 @@
                   };
               }
           });
+       
   
           if (returnData) {
               const response = await fetch('/return-order', {
@@ -1309,6 +1310,7 @@
           });
       }
   }
+
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.retry-payment-btn').forEach(button => {
       button.addEventListener('click', function () {
