@@ -613,7 +613,7 @@
                         <div class="details-group">
                             <label>Full Name</label>
                             <p class="detail-value">
-                                <%=user.username%>
+                                <%=user.name%>
                             </p>
                         </div>
 
@@ -627,7 +627,7 @@
                         <div class="details-group">
                             <label>Phone Number</label>
                             <p class="detail-value">
-                                <%=user.mobile || 'Not provided' %>
+                                <%=user.phone || 'Not provided' %>
                             </p>
                         </div>
                     </div>
@@ -1465,7 +1465,7 @@
             
             if (couponInput) {
                 couponInput.value = couponCode; 
-                applyCoupon();
+                
             }
         });
     });
