@@ -291,7 +291,7 @@ const loadshoppingPage = async (req, res) => {
     const limit = 8;
     const skip = (page - 1) * limit;
 
-    const categoryFilter = req.query.category; // Now can be a string or array
+    const categoryFilter = req.query.category; 
     const sortBy = req.query.sort || 'default';
     const minPrice = req.query.minPrice;
     const maxPrice = req.query.maxPrice;
@@ -305,9 +305,7 @@ const loadshoppingPage = async (req, res) => {
       query.productName = { $regex: searchQuery, $options: 'i' };
     }
 
-    // Handle category filter
     if (categoryFilter) {
-      // Convert single category to array for consistency
       const categories = Array.isArray(categoryFilter)
         ? categoryFilter
         : [categoryFilter];
@@ -318,7 +316,6 @@ const loadshoppingPage = async (req, res) => {
       query.category = { $in: categoriesId };
     }
 
-    // Price filter
     if (minPrice || maxPrice) {
       query.salePrice = {};
       if (minPrice) query.salePrice.$gte = parseFloat(minPrice);
@@ -344,7 +341,6 @@ const loadshoppingPage = async (req, res) => {
         sortOptions = { createdOn: -1 };
     }
 
-    // Fetch products with filters, search, and sorting
     let products = await Product.find(query)
       .sort(sortOptions)
       .skip(skip)
@@ -365,7 +361,7 @@ const loadshoppingPage = async (req, res) => {
       totalProducts,
       currentPage: page,
       totalPages,
-      activeCategory: categoryFilter, // Pass as array or single value
+      activeCategory: categoryFilter, 
       currentSort: sortBy,
       currentMinPrice: minPrice,
       currentMaxPrice: maxPrice,
@@ -381,19 +377,18 @@ const loadshoppingPage = async (req, res) => {
 //load user Profile page
 const loadProfile = async (req, res) => {
   try {
-    const userId = req.session.user; // Changed 'users' to 'userId' for clarity
+    const userId = req.session.user;
     const userProfile = await User.findById(userId);
     
     if (!userProfile) {
       return res.status(HttpStatus.NOT_FOUND).render('user/pageNotFound', { message: 'User not found' });
     }
 
-    // Fetch userAddress from Address model (adjust based on your schema)
-    const userAddress = await Address.findOne({ user: userId }); // Example query
+    const userAddress = await Address.findOne({ user: userId }); 
 
     return res.render('myaccount', {
       user: userProfile,
-      userAddress: userAddress || null // Pass userAddress, fallback to null
+      userAddress: userAddress || null 
     });
   } catch (error) {
     console.error('Error loading profile:', error);
@@ -411,6 +406,7 @@ const addAddress = async (req, res) => {
     
   }
 };
+//using to add the address
 
 const address = async (req, res) => {
   try {
@@ -447,7 +443,7 @@ const address = async (req, res) => {
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
   }
 };
-
+//using to get address page
 const getAddress = async (req, res) => {
   try {
     const user = req.session.user;
@@ -467,7 +463,7 @@ const getAddress = async (req, res) => {
 };
 
 
-
+//using to get the edit address page
 
 const getEditPage = async (req, res) => {
   try {
@@ -529,6 +525,7 @@ const edit = async (req, res) => {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "An error occurred while updating the address" });
   }
 };
+//using to set default adress 
 const setDefaultAddress = async (req, res) => {
   try {
     const user = req.session.user;
@@ -557,7 +554,7 @@ const setDefaultAddress = async (req, res) => {
   }
 };
 
-
+//using to delete adres in adress page
 const deleteAddress = async (req, res) => {
   try {
     const user = req.session.user;
@@ -576,7 +573,7 @@ const deleteAddress = async (req, res) => {
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
   }
 };
-
+//using to update profile
 const updateProfile = async (req, res) => {
   try {
     const user = req.session.user;
@@ -586,7 +583,7 @@ const updateProfile = async (req, res) => {
     console.log("The error is" + error);
   }
 };
-
+//using to profile update
 const profileUpdate = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -613,11 +610,12 @@ const otpVerification = async (req, res) => {
     console.log("otp error" + error);
   }
 };
+//using to render the about page
 const about = async (req, res) => {
   try {
-    const user = req.session.user; // Get the logged-in user
+    const user = req.session.user; 
 
-    return res.render('about', { user }); // Pass user to EJS
+    return res.render('about', { user }); 
   } catch (error) {
     console.log("error: " + error);
     res.status(500).send("Internal Server Error");

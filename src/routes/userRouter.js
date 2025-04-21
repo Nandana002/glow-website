@@ -133,12 +133,6 @@ router.post('/edit-address/:id', userAuth,userController.edit);
 
 router.get('/')
 
-router.post(
-  '/productDetailsPage/review',
-  userAuth,
-  productController.submitReview
-);
-
 
 router.get('/about',userController.about)
 export default router;

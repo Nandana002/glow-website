@@ -880,7 +880,7 @@
                 <strong><%= (order.totalPrice + (order.couponAmount || 0)).toFixed(2) %></strong>
               </div>
             </div>
-            <h3 class="total-amount">Total Amount: <%= order.finalAmount || order.totalPrice %></h3>
+            <h3 class="total-amount">Total Amount: <%= order.finalAmount %></h3>
             <a href="/download-invoice/<%= order.orderId %>" class="invoice-btn"><i class="fas fa-file-invoice"></i> Download Invoice</a>
           </div>
           <input type="hidden" name="orderId" value="<%=order.orderId%>">

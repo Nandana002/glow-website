@@ -234,7 +234,6 @@ const applyCoupon = async (req, res) => {
         discountAmount = Math.min(discountAmount, orderTotal);
         const newTotal = orderTotal - discountAmount;
 
-        // Distribute discount equally among items
         const itemCount = cart.items.length;
         const perItemDiscount = itemCount > 0 ? discountAmount / itemCount : 0;
 
@@ -465,7 +464,6 @@ const placeOrder = async (req, res) => {
             });
         }
 
-        // Validate that the sum of per-item discounts matches the total discount
         const itemCount = cart.items.length;
         const expectedTotalDiscount = perItemDiscount * itemCount;
         if (Math.abs(expectedTotalDiscount - actualDiscount) > 0.01) {
@@ -490,7 +488,7 @@ const placeOrder = async (req, res) => {
                 price: item.price,
                 shade: item.shade,
                 name: item.productId.productName,
-                discount: perItemDiscount, // Assign per-item discount
+                discount: perItemDiscount, 
                 returnStatus: 'Not Requested',
                 cancelStatus: 'completed',
                 couponCode: req.session.activeCoupon || null

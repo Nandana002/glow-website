@@ -25,7 +25,6 @@ const orders = async (req, res) => {
     }
 }
 //using to render view order page
-//using to render view order page
 const viewOrder = async (req, res) => {
     try {
         const user = req.session.user;
@@ -101,6 +100,7 @@ const viewOrder = async (req, res) => {
         res.status(500).send("Server Error");
     }
 };
+//using to cancel the order
 const cancelOrder = async (req, res) => {
     try {
         const { orderId, productId, cancelReason } = req.body;
@@ -195,6 +195,8 @@ const cancelOrder = async (req, res) => {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
     }
 };
+
+//using to return the order
 const returnOrder = async (req, res) => {
     try {
         const { productId } = req.body;

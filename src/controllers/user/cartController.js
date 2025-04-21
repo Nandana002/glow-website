@@ -132,7 +132,6 @@ const addToCart = async (req, res) => {
             cart.items.push({ productId, shade, quantity, price, totalPrice });
         }
 
-        // Update stock
         if (shadeVariant) {
             console.log(`Before update: Shade ${shade} quantity = ${shadeVariant.quantity}, Total quantity = ${product.quantity}`);
             shadeVariant.quantity -= quantity;
@@ -155,7 +154,6 @@ const addToCart = async (req, res) => {
             throw new Error("Failed to save cart update");
         }
 
-        // Verify the update persisted
         const updatedProduct = await Product.findById(productId);
         if (shadeVariant) {
             const updatedShade = updatedProduct.shadeVariants.find(v => v.shade === shade);

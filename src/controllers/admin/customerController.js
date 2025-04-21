@@ -7,14 +7,11 @@ const customer = async (req, res) => {
     try {
         let search = req.query.search || '';
         let filter = { isAdmin: false };
-
         if (search) {
             filter.name = { $regex: search, $options: 'i' };
         }
-
         let page = Math.max(1, parseInt(req.query.page) || 1);
         let limit = 7;
-
         let user = await User.find(filter).sort({ createdAt: -1 }).limit(limit).skip((page - 1) * limit);
 
         let count = await User.countDocuments(filter);

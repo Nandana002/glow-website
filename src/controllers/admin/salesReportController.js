@@ -179,23 +179,20 @@ const exportSalesReport = async (req, res) => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Error generating report' });
     }
 };
-//using to generate excel report
 const generateExcelReport = async (orders, totals, dateRange, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Report');
 
-    // Title
     worksheet.mergeCells('A1:H1');
     worksheet.getCell('A1').value = 'Sales Report';
     worksheet.getCell('A1').font = { size: 16, bold: true };
     worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
-    // Date Range
+    
     worksheet.mergeCells('A2:H2');
     worksheet.getCell('A2').value = `Period: ${dateRange.start.toLocaleDateString()} to ${dateRange.end.toLocaleDateString()}`;
     worksheet.getCell('A2').alignment = { horizontal: 'center' };
 
-    // Summary
     worksheet.addRow(['']);
     worksheet.addRow(['Summary']);
     worksheet.addRow(['Total Orders', totals.totalOrders]);
@@ -203,7 +200,6 @@ const generateExcelReport = async (orders, totals, dateRange, res) => {
     worksheet.addRow(['Total Discount', formatCurrency(totals.totalDiscount)]);
     worksheet.addRow(['Net Amount', formatCurrency(totals.totalSales - totals.totalDiscount)]);
 
-    // Payment Methods Summary
     worksheet.addRow(['']);
     worksheet.addRow(['Payment Methods']);
     Object.entries(totals.paymentMethods).forEach(([method, count]) => {
@@ -211,7 +207,7 @@ const generateExcelReport = async (orders, totals, dateRange, res) => {
     });
     worksheet.addRow(['']);
 
-    // Headers
+   
     worksheet.addRow([
         'Order ID',
         'Date',
@@ -231,7 +227,6 @@ const generateExcelReport = async (orders, totals, dateRange, res) => {
         fgColor: { argb: 'FFE0E0E0' }
     };
 
-    // Data rows
     orders.forEach(order => {
         worksheet.addRow([
             order.orderId,
@@ -245,13 +240,11 @@ const generateExcelReport = async (orders, totals, dateRange, res) => {
         ]);
     });
 
-    // Column formatting
     worksheet.columns.forEach(column => {
         column.width = 15;
         column.alignment = { horizontal: 'left' };
     });
 
-    // Headers
     res.setHeader(
         'Content-Type',
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -263,7 +256,6 @@ const generateExcelReport = async (orders, totals, dateRange, res) => {
 
     await workbook.xlsx.write(res);
 };
-//using to generate pdf report
 const generatePDFReport = async (orders, totals, dateRange, res) => {
     const doc = new PDFDocument({ margin: 30, size: 'A4' });
 
@@ -272,18 +264,15 @@ const generatePDFReport = async (orders, totals, dateRange, res) => {
 
     doc.pipe(res);
 
-    // Title
     doc.fontSize(20).text('Sales Report', { align: 'center' });
     doc.moveDown();
 
-    // Date Range
     doc.fontSize(12).text(
         `Period: ${dateRange.start.toLocaleDateString()} to ${dateRange.end.toLocaleDateString()}`,
         { align: 'center' }
     );
     doc.moveDown();
 
-    // Summary Table
     const summaryTable = {
         headers: ['Metric', 'Value'],
         rows: [
@@ -301,7 +290,6 @@ const generatePDFReport = async (orders, totals, dateRange, res) => {
 
     doc.moveDown();
 
-    // Payment Methods Summary
     doc.fontSize(12).text('Payment Methods Summary', { underline: true });
     doc.moveDown(0.5);
 
@@ -353,15 +341,15 @@ const getSalesData = async (req, res) => {
             case 'yearly':
                 startDate = new Date(currentDate);
                 startDate.setFullYear(currentDate.getFullYear() - 2);
-                startDate.setMonth(0, 1); // Start of the year
+                startDate.setMonth(0, 1); 
                 break;
             case 'monthly':
                 startDate = new Date(currentDate);
-                startDate.setMonth(currentDate.getMonth() - 5, 1); // Last 6 months
+                startDate.setMonth(currentDate.getMonth() - 5, 1); 
                 break;
             case 'weekly':
                 startDate = new Date(currentDate);
-                startDate.setDate(currentDate.getDate() - 6); // Last 7 days
+                startDate.setDate(currentDate.getDate() - 6); 
                 startDate.setHours(0, 0, 0, 0);
                 break;
             default:
@@ -556,10 +544,10 @@ const generateLedger = async (req, res) => {
         const stream = fs.createWriteStream(filePath);
         doc.pipe(stream);
 
-        // Title
+        
         doc.fontSize(26).fillColor('#000').text('Ledger Book', { align: 'center', underline: true }).moveDown(1);
 
-        // Column Settings
+    
         const columnWidths = {
             orderId: 120,
             user: 150,
@@ -573,7 +561,6 @@ const generateLedger = async (req, res) => {
         const startX = (doc.page.width - totalTableWidth) / 2;
         const startY = doc.y;
 
-        // Table Headers
         doc
             .font('Helvetica-Bold')
             .fontSize(14)

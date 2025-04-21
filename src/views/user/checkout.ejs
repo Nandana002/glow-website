@@ -778,7 +778,7 @@
                                 <i class="fas fa-credit-card payment-icon"></i>
                                 <div class="payment-details">
                                     <p class="name">Wallet</p>
-                                    <p class="description">Pay securely with your wallet   Available: ₹<%= balance %></p>
+                                    <p class="description">Pay securely with your wallet   Available: ₹<%= balance.toFixed(2) %></p>
                                 </div>
                             </div>
                         </div>
@@ -1077,7 +1077,7 @@
 
          
             applyCouponBtn.onclick = async function (event) {
-                event.preventDefault(); // Prevent any form submission
+                event.preventDefault(); 
                 console.log("Apply coupon button clicked");
 
                 const couponCode = couponInput.value.trim();
