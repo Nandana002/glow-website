@@ -1071,22 +1071,30 @@
               });
   
               if (response.ok) {
-                  await customStyle.fire({
-                      title: 'Order Cancelled',
-                      text: 'Your order has been cancelled successfully.',
-                      icon: 'success',
-                      timer: 2000,
-                      showConfirmButton: false,
-                      iconColor: '#FF4D6D'
-                  });
-  
-                  const cancelButton = document.getElementById(`cancel-button-${productId}`);
-                  if (cancelButton) {
-                      cancelButton.innerText = 'Cancelled';
-                      cancelButton.disabled = true;
-                      cancelButton.classList.remove('btn-cancel');
-                      cancelButton.classList.add('badge', 'bg-danger');
-                  }
+    await customStyle.fire({
+        title: 'Order Cancelled',
+        text: 'Your order has been cancelled successfully.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+        iconColor: '#FF4D6D'
+    });
+
+
+    const cancelButton = document.getElementById(`cancel-button-${productId}`);
+    if (cancelButton) {
+        cancelButton.innerText = 'Cancelled';
+        cancelButton.disabled = true;
+        cancelButton.classList.remove('btn-cancel');
+        cancelButton.classList.add('badge', 'bg-danger');
+    }
+
+   
+    setTimeout(() => {
+        window.location.reload();
+    },100); 
+
+
               } else {
                   throw new Error('Failed to cancel the item');
               }
