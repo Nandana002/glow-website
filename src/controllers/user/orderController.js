@@ -25,6 +25,7 @@ const orders = async (req, res) => {
     }
 }
 //using to render view order page
+//using to render view order page
 const viewOrder = async (req, res) => {
     try {
         const user = req.session.user;
@@ -37,6 +38,9 @@ const viewOrder = async (req, res) => {
             const userData = await User.findOne({ _id: user });
             
             // Process order items
+            let totalEffectiveAmount = 0;
+            let allItemsCanceledOrReturned = true;
+            
             for (let item of order.orderedItems) {
                 const product = item.product;
                 if (product && product.reviews) {
@@ -52,10 +56,18 @@ const viewOrder = async (req, res) => {
                     item.effectivePrice = 0;
                 } else {
                     item.effectivePrice = item.price * item.quantity;
+                    totalEffectiveAmount += item.effectivePrice;
+                    allItemsCanceledOrReturned = false;
                 }
             }
+            
+            if (allItemsCanceledOrReturned) {
+                order.displayTotal = 0;
+                order.finalAmount = 0;
+            } else {
+                order.displayTotal = Math.max(0, totalEffectiveAmount - (order.discount || 0));
+            }
 
-            // Process address
             if (order.address) {
                 const addressDoc = await Address.findOne(
                     { userId: user, "address._id": order.address }
@@ -69,17 +81,13 @@ const viewOrder = async (req, res) => {
                 }
             }
 
-            // Set discount information for the view
             order.couponAmount = order.discount || 0;
             
-            // Extract coupon code if available
             if (order.couponCode) {
-                // If couponCode is directly on the order
                 order.displayCouponCode = order.couponCode;
             } else if (order.orderedItems && order.orderedItems.length > 0 && 
                        order.orderedItems[0].couponCode && 
                        order.orderedItems[0].couponCode.length > 0) {
-                // If couponCode is in the first ordered item
                 order.displayCouponCode = order.orderedItems[0].couponCode[0];
             }
 
@@ -110,7 +118,6 @@ const cancelOrder = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Item already canceled" });
         }
 
-        // Update product stock
         const product = await Product.findById(itemToCancel.product);
         if (product) {
             const shadeVariant = product.shadeVariants.find(v => v.shade === itemToCancel.shade);
@@ -122,16 +129,13 @@ const cancelOrder = async (req, res) => {
             await product.save();
         }
 
-        // Mark item as canceled
         itemToCancel.cancelStatus = 'canceled';
         itemToCancel.cancelReason = cancelReason;
 
-        // Calculate refund amount
         const originalItemPrice = itemToCancel.price * itemToCancel.quantity;
         const itemDiscountShare = order.discount ? (order.discount / order.orderedItems.length) : 0;
         const refundAmount = Math.max(0, originalItemPrice - itemDiscountShare);
 
-        // Check if all items are canceled or returned
         const allItemsCanceledOrReturned = order.orderedItems.every(item => 
             item.cancelStatus === 'canceled' || 
             item.returnStatus === 'Approved'
@@ -156,7 +160,6 @@ const cancelOrder = async (req, res) => {
             order.finalAmount = Math.max(0, subtotal - order.discount);
         }
 
-        // Handle refund
         if (order.paymentMethod !== 'COD' && order.paymentStatus === 'Success') {
             const wallet = await Wallet.findOne({ userId: order.userId });
             if (wallet) {
@@ -211,7 +214,6 @@ const returnOrder = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Return already requested or item canceled" });
         }
 
-        // Update product stock
         const product = await Product.findById(returnItem.product);
         if (product) {
             const shadeVariant = product.shadeVariants.find(v => v.shade === returnItem.shade);
@@ -223,19 +225,17 @@ const returnOrder = async (req, res) => {
             await product.save();
         }
 
-        // Mark item as return requested
         returnItem.returnStatus = 'Requested';
 
-        // Calculate refund amount
         const originalItemPrice = returnItem.price * returnItem.quantity;
         const itemDiscountShare = order.discount ? (order.discount / order.orderedItems.length) : 0;
         const refundAmount = Math.max(0, originalItemPrice - itemDiscountShare);
 
-        // Check if all items are canceled or returned
+        
         const allItemsCanceledOrReturned = order.orderedItems.every(item => 
             item.cancelStatus === 'canceled' || 
             item.returnStatus === 'Approved' || 
-            item.returnStatus === 'Requested' // Keep 'Requested' if that's your intended logic
+            item.returnStatus === 'Requested' 
         );
 
         if (allItemsCanceledOrReturned) {
@@ -258,7 +258,6 @@ const returnOrder = async (req, res) => {
             order.finalAmount = Math.max(0, subtotal - order.discount);
         }
 
-        // Handle refund
         const wallet = await Wallet.findOne({ userId: order.userId });
         if (wallet) {
             wallet.balance += refundAmount;
