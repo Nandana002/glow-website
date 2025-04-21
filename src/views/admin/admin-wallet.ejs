@@ -298,13 +298,13 @@
         <h2 class="content-title">Wallet Transactions</h2>
     </div>
 
-    <div class="filter-section">
+    <!-- <div class="filter-section">
         <h5 class="filter-title">Filter Transactions</h5>
         <form class="filter-form" action="/admin/wallets" method="GET">
             <div class="form-group">
                 <label for="search">Search User</label>
-                <input type="text" class="form-control" id="search" name="search" placeholder="Name or Email" value="<%= search || '' %>">
-            </div>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Name onpmr Email" value="<%= search || '' %>">
+            </div> -->
             <!-- <div class="form-group">
                 <label for="transactionType">Transaction Type</label>
                 <select class="form-control" id="transactionType" name="transactionType">
@@ -316,7 +316,7 @@
                     <option value="manual" <%= transactionType === 'manual' ? 'selected' : '' %>>Manual</option>
                 </select>
             </div> -->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="minBalance">Min Balance</label>
                 <input type="number" class="form-control" id="minBalance" name="minBalance" placeholder="Min ₹" value="<%= minBalance || '' %>">
             </div>
@@ -338,7 +338,7 @@
                 <option value="100" <%= transactionLimit == 100 ? 'selected' : '' %>>100</option>
             </select>
         </div>
-    </div>
+    </div> -->
 
     <div class="card">
         <div class="card-header">
