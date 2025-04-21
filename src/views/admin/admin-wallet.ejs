@@ -298,52 +298,7 @@
         <h2 class="content-title">Wallet Transactions</h2>
     </div>
 
-    <!-- <div class="filter-section">
-        <h5 class="filter-title">Filter Transactions</h5>
-        <form class="filter-form" action="/admin/wallets" method="GET">
-            <div class="form-group">
-                <label for="search">Search User</label>
-                <input type="text" class="form-control" id="search" name="search" placeholder="Name onpmr Email" value="<%= search || '' %>">
-            </div> -->
-            <!-- <div class="form-group">
-                <label for="transactionType">Transaction Type</label>
-                <select class="form-control" id="transactionType" name="transactionType">
-                    <option value="">All Types</option>
-                    <option value="deposit" <%= transactionType === 'deposit' ? 'selected' : '' %>>Deposit</option>
-                    <option value="purchase" <%= transactionType === 'purchase' ? 'selected' : '' %>>Purchase</option>
-                    <option value="refund" <%= transactionType === 'refund' ? 'selected' : '' %>>Refund</option>
-                    <option value="wallet-to-wallet" <%= transactionType === 'wallet-to-wallet' ? 'selected' : '' %>>Wallet to Wallet</option>
-                    <option value="manual" <%= transactionType === 'manual' ? 'selected' : '' %>>Manual</option>
-                </select>
-            </div> -->
-            <!-- <div class="form-group">
-                <label for="minBalance">Min Balance</label>
-                <input type="number" class="form-control" id="minBalance" name="minBalance" placeholder="Min ₹" value="<%= minBalance || '' %>">
-            </div>
-            <div class="form-group">
-                <label for="maxBalance">Max Balance</label>
-                <input type="number" class="form-control" id="maxBalance" name="maxBalance" placeholder="Max ₹" value="<%= maxBalance || '' %>">
-            </div>
-            <div class="form-group">
-                <label>&nbsp;</label>
-                <button type="submit" class="filter-button">Apply Filters</button>
-            </div>
-        </form>
-        <div class="items-per-page">
-            <span class="items-label">Items per page:</span>
-            <select class="items-select" id="transactionLimitSelect" onchange="changeTransactionLimit()">
-                <option value="10" <%= transactionLimit == 10 ? 'selected' : '' %>>10</option>
-                <option value="25" <%= transactionLimit == 25 ? 'selected' : '' %>>25</option>
-                <option value="50" <%= transactionLimit == 50 ? 'selected' : '' %>>50</option>
-                <option value="100" <%= transactionLimit == 100 ? 'selected' : '' %>>100</option>
-            </select>
-        </div>
-    </div> -->
-
     <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">Transactions</h5>
-        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
