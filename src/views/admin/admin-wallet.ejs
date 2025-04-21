@@ -319,7 +319,7 @@
                                 <% if (wallet && wallet.userId) { %>
                                     <tr>
                                         <td><%= wallet.userId._id %></td>
-                                        <td><%= new Date(transaction.transactionDate).toLocaleString() %></td>
+                                        <td><%= new Date(transaction.transactionDate).toDateString() %></td>
                                         <td><%= wallet.userId.name %></td>
                                         <td>
                                             <span class="badge badge-<%= transaction.transactionType %>">
