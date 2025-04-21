@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         /* General Reset */
-        * {
+         /* General Reset */
+         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -23,13 +24,10 @@
             background-color: #f7f8f9;
             color: #333;
             font-size: 16px;
-            display: flex;
             min-height: 100vh;
             position: relative;
+            overflow-x: hidden;
         }
-        
-        /* Navbar inherited from your original code */
-        /* keeping this as is */
         
         /* Sidebar Styling */
         .sidebar {
@@ -44,6 +42,7 @@
             left: 0;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 900;
+            transition: all 0.3s ease;
         }
         
         /* Sidebar Links */
@@ -72,14 +71,16 @@
             display: flex;
             margin-left: 260px;
             width: calc(100% - 260px);
+            transition: all 0.3s ease;
         }
         
         .content {
             flex: 1;
             padding: 20px;
+            width: 100%;
         }
         
-        /* Referral Page Styling */
+        /* Referral Page Styling - keeping this as requested */
         .referral-container {
             max-width: 1000px;
             padding: 20px;
@@ -121,6 +122,7 @@
             justify-content: center;
             gap: 15px;
             margin: 25px 0;
+            flex-wrap: wrap;
         }
         
         .social-icon {
@@ -159,14 +161,25 @@
             font-size: 18px;
             font-weight: 600;
             letter-spacing: 1px;
-            max-width: 250px;
             background-color: #f8f8f8;
+            min-width: 200px;
+            max-width: 100%;
+        }
+        
+        .referral-code-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         
         .stats-card {
             text-align: center;
             padding: 10px;
             transition: transform 0.3s ease;
+            margin-bottom: 15px;
         }
         
         .stats-card:hover {
@@ -179,6 +192,7 @@
             height: 100%;
             position: relative;
             transition: transform 0.3s ease;
+            margin-bottom: 15px;
         }
         
         .step-card:hover {
@@ -228,37 +242,114 @@
             display: none; /* Hide by default on mobile */
         }
         
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background-color: #ff5e5b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
         /* Responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 1200px) {
+            .referral-container {
+                margin-left: 20px;
+                margin-right: 20px;
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 992px) {
             .sidebar {
                 width: 220px;
             }
             
             .container {
                 margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+            
+            .referral-container {
+                margin-left: 0;
             }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                box-shadow: none;
+                width: 250px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
             }
             
             .container {
                 margin-left: 0;
                 width: 100%;
-                flex-direction: column;
             }
             
+            .referral-container {
+                padding: 15px;
+                margin-left: 0;
+                max-width: 100%;
+            }
+            
+            .social-share {
+                justify-content: center;
+            }
+            
+            .card-header, .card-body {
+                padding: 15px;
+            }
+            
+            .referral-input {
+                font-size: 16px;
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
             .referral-container {
                 padding: 10px;
             }
             
-            .social-share {
-                flex-wrap: wrap;
+            .social-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            h3 {
+                font-size: 1.5rem;
+            }
+            
+            .card-header h4, .card-header h5 {
+                font-size: 1.2rem;
+            }
+            
+            .referral-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .step-card {
+                padding: 15px 10px;
+            }
+            
+            .table {
+                font-size: 14px;
             }
         }
     </style>
