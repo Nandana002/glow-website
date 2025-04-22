@@ -53,7 +53,6 @@ router.get('/editProduct', isAuthenticated, getEditProduct)
 router.post('/editProduct/:id', isAuthenticated, uploads.array('images', 4), editProduct)
 router.post('/deleteImage', isAuthenticated, deleteSingleImage)
 
-// router.get('/coupon',isAuthenticated,couponController.loadCoupon)
 // // // Order Management Routes
 router.get('/orderList',isAuthenticated,orderList)
 router.post('/order-status',orderStatus)

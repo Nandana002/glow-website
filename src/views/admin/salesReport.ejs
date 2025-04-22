@@ -392,7 +392,7 @@
 
     let url = `/admin/sales-report/export?type=${type}&reportType=${reportType}`;
     if (reportType === 'custom' && startDate && endDate) {
-        // Ensure dates are in YYYY-MM-DD format
+        
         const start = new Date(startDate);
         const end = new Date(endDate);
         if (isNaN(start.getTime()) || isNaN(end.getTime())) {
