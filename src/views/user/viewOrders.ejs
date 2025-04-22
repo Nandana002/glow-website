@@ -818,7 +818,7 @@
                       <% } %>
                     </td>
                     <td>
-                      <% if (order.status === 'Pending' || order.status === 'Shipped') { %>
+                      <% if (order.status === 'Pending' || order.status === 'Shipped' || order.status === 'Confirmed') { %>
                         <% if (item.returnStatus !== "Approved") { %>
                           <% if (item.cancelStatus === 'canceled') { %>
                             <span class="badge bg-danger">Canceled</span>

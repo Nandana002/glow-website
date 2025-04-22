@@ -9,7 +9,6 @@
         :root {
             --primary-color: #FF6B6B;
             --secondary-color: #FFE2E2;
-            --accent-color: #FF8FAB;
             --text-color: #4A4A4A;
             --error-color: #FF6B6B;
         }
@@ -17,28 +16,23 @@
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #FFF5F5 0%, #FFE2E2 100%);
-            color: var(--text-color);
             font-family: 'Poppins', sans-serif;
         }
 
         .form-container {
-            width: 75%;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 2rem auto;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
+            border-radius: 15px;
+            padding: 2rem;
             box-shadow: 0 8px 32px rgba(255, 107, 107, 0.1);
-            backdrop-filter: blur(4px);
         }
 
         h1 {
             color: var(--primary-color);
-            font-size: 2rem;
-            font-weight: 600;
+            font-size: 1.8rem;
             text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--secondary-color);
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
@@ -47,26 +41,14 @@
             margin-bottom: 0.5rem;
         }
 
-        .form-control {
+        .form-control, .form-select {
             border: 2px solid #FFE2E2;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 0.75rem;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
-        }
-
-        .form-select {
-            border: 2px solid #FFE2E2;
-            border-radius: 10px;
-            padding: 0.75rem;
-            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23FF6B6B' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
-        }
-
-        .form-select:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
         }
@@ -74,348 +56,306 @@
         .btn-primary {
             background-color: var(--primary-color);
             border: none;
-            border-radius: 25px;
-            padding: 0.75rem 2.5rem;
+            border-radius: 20px;
+            padding: 0.75rem 2rem;
             font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
         }
 
         .btn-primary:hover {
             background-color: #ff5252;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .btn-primary:focus {
-            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.25);
         }
 
         .error-message {
             color: var(--error-color);
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             margin-top: 0.25rem;
             display: none;
         }
 
-        /* Input group styling */
-        .input-group {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Floating label animation */
-        .form-control:focus + .form-label,
-        .form-control:not(:placeholder-shown) + .form-label {
-            transform: translateY(-1.5rem) scale(0.85);
-            color: var(--primary-color);
-        }
-
-        /* Custom scrollbar for select */
-        select::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        select::-webkit-scrollbar-track {
-            background: #FFE2E2;
-            border-radius: 4px;
-        }
-
-        select::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .form-container {
-                width: 90%;
+                margin: 1rem;
                 padding: 1.5rem;
             }
-        }
-        .error-message{
-            color:red
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="d-flex justify-content-center align-items-center bg-light">
-    <form class="row g-3 shadow p-4 bg-white rounded mt-5" style="width: 70%" id="address-form" onsubmit="address(event)">
+<body>
+    <div class="form-container">
         <h1>Add Address</h1>
-        
-        <div class="col-md-6">
-            <label for="inputName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="inputName" name="name">
-            <div id="error1" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputPhone" class="form-label">Phone</label>
-            <input type="number" class="form-control" id="inputPhone" name="phone">
-            <div id="error2" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputAltPhone" class="form-label">Alternative Phone (Optional)</label>
-            <input type="number" class="form-control" id="inputAltPhone" name="altPhone">
-            <div id="error3" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputCity" class="form-label">City</label>
-            <input type="text" class="form-control" id="inputCity" name="city">
-            <div id="error4" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputState" class="form-label">State</label>
-            <select id="inputState" class="form-select" name="state">
-                <option selected>Choose...</option>
-                <option>Andhra Pradesh</option>
-                <option>Arunachal Pradesh</option>
-                <option>Assam</option>
-                <option>Bihar</option>
-                <option>Chhattisgarh</option>
-                <option>Goa</option>
-                <option>Gujarat</option>
-                <option>Haryana</option>
-                <option>Himachal Pradesh</option>
-                <option>Jharkhand</option>
-                <option>Karnataka</option>
-                <option>Kerala</option>
-                <option>Madhya Pradesh</option>
-                <option>Maharashtra</option>
-                <option>Manipur</option>
-                <option>Meghalaya</option>
-                <option>Mizoram</option>
-                <option>Nagaland</option>
-                <option>Odisha</option>
-                <option>Punjab</option>
-                <option>Rajasthan</option>
-                <option>Sikkim</option>
-                <option>Tamil Nadu</option>
-                <option>Telangana</option>
-                <option>Tripura</option>
-                <option>Uttar Pradesh</option>
-                <option>Uttarakhand</option>
-                <option>West Bengal</option>
-                <option>Andaman and Nicobar Islands</option>
-                <option>Chandigarh</option>
-                <option>Dadra and Nagar Haveli and Daman and Diu</option>
-                <option>Delhi</option>
-                <option>Lakshadweep</option>
-                <option>Puducherry</option>
-                <option>Ladakh</option>
-                <option>Jammu and Kashmir</option>
-            </select>
-            <div id="error5" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputPincode" class="form-label">Pincode</label>
-            <input type="text" class="form-control" id="inputPincode" name="pincode">
-            <div id="error6" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputLandMark" class="form-label">Landmark (Optional)</label>
-            <input type="text" class="form-control" id="inputLandMark" name="landMark">
-            <div id="error7" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-6">
-            <label for="inputAddressType" class="form-label">Address Type</label>
-            <select id="inputAddressType" class="form-select" name="addressType">
-                <option selected>Choose...</option>
-                <option>Home</option>
-                <option>Work</option>
-                <option>Other</option>
-            </select>
-            <div id="error8" class="error-message"></div>
-        </div>
-        
-        <div class="col-md-12">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="inputDefault" name="isDefault">
-                <label class="form-check-label" for="inputDefault">
-                    Set as default address
-                </label>
+        <form id="address-form" class="row g-3">
+            <div class="col-md-6">
+                <label for="inputName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="inputName" name="name">
+                <div id="errorName" class="error-message"></div>
             </div>
-        </div>
-        
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Add Address</button>
-        </div>
-    </form>
-    
+
+            <div class="col-md-6">
+                <label for="inputPhone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="inputPhone" name="phone">
+                <div id="errorPhone" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputAltPhone" class="form-label">Alternative Phone (Optional)</label>
+                <input type="tel" class="form-control" id="inputAltPhone" name="altPhone">
+                <div id="errorAltPhone" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputCity" class="form-label">City</label>
+                <input type="text" class="form-control" id="inputCity" name="city">
+                <div id="errorCity" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputState" class="form-label">State</label>
+                <select id="inputState" class="form-select" name="state">
+                    <option value="">Choose...</option>
+                    <option>Andhra Pradesh</option>
+                    <option>Arunachal Pradesh</option>
+                    <option>Assam</option>
+                    <option>Bihar</option>
+                    <option>Chhattisgarh</option>
+                    <option>Goa</option>
+                    <option>Gujarat</option>
+                    <option>Haryana</option>
+                    <option>Himachal Pradesh</option>
+                    <option>Jharkhand</option>
+                    <option>Karnataka</option>
+                    <option>Kerala</option>
+                    <option>Madhya Pradesh</option>
+                    <option>Maharashtra</option>
+                    <option>Manipur</option>
+                    <option>Meghalaya</option>
+                    <option>Mizoram</option>
+                    <option>Nagaland</option>
+                    <option>Odisha</option>
+                    <option>Punjab</option>
+                    <option>Rajasthan</option>
+                    <option>Sikkim</option>
+                    <option>Tamil Nadu</option>
+                    <option>Telangana</option>
+                    <option>Tripura</option>
+                    <option>Uttar Pradesh</option>
+                    <option>Uttarakhand</option>
+                    <option>West Bengal</option>
+                    <option>Andaman and Nicobar Islands</option>
+                    <option>Chandigarh</option>
+                    <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                    <option>Delhi</option>
+                    <option>Lakshadweep</option>
+                    <option>Puducherry</option>
+                    <option>Ladakh</option>
+                    <option>Jammu and Kashmir</option>
+                </select>
+                <div id="errorState" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputPincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="inputPincode" name="pincode">
+                <div id="errorPincode" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputLandMark" class="form-label">Landmark (Optional)</label>
+                <input type="text" class="form-control" id="inputLandMark" name="landMark">
+                <div id="errorLandMark" class="error-message"></div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputAddressType" class="form-label">Address Type</label>
+                <select id="inputAddressType" class="form-select" name="addressType">
+                    <option value="">Choose...</option>
+                    <option>Home</option>
+                    <option>Work</option>
+                    <option>Other</option>
+                </select>
+                <div id="errorAddressType" class="error-message"></div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="inputDefault" name="isDefault">
+                    <label class="form-check-label" for="inputDefault">Set as default address</label>
+                </div>
+            </div>
+
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary">Add Address</button>
+            </div>
+        </form>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-</body>
-<script>
-function nameValidateChecking(name) {
-    const error1 = document.getElementById('error1');
-    const namePattern = /^[a-zA-Z\s'-]+$/;
-    if(name.trim() == "") {
-        error1.style.display = "block";
-        error1.innerHTML = "Please enter a valid name";
-    } else if(!namePattern.test(name)) {
-        error1.style.display = "block";
-        error1.innerHTML = "Name can only contain alphabets and spaces";
-    } else {
-        error1.style.display = "none";
-        error1.innerHTML = '';
-        return true;
-    }
-    return false;
-}
+    <script>
+        const validators = {
+            name: (value) => {
+                const error = document.getElementById('errorName');
+                const pattern = /^[a-zA-Z\s'-]+$/;
+                if (!value.trim()) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Name is required';
+                    return false;
+                }
+                if (!pattern.test(value)) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Name can only contain letters, spaces, or hyphens';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function phoneValidateChecking(phone) {
-    const error2 = document.getElementById('error2');
-    if(phone == "") {
-        error2.style.display = "block";
-        error2.innerHTML = "Enter a valid phone number";
-        return false;
-    } else if (phone.length < 10 || phone.length > 10) {
-        error2.style.display = "block";
-        error2.innerHTML = "Enter 10 digits";
-        return false;
-    } else {
-        error2.style.display = "none";
-        error2.innerHTML = "";
-        return true;
-    }
-}
+            phone: (value) => {
+                const error = document.getElementById('errorPhone');
+                const pattern = /^[6-9]\d{9}$/;
+                if (!value.trim()) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Phone number is required';
+                    return false;
+                }
+                if (!pattern.test(value)) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Enter a valid 10-digit phone number starting with 6-9';
+                    return false;
+                }
+                if (/^0+$/.test(value)) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Phone number cannot be all zeros';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function altPhoneValidateChecking(altPhone) {
-    const error3 = document.getElementById('error3');
-    if(altPhone !== "" && (altPhone.length < 10 || altPhone.length > 10)) {
-        error3.style.display = "block";
-        error3.innerHTML = "Enter 10 digits";
-        return false;
-    } else {
-        error3.style.display = "none";
-        error3.innerHTML = "";
-        return true;
-    }
-}
+            altPhone: (value) => {
+                const error = document.getElementById('errorAltPhone');
+                if (value.trim()) {
+                    const pattern = /^[6-9]\d{9}$/;
+                    if (!pattern.test(value)) {
+                        error.style.display = 'block';
+                        error.innerHTML = 'Enter a valid 10-digit phone number starting with 6-9';
+                        return false;
+                    }
+                    if (/^0+$/.test(value)) {
+                        error.style.display = 'block';
+                        error.innerHTML = 'Phone number cannot be all zeros';
+                        return false;
+                    }
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function cityValidateChecking(city) {
-    const error4 = document.getElementById('error4');
-    if(city == '') {
-        error4.style.display = 'block';
-        error4.innerHTML = 'City is required';
-        return false;
-    } else {
-        error4.style.display = 'none';
-        error4.innerHTML = '';
-        return true;
-    }
-}
+            city: (value) => {
+                const error = document.getElementById('errorCity');
+                if (!value.trim()) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'City is required';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function stateValidateChecking(state) {
-    const error5 = document.getElementById('error5');
-    if(state == 'Choose...') {
-        error5.style.display = 'block';
-        error5.innerHTML = 'Please select a state';
-        return false;
-    } else {
-        error5.style.display = 'none';
-        error5.innerHTML = '';
-        return true;
-    }
-}
+            state: (value) => {
+                const error = document.getElementById('errorState');
+                if (!value || value === 'Choose...') {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Please select a state';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function pincodeValidateChecking(pincode) {
-    const error6 = document.getElementById('error6');
-    if(pincode == '') {
-        error6.style.display = 'block';
-        error6.innerHTML = 'Pincode is required';
-        return false;
-    } else if(pincode.length !== 6) {
-        error6.style.display = 'block';
-        error6.innerHTML = "Pincode must be 6 digits";
-        return false;
-    } else {
-        error6.style.display = 'none';
-        error6.innerHTML = '';
-        return true;
-    }
-}
+            pincode: (value) => {
+                const error = document.getElementById('errorPincode');
+                const pattern = /^\d{6}$/;
+                if (!value.trim()) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Pincode is required';
+                    return false;
+                }
+                if (!pattern.test(value)) {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Pincode must be 6 digits';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
+            },
 
-function addressTypeValidateChecking(addressType) {
-    const error8 = document.getElementById('error8');
-    if(addressType == 'Choose...') {
-        error8.style.display = 'block';
-        error8.innerHTML = 'Please select an address type';
-        return false;
-    } else {
-        error8.style.display = 'none';
-        error8.innerHTML = '';
-        return true;
-    }
-}
-
-async function address(event) {
-    event.preventDefault(); 
-    const form = document.getElementById('address-form');
-    const name = form["name"].value.trim();
-    const phone = form["phone"].value.trim();
-    const altPhone = form["altPhone"].value.trim();
-    const city = form["city"].value.trim();
-    const state = form["state"].value;
-    const pincode = form["pincode"].value.trim();
-    const landMark = form["landMark"].value.trim();
-    const addressType = form["addressType"].value;
-    const isDefault = form["isDefault"].checked;
-    
-    const isNameValid = nameValidateChecking(name);
-    const isPhoneValid = phoneValidateChecking(phone);
-    const isAltPhoneValid = altPhoneValidateChecking(altPhone);
-    const isCityValid = cityValidateChecking(city);
-    const isStateValid = stateValidateChecking(state);
-    const isPincodeValid = pincodeValidateChecking(pincode);
-    const isAddressTypeValid = addressTypeValidateChecking(addressType);
-    
-    if(isNameValid && isPhoneValid && isAltPhoneValid && isCityValid && isStateValid && isPincodeValid && isAddressTypeValid) {
-        const formData = {
-            name,
-            phone,
-            altPhone: altPhone || undefined,
-            city,
-            state,
-            pincode,
-            landMark: landMark || undefined,
-            addressType,
-            isDefault
-        };
-        
-        try {
-            const response = await fetch('/address', {
-                method: 'POST',
-                headers: {'Content-Type': "application/json"},
-                body: JSON.stringify(formData)
-            });
-            
-            if(response.ok) {
-                await Swal.fire({
-                    title: 'Success!',
-                    text: 'Address added successfully!',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-                window.location.href = '/getAddress';
-            } else {
-                throw new Error('Server returned an error');
+            addressType: (value) => {
+                const error = document.getElementById('errorAddressType');
+                if (!value || value === 'Choose...') {
+                    error.style.display = 'block';
+                    error.innerHTML = 'Please select an address type';
+                    return false;
+                }
+                error.style.display = 'none';
+                return true;
             }
-        } catch (error) {
-            console.log("The error " + error);
-            await Swal.fire({
-                title: 'Error!',
-                text: 'There was an issue with the network. Please try again later.',
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
+        };
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('address-form');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            const validations = [
+                validators.name(data.name),
+                validators.phone(data.phone),
+                validators.altPhone(data.altPhone || ''),
+                validators.city(data.city),
+                validators.state(data.state),
+                validators.pincode(data.pincode),
+                validators.addressType(data.addressType)
+            ];
+
+            if (validations.every(Boolean)) {
+                try {
+                    const response = await fetch('/address', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ...data,
+                            altPhone: data.altPhone || undefined,
+                            landMark: data.landMark || undefined,
+                            isDefault: !!data.isDefault
+                        })
+                    });
+
+                    if (response.ok) {
+                        await Swal.fire({
+                            title: 'Success!',
+                            text: 'Address added successfully!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        window.location.href = '/getAddress';
+                    } else {
+                        throw new Error('Server error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to add address. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
         }
-    }
-}
-</script>
+
+        document.getElementById('address-form').addEventListener('submit', handleSubmit);
+    </script>
+</body>
 </html>

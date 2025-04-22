@@ -235,15 +235,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function phoneValidateChecking(phone) {
         const error2 = document.getElementById('error2');
+        // Check if the phone is empty
         if(phone == "") {
             error2.style.display = "block";
             error2.innerHTML = "Enter a valid phone number";
             return false;
-        } else if (phone.length < 10 || phone.length > 10) {
+        } 
+        // Check if the phone length is exactly 10 digits
+        else if (phone.length !== 10) {
             error2.style.display = "block";
-            error2.innerHTML = "Enter 10 digits";
+            error2.innerHTML = "Phone number must be 10 digits";
             return false;
-        } else {
+        }
+        // Check if the phone contains only zeros
+        else if (/^0+$/.test(phone)) {
+            error2.style.display = "block";
+            error2.innerHTML = "Phone number cannot be all zeros";
+            return false;
+        }
+        // Check if phone contains only numbers
+        else if (!/^\d+$/.test(phone)) {
+            error2.style.display = "block";
+            error2.innerHTML = "Phone number should contain only digits";
+            return false;
+        }
+        else {
             error2.style.display = "none";
             error2.innerHTML = "";
             return true;
@@ -252,11 +268,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function altPhoneValidateChecking(altPhone) {
         const error3 = document.getElementById('error3');
-        if(altPhone !== "" && (altPhone.length < 10 || altPhone.length > 10)) {
+        // If alternative phone is empty, it's valid (since it's optional)
+        if(altPhone == "") {
+            error3.style.display = "none";
+            error3.innerHTML = "";
+            return true;
+        }
+        // Check if the phone length is exactly 10 digits
+        else if (altPhone.length !== 10) {
             error3.style.display = "block";
-            error3.innerHTML = "Enter 10 digits";
+            error3.innerHTML = "Alternative phone number must be 10 digits";
             return false;
-        } else {
+        }
+        // Check if the phone contains only zeros
+        else if (/^0+$/.test(altPhone)) {
+            error3.style.display = "block";
+            error3.innerHTML = "Phone number cannot be all zeros";
+            return false;
+        }
+        // Check if phone contains only numbers
+        else if (!/^\d+$/.test(altPhone)) {
+            error3.style.display = "block";
+            error3.innerHTML = "Phone number should contain only digits";
+            return false;
+        }
+        else {
             error3.style.display = "none";
             error3.innerHTML = "";
             return true;
@@ -298,6 +334,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if(pincode.length !== 6) {
             error6.style.display = 'block';
             error6.innerHTML = "Pincode must be 6 digits";
+            return false;
+        } else if(!/^\d+$/.test(pincode)) {
+            error6.style.display = 'block';
+            error6.innerHTML = "Pincode should contain only digits";
             return false;
         } else {
             error6.style.display = 'none';
