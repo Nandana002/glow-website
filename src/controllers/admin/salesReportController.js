@@ -131,22 +131,43 @@ const getDateRange = (reportType, startDate, endDate) => {
         case 'weekly':
             start.setDate(now.getDate() - now.getDay());
             start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
             break;
         case 'monthly':
             start.setDate(1);
             start.setHours(0, 0, 0, 0);
+            end.setMonth(end.getMonth() + 1, 0); // Set to last day of the month
+            end.setHours(23, 59, 59, 999);
             break;
         case 'custom':
+            if (!startDate || !endDate) {
+                throw new Error('Start date and end date are required for custom range');
+            }
             start = new Date(startDate);
             end = new Date(endDate);
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                throw new Error('Invalid start or end date');
+            }
+            start.setHours(0, 0, 0, 0); // Start of the day
+            end.setHours(23, 59, 59, 999); // End of the day
             break;
+        default:
+            throw new Error('Invalid report type');
     }
+
+    console.log('Date Range:', { start, end });
     return { start, end };
 };
 //using to export sales report
 const exportSalesReport = async (req, res) => {
     try {
         const { type, reportType, startDate, endDate } = req.query;
+        if (!['daily', 'weekly', 'monthly', 'custom'].includes(reportType)) {
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                status: false,
+                message: 'Invalid report type',
+            });
+        }
         const dateRange = getDateRange(reportType, startDate, endDate);
 
         const orders = await Order.find({

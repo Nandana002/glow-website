@@ -386,22 +386,32 @@
         }
 
         async function exportReport(type) {
-            const reportType = '<%= reportType %>';
-            const startDate = document.getElementById('startDate')?.value;
-            const endDate = document.getElementById('endDate')?.value;
-            
-            let url = `/admin/sales-report/export?type=${type}&reportType=${reportType}`;
-            if (reportType === 'custom' && startDate && endDate) {
-                url += `&startDate=${startDate}&endDate=${endDate}`;
-            }
-            
-            try {
-                window.location.href = url;
-            } catch (error) {
-                console.error('Export error:', error);
-                Swal.fire('Error', 'Failed to export report', 'error');
-            }
+    const reportType = '<%= reportType %>';
+    const startDate = document.getElementById('startDate')?.value;
+    const endDate = document.getElementById('endDate')?.value;
+
+    let url = `/admin/sales-report/export?type=${type}&reportType=${reportType}`;
+    if (reportType === 'custom' && startDate && endDate) {
+        // Ensure dates are in YYYY-MM-DD format
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            Swal.fire('Error', 'Invalid date format', 'error');
+            return;
         }
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    } else if (reportType === 'custom') {
+        Swal.fire('Error', 'Please select both start and end dates', 'error');
+        return;
+    }
+
+    try {
+        window.location.href = url;
+    } catch (error) {
+        console.error('Export error:', error);
+        Swal.fire('Error', 'Failed to export report', 'error');
+    }
+}
     </script>
 </body>
 </html>
