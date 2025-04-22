@@ -283,12 +283,16 @@
             color: #dc3545;
             /* This is red */
         }
+
         .transaction-amount.Credit {
-  color: #28a745; /* Green for credited amounts */
-}
-.transaction-amount.Debit {
-  color: #dc3545; /* Red for debited amounts */
-}
+            color: #28a745;
+            /* Green for credited amounts */
+        }
+
+        .transaction-amount.Debit {
+            color: #dc3545;
+            /* Red for debited amounts */
+        }
 
         .page-link:hover {
             background-color: #ff5e5b;
@@ -371,6 +375,10 @@
                 font-size: 16px;
             }
         }
+         /* Adding green color for referral rewards */
+         .transaction-amount.Referral {
+            color: #28a745;
+        }
     </style>
 </head>
 
@@ -441,34 +449,43 @@
                         <div class="wallet-card">
                             <h5><i class="fas fa-history"></i> Transaction History</h5>
                             <div class="transaction-history">
-                                <% if (wallet.transactionHistory && wallet.transactionHistory.length > 0) { %>
-                                  <% wallet.transactionHistory.forEach(transaction => { %>
-                                    <div class="transaction-item">
-                                      <div class="transaction-details">
-                                        <h6 style="font-weight: 800;"><%= transaction.description %></h6>
-                                        <h6>Wallet Transaction</h6>
-                                        <span class="transaction-date">
-                                          <%= new Date(transaction.transactionDate).toLocaleDateString('en-US', {
-                                            year: 'numeric', month: 'short', day: 'numeric',
-                                            hour: '2-digit', minute: '2-digit'
-                                          }) %>
-                                        </span>
-                                      </div>
-                                      <div class="transaction-amount <%= transaction.transactionType === 'refund' ? 'Credit' : 'Debit' %>">
-                                        <% if (transaction.transactionType === 'refund') { %>
-                                          <i class="fas fa-plus-circle"></i> ₹<%= transaction.transactionAmount.toFixed(2) %>
-                                        <% } else { %>
-                                          <i class="fas fa-minus-circle"></i> ₹<%= transaction.transactionAmount.toFixed(2) %>
-                                        <% } %>
-                                      </div>
-                                    </div>
-                                  <% }) %>
-                                <% } else { %>
-                                  <div class="transaction-item">
-                                    <p>No transactions found.</p>
-                                  </div>
-                                <% } %>
-                              </div>
+                                <% if (wallet.transactionHistory && wallet.transactionHistory.length> 0) { %>
+                                    <% wallet.transactionHistory.forEach(transaction=> { %>
+                                        <div class="transaction-item">
+                                            <div class="transaction-details">
+                                                <h6 style="font-weight: 800;">
+                                                    <%= transaction.description %>
+                                                </h6>
+                                                <h6>Wallet Transaction</h6>
+                                                <span class="transaction-date">
+                                                    <%= new
+                                                        Date(transaction.transactionDate).toLocaleDateString('en-US', {
+                                                        year: 'numeric' , month: 'short' , day: 'numeric' ,
+                                                        hour: '2-digit' , minute: '2-digit' }) %>
+                                                </span>
+                                            </div>
+                                            <% let transactionClass='' ; if (transaction.description &&
+                                                transaction.description.toLowerCase().includes('referral')) {
+                                                transactionClass='Referral' ; } else if
+                                                (transaction.transactionType==='refund' ) { transactionClass='Credit' ;
+                                                } else { transactionClass='Debit' ; } %>
+                                                <div class="transaction-amount <%= transactionClass %>">
+                                                    <% if (transactionClass==='Debit' ) { %>
+                                                        <i class="fas fa-minus-circle"></i> ₹<%=
+                                                            transaction.transactionAmount.toFixed(2) %>
+                                                            <% } else { %>
+                                                                <i class="fas fa-plus-circle"></i> ₹<%=
+                                                                    transaction.transactionAmount.toFixed(2) %>
+                                                                    <% } %>
+                                                </div>
+                                        </div>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <div class="transaction-item">
+                                                    <p>No transactions found.</p>
+                                                </div>
+                                                <% } %>
+                            </div>
 
                             <% if (totalPages> 1) { %>
                                 <nav aria-label="Transaction history pagination" class="mt-4">

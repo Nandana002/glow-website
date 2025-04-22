@@ -3,8 +3,6 @@ import { Category } from "../../models/categorySchema.js";
 import { Product } from "../../models/productSchema.js";
 import { HttpStatus } from "../../statusCode.js";
 import { Messages } from '../../responseMessages.js';
-
-import Swal from 'sweetalert2'
 //using for showing categories
 const categoryInfo = async (req, res) => {
     try {

@@ -8,6 +8,7 @@ import { Address } from "../../models/addressSchema.js";
 import crypto from 'crypto';
 import { HttpStatus } from "../../statusCode.js";
 import { error } from "console";
+import { Wallet } from "../../models/walletSchema.js";
 import {Cart} from "../../models/cartSchema.js"
 import {Wishlist} from "../../models/wishlistSchema.js" 
 dotenv.config();
@@ -104,7 +105,7 @@ async function sendVerificationEmail(email, otp) {
 //using for signup
 const signup = async (req, res) => {
   try {
-      const { email, phone, name, password, CPassword } = req.body
+      const { email, phone, name, password, CPassword ,referralCode} = req.body
 
       console.log("Received email:", email);
       if (password !== CPassword) {
@@ -122,7 +123,7 @@ const signup = async (req, res) => {
       }
       req.session.userOtp = otp;
       console.log("name is", name)
-      req.session.userData = { name, phone, email, password }
+      req.session.userData = { name, phone, email, password,referralCode }
       console.log("otp", req.session.userOtp)
       console.log("userdata", req.session.userData)
 
@@ -144,56 +145,141 @@ const securePassword = async (password) => {
 
     }
 }
-//using for verify otp
 const verifyOtp = async (req, res) => {
   try {
-      const { otps } = req.body;
-      console.log("Body ", req.body);
-      if (otps == req.session.userOtp) {
-          const user = req.session.userData;
-          const passwordHash = await securePassword(user.password);
-          const saveUserData = new User({
-              name: user.name,
-              phone: user.phone,
-              email: user.email,
-              password: passwordHash
-          });
-          const referralCode = generateReferralCode(user.email);
-          if (referralCode) saveUserData.referralCode = referralCode;
-
-          console.log("Generated referralCode:", referralCode);
-          await saveUserData.save();
-          req.session.user = saveUserData._id;
-
-          if (user.referralCode) {
-              const referrer = await User.findOne({ referralCode: user.referralCode });
-              if (referrer) {
-                  referrer.referralCount += 1;
-                  referrer.referralRewards += 100;         
-                  referrer.wallet += referrer.referralRewards; 
-                  await referrer.save();
-                  console.log("Referrer updated:", referrer);
-              }
-          }
-
-          return res.status(200).json({
-              success: true,
-              message: "OTP verified successfully.",
-              redirectUrl: "/home",
-          });
-      } else {
-          return res.status(400).json({
-              success: false,
-              message: "Wrong OTP.",
-              redirectUrl: "user/verify-otp",
-          });
+    const { otps } = req.body;
+    console.log("Body ", req.body);
+    
+    if (!req.session.userOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP session expired or not found.",
+        redirectUrl: "/signup",
+      });
+    }
+    
+    
+    if (otps == req.session.userOtp) {
+      
+      const user = req.session.userData;
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: "User data not found in session.",
+          redirectUrl: "/signup",
+        });
       }
+      
+      const passwordHash = await securePassword(user.password);
+      if (!passwordHash) {
+        return res.status(500).json({
+          success: false,
+          message: "Error securing password.",
+          redirectUrl: "/signup",
+        });
+      }
+      
+      const saveUserData = new User({
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+        password: passwordHash
+      });
+      
+      const referralCode = generateReferralCode(user.email);
+      if (referralCode) {
+        saveUserData.referralCode = referralCode;
+        console.log("Generated referralCode:", referralCode);
+      } else {
+        console.log("Failed to generate referral code");
+      }
+      
+      await saveUserData.save();
+      req.session.user = saveUserData._id;
+      
+      const newUserWallet = new Wallet({
+        userId: saveUserData._id,
+        balance: 0,
+        transactionHistory: []
+      });
+      
+      await newUserWallet.save();
+      console.log("Created new wallet for user:", saveUserData.email);
+      
+      if (user.referralCode) {
+        console.log("Processing referral with code:", user.referralCode);
+        
+        const referrer = await User.findOne({ referralCode: user.referralCode });
+        if (referrer) {
+          console.log("Found referrer:", referrer.email);
+          
+          if (typeof referrer.referralCount !== 'number') referrer.referralCount = 0;
+          if (typeof referrer.referralRewards !== 'number') referrer.referralRewards = 0;
+          
+          referrer.referralCount += 1;
+          referrer.referralRewards += 100;         
+          
+          await referrer.save();
+          
+          let referrerWallet = await Wallet.findOne({ userId: referrer._id });
+          
+          if (!referrerWallet) {
+            referrerWallet = new Wallet({
+              userId: referrer._id,
+              balance: 100,
+              transactionHistory: [{
+                transactionType: 'manual',
+                transactionAmount: 100,
+                description: 'Referral reward from ' + saveUserData.email
+              }]
+            });
+          } else {
+            referrerWallet.balance += 100;
+            referrerWallet.transactionHistory.push({
+              transactionType: 'manual',
+              transactionAmount: 100,
+              description: 'Referral reward from ' + saveUserData.email
+            });
+          }
+          
+          await referrerWallet.save();
+          
+          console.log("Referrer updated successfully. New counts:", {
+            referralCount: referrer.referralCount,
+            referralRewards: referrer.referralRewards,
+            walletBalance: referrerWallet.balance
+          });
+        } else {
+          console.log("No referrer found with code:", user.referralCode);
+        }
+      } else {
+        console.log("No referral code provided during signup");
+      }
+      
+      delete req.session.userOtp;
+      delete req.session.userData;
+      
+      return res.status(200).json({
+        success: true,
+        message: "OTP verified successfully.",
+        redirectUrl: "/home",
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Wrong OTP.",
+        redirectUrl: "user/verify-otp",
+      });
+    }
   } catch (error) {
-      console.error("Error verifying OTP:", error);
-      return res.status(500).json({ success: false, message: "An error occurred." });
+    console.error("Error verifying OTP:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "An error occurred while verifying OTP.",
+      redirectUrl: "/signup"
+    });
   }
 };
-
 //using for sending otp
 
 const resendOtp = async (req, res) => {
