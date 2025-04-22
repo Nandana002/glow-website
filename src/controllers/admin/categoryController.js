@@ -141,6 +141,10 @@ const getUnlistCategory = async (req, res) => {
     try {
         let id = req.query.id;
         await Category.updateOne({ _id: id }, { $set: { isListed: true } });
+        await Product.updateMany(
+            { category: id, quantity: { $lt: 5 }, price: { $lt: 1000 } },
+            { $set: { isBlocked: true } }
+        );
         res.redirect('/admin/categoryInfo')
 
     } catch (error) {
