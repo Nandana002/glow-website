@@ -347,7 +347,7 @@
                       <td><%= order.orderId %></td>
                       <td><%= item.shade %></td>
                       <td><%= order.productName %></td>
-                      <td>₹<%= order.finalAmount || order.totalPrice %></td>
+                      <td>₹<%= order.finalAmount  %></td>
                       <td><%= order.paymentMethod %></td>
                       <td>
                         <select name="status" class="statusSelect" data-order-id="<%= order.orderId %>">
