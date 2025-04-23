@@ -148,7 +148,7 @@ const wallet = async (req, res) => {
     wallet.transactionHistory.push({
       transactionType: 'purchase',
       transactionAmount: amountToDeduct,
-      transactionDate: new Date(),
+      transactionDate: new Date().toISOString(),
       description: `purchase from order ${newOrder._id}`,
     });
     await wallet.save();
