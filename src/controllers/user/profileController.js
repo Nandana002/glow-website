@@ -90,7 +90,7 @@ const updateProfileImage = async (req, res) => {
 const sendVerificationGmail=async(email,otp)=>{
     try {
         const transporter=nodemailer.createTransport({
-            service:"gmail",
+            host:"smtp.gmail.com",
             port:587,
             secure:false,
             requireTLS:true,
