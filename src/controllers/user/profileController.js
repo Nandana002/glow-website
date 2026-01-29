@@ -18,11 +18,7 @@ function generateOtp(){
     }
     return otp;
 }
-
-
-
-
-//using to update profile image
+// using to update profile image
 
 const updateProfileImage = async (req, res) => {
     try {

@@ -1,3 +1,4 @@
+import { type } from "os";
 import User from "../../models/userSchema.js";
 
 const googleCallback = async (req, res) => {
@@ -14,7 +15,7 @@ const googleCallback = async (req, res) => {
           console.error('Error logging out:', err);
           return res.redirect('/signup');
         }
-        return res.render('login', { message: "User is blocked by admin" });
+        return res.render('login', { message: "User is blocked by admin ,why this error " });
       });
       return;
     }
