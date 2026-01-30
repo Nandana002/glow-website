@@ -79,6 +79,8 @@ async function sendVerificationEmail(email, otp) {
             port: 587,
             secure: false,
             requireTLS: true,
+            connectionTimeout: 10000,
+            socketTimeout: 10000,
             auth: {
                 user: process.env.NODEMAILER_EMAIL,
                 pass: process.env.NODEMAILER_PASSWORD
@@ -88,17 +90,15 @@ async function sendVerificationEmail(email, otp) {
         const info = await transpoter.sendMail({
             from: process.env.NODEMAILER_EMAIL,
             to: email,
-            subject: "verify your account",
-            text: `your OTP IS ${otp}`,
+            subject: "Verify your account",
+            text: `Your OTP is: ${otp}`,
             html: `<b>Your OTP: ${otp}</b>`,
-
-
-
         })
         return info.accepted.length > 0
 
     } catch (error) {
-        console.error('error  sending email', error)
+        console.error('Error sending verification email:', error.message)
+        console.error('Error code:', error.code)
         return false
     }
 }
