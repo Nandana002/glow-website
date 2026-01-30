@@ -75,30 +75,30 @@ function generateOtp() {
 async function sendVerificationEmail(email, otp) {
     try {
         const transpoter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp-relay.brevo.com',
             port: 587,
             secure: false,
-            requireTLS: true,
-            connectionTimeout: 10000,
-            socketTimeout: 10000,
             auth: {
-                user: process.env.NODEMAILER_EMAIL,
-                pass: process.env.NODEMAILER_PASSWORD
-            }
-
+                user: process.env.BREVO_SMTP_EMAIL,
+                pass: process.env.BREVO_SMTP_PASSWORD
+            },
+            connectionTimeout: 15000,
+            socketTimeout: 15000
         })
         const info = await transpoter.sendMail({
-            from: process.env.NODEMAILER_EMAIL,
+            from: `GlowGazy <${process.env.BREVO_SMTP_EMAIL}>`,
             to: email,
-            subject: "Verify your account",
-            text: `Your OTP is: ${otp}`,
-            html: `<b>Your OTP: ${otp}</b>`,
+            subject: "Verify your GlowGazy Account",
+            text: `Your OTP is: ${otp}. This OTP will expire in 10 minutes.`,
+            html: `<h2>Account Verification</h2><p>Your OTP is: <b>${otp}</b></p><p>This OTP will expire in 10 minutes.</p>`,
         })
+        console.log('Email sent successfully:', info.messageId)
         return info.accepted.length > 0
 
     } catch (error) {
         console.error('Error sending verification email:', error.message)
         console.error('Error code:', error.code)
+        console.error('Full error:', error)
         return false
     }
 }
