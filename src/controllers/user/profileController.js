@@ -95,12 +95,12 @@ const sendVerificationGmail=async(email,otp)=>{
             secure:false,
             requireTLS:true,
             auth:{
-                user:process.env.NODEMAILER_EMAIL,
-                pass:process.env.NODEMAILER_PASSWORD,
+                user:process.env.BREVO_SMTP_EMAIL,
+                pass:process.env.BREVO_SMTP_PASSWORD,
             }
         })
         const mailOptions={
-            from:process.env.NODEMAILER_EMAIL,
+            from:process.env.BREVO_SMTP_EMAIL,
             to:email,
             subject:"your OTP for password reset",
             text:'your OTP is ${otp}',
